@@ -10,4 +10,9 @@ class User_Gui_Forms{
         $ui->setLayout("user/forms/authorization.tpl");
     }
 
+    public function getLogOutForm($ui)
+    {
+        $ui->setLayout("user/forms/logout.tpl");
+    }
+
 }

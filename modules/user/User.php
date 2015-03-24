@@ -18,7 +18,7 @@ class User extends Module{
      * Get current user id
      * @return int
      */
-    private static function getUserId()
+    public static function getUserId()
     {
         if(!empty($_SESSION[User::USER_ID])) {
             return $_SESSION[User::USER_ID];
@@ -32,7 +32,7 @@ class User extends Module{
      * @param $id int
      */
     private static function setUserId($id)
-    {   echo "user id setted: ".$id;
+    {
         $_SESSION[User::USER_ID] = $id;
     }
 
@@ -49,8 +49,8 @@ class User extends Module{
     {
         if($this->formHandlers == null) {
             $this->formHandlers = array(
-                'authorization' => new FormHandler('authorization')
-
+                'authorization' => new FormHandler('authorization'),
+                'logout' => new FormHandler('logout')
             );
         }
         return $this->formHandlers;
@@ -69,34 +69,26 @@ class User extends Module{
         return User::$user;
     }
 
+    /**
+     * User authorization form controller
+     *
+     * @param FormHandler $handler
+     */
     public function authorization(FormHandler $handler){
-        if(empty($_POST['email'])) {
-            $handler->addError('email', UI_Validation::REQUIRED);
-        }
-        if(empty($_POST['password'])) {
-            $handler->addError('password', UI_Validation::REQUIRED);
-        }
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $usersList = $this->getService()->loadAll(" WHERE user.email='".DB::escape($email)
-            ."' AND user.password='".DB::escape($password)."'");
-
-
-        /* @var $user PersistUser */
-        foreach($usersList as $user) {
-            if($user->getPassword() === $password) {
-                User::$user = $user;
-                User::setUserId($user->getId());
-                break;
-            }
-        }
-        if(User::getUser() == null) {
-            $handler->addError('email', UI_Validation::CUSTOM);
+        $provider = new User_Actions();
+        $user = $provider->authorization($handler);
+        if($user != null) {
+            User::$user = $user;
+            User::setUserId($user->getId());
         }
     }
 
 
-
+    /**
+     * User authorization form UI controller.
+     * Prepare data for form rendering
+     * @param UI $ui
+     */
     public function getAuthorizationForm(UI $ui){
         if(User::getUser() == null) {
             $provider = new User_Gui_Forms();
@@ -104,5 +96,28 @@ class User extends Module{
         }
     }
 
+    /**
+     * User authorization form UI controller.
+     * Prepare data for form rendering
+     * @param UI $ui
+     */
+    public function getLogOutForm(UI $ui){
+        if(User::getUser() != null) {
+            $provider = new User_Gui_Forms();
+            $provider->getLogOutForm($ui);
+        }
+    }
 
+    /**
+     * User authorization form UI controller.
+     * Prepare data for form rendering
+     * @param UI $ui
+     */
+    public function logout(){
+        if(User::getUser() != null) {
+            User::setUserId(0);
+            User::$user = null;
+        }
+        Core_Utils::redirectToHome();
+    }
 }

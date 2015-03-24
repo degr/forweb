@@ -32,7 +32,7 @@ class Word{
         if(!empty($cache[$language][$module][$term])) {
             return $cache[$language][$module][$term];
         } else {
-            return '';
+            return '['.$term.']';
         }
     }
 

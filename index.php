@@ -49,9 +49,7 @@ function __autoload($class) {
             require_once ORM::getPersistObjectsFolder().$class.".php";
             return;
         }
-        debug(debug_backtrace(3));
     }
-
     require_once($file);
 }
 
