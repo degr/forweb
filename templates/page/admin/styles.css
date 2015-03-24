@@ -1,0 +1,161 @@
+/*{literal}*/
+#admin_panel .block{
+    height: 40px;
+}
+.admin_panel{
+    opacity: 0.4;
+}
+.admin_panel:hover{
+    opacity: 1;
+}
+#admin_panel .block .template,#admin_panel .block .content_toggler {
+    padding-top: 7px;
+}
+
+#admin_panel .block .template label, #admin_panel .block .template .grid_center{
+    float: left;
+}
+#admin_panel .addNewInclude{
+    margin-left: 5px;
+}
+#admin_panel .staticContent{
+    position: relative;
+}
+#admin_panel .content_type{
+    width: 150px;
+}
+#admin_panel .content_type label{
+    width: 35px;
+    display: inline-block;
+}
+#admin_panel .content_type .grid_center, #admin_panel .content_type select {
+    width: 110px;
+    display: inline-block;
+}
+#admin_panel .content_type .grid_center{
+    padding-top: 7px;
+}
+#admin_panel .staticContentTextarea{
+    position: absolute;
+    background-color: #ffffff;
+    border: 1px solid gray;
+    top: 10px;
+    left: 10px;
+    width: 780px;
+    z-index: 50;
+}
+#admin_panel .staticContentTextarea textarea{
+    width: 100%;
+    padding: 3px;
+    margin: 0;
+    box-sizing: border-box;
+}
+#admin_panel .staticContentTextarea p{
+    height: 25px;
+    color: gray;
+}
+#admin_panel .staticContentTextarea a{
+    width: 16px;
+    height: 16px;
+    font-size: 14px;
+    color: red;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+#admin_panel .include_row .icon-delete{
+    margin-top: 9px;
+    margin-left: 4px;
+}
+#admin_panel #access_table{
+    border-collapse:collapse;
+}
+#admin_panel #access_table td{
+    text-align: center;
+    position: relative;
+}
+#admin_panel #access_table th{
+    border-bottom: 1px dotted gray;
+    border-left: 1px dotted gray;
+}
+#admin_panel #access_table th:first-child{
+    border-left: none;
+}
+
+#admin_panel #access_table td a.icon-delete{
+    display: inline-block;
+}
+#admin_panel #access_table th a{
+    display: inline-block;
+    position: relative;
+    top: 2px;
+}
+#admin_panel a.delete_block{
+    margin: 3px 0 0 3px;
+}
+#admin_panel div.template_blocks h3+.arrowsHolder{
+    margin: 9px 0 0 3px;
+}
+#admin_panel .content_toggler{
+    position: relative;
+}
+#admin_panel .content_toggler .showContentToggler{
+    text-decoration: none;
+}
+#admin_panel .content_toggler .dynamicContent{
+    position: absolute;
+    left: 0;
+    top: 24px;
+    background-color: white;
+    z-index: 40;
+    padding: 10px;
+    border: 1px solid #337ab7;
+    border-top: none;
+}
+#admin_panel .comment_holder{
+    margin-left: 10px;
+    position: relative;
+    top: 3px;
+    min-width: 380px;
+}
+#admin_panel .comment_holder input{
+    width: 100%
+}
+#admin_panel #config_form .modules_list{
+    min-width: 100px;
+    border-right: 1px solid gray;
+}
+#admin_panel #config_form .modules_list li{
+    border: 1px solid gray;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    margin-bottom: 3px;
+    background-color: white;
+    position: relative;
+    left: 1px;
+}
+#admin_panel #config_form .modules_list a{
+    text-decoration: none;
+}
+#admin_panel #config_form .modules_list li.active{
+    border-right: none;
+}
+#admin_panel #config_form .module_tabs .holder{
+    padding: 5px 5px 0 5px;
+}
+#admin_panel #config_form .module_tabs input[type="text"]{
+    display: block;
+    float: left;
+    width: 160px;
+}
+#admin_panel #config_form .module_tabs label{
+    text-align: right;
+    width: 100px;
+    display: block;
+    float: left;
+    padding-right: 5px;
+}
+#admin_panel #config_form .module_tabs a{
+    margin: 4px 0 0 4px;
+}
+/*{/literal}*/
