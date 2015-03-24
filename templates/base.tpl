@@ -13,12 +13,12 @@
 <div class="wrapper row">
 	<div class="block col-lg-12 header">
 		{$block.header}
+		</div>
+	<div class="block col-lg-3 col-md-4 col-sm-5 col-xs-6 sidebar">
+		{$block.sidebar}
 	</div>
 	<div class="block col-lg-9 col-md-8 col-sm-7 col-xs-6 content">
 		{$block.content}
-	</div>
-	<div class="block col-lg-3 col-md-4 col-sm-5 col-xs-6 sidebar">
-		{$block.sidebar}
 	</div>
 </div>
 </body>

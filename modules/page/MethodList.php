@@ -22,9 +22,18 @@ class Page_MethodList {
             $reflectObj = new ReflectionClass($moduleName);
             $methods = $reflectObj->getMethods(ReflectionMethod::IS_PUBLIC);
             foreach($methods as $method) {
-                if(strtolower($method->name) !== '__construct') {
-                    $out[$method->name] = $method->name;
+                $parameters = $method->getParameters();
+                if(count($parameters) != 1) {
+                    continue;
                 }
+                $class = $parameters[0]->getClass();
+                if(empty($class)) {
+                    continue;
+                }
+                if($class->getName() !== 'UI') {
+                    continue;
+                }
+                $out[$method->name] = $method->name;
             }
             return $out;
         } else {
