@@ -104,7 +104,6 @@ class ORM_Objects_Bind{
 	public function setCustomLeftField($customLeftField, $otherSide = true)
 	{
 		$this->customLeftField = $customLeftField;
-		debug(array($this->getLeftTable()->getName(), $this->getType(), $otherSide, $customLeftField));
 		if ($otherSide) {
 			//$this->applyCustomNameForOtherBind($customLeftField, false);
 		}
@@ -119,9 +118,11 @@ class ORM_Objects_Bind{
 		}
 	}
 
-	public function setCustomRightField($customRightField){
+	public function setCustomRightField($customRightField, $otherSide = true){
 		$this->customRightField = $customRightField;
-		//$this->applyCustomNameForOtherBind($customRightField, true);
+		if($otherSide) {
+			//$this->applyCustomNameForOtherBind($customRightField, true);
+		}
 	}
 
 	protected function applyCustomNameForOtherBind($name, $left){

@@ -69,8 +69,8 @@ class ORM_Install implements Module_IInstall{
 
             if(!empty($currentBind)){
                 $text .= "//////////////Persist object " . $field->getName(). "  getter and setter ///////////////\n";
-                $postfix = $postfix = $currentBind->getLeftField() === $field->getName() ? "Id" : "";
-                $text .= ORM_Install::getTextForBindGetter($currentBind);
+                $postfix = $currentBind->getLeftField() === $field->getName() ? "Id" : "";
+                $text .= ORM_Install::getTextForBindGetter($currentBind, $postfix);
                 $text .= ORM_Install::getTextForBindSetter($currentBind);
             } else {
                 $postfix = "";
@@ -145,7 +145,7 @@ class ORM_Install implements Module_IInstall{
         return $out;
     }
 
-    protected static function getTextForBindGetter(ORM_Objects_Bind $bind)
+    protected static function getTextForBindGetter(ORM_Objects_Bind $bind, $postfix)
     {
         $type = $bind->getType();
         if($type == ORM_Objects_Table::MANY_TO_MANY || $type == ORM_Objects_Table::ONE_TO_MANY) {
@@ -162,7 +162,7 @@ class ORM_Install implements Module_IInstall{
 
         $text .= "\tpublic function get" . ucfirst($bind->getLeftField()) . "(){\n";
         if ($bind->getLazyLoad()) {
-            $text .= ORM_Install::getLazyLoadTextForBind($bind);
+            $text .= ORM_Install::getLazyLoadTextForBind($bind, $postfix);
         }
         $text .= "\t\treturn \$this->" . $bind->getLeftField() . ";\n";
         $text .="\t}\n";
@@ -216,12 +216,12 @@ class ORM_Install implements Module_IInstall{
         return $text;
     }
 
-    protected static function getLazyLoadTextForBind(ORM_Objects_Bind $bind){
+    protected static function getLazyLoadTextForBind(ORM_Objects_Bind $bind, $postfix){
         $propertyName = $bind->getLeftField();
         $text = "\t\tif(\$this->" . $propertyName . " === null){\n";
         $text .= "\t\t\t\$this->" . $propertyName . " = ORM::loadBinded('"
             . $bind->getRightTable()->getName()
-            . "', \$this->get".ucfirst($bind->getLeftKey())."(), '"
+            . "', \$this->get".ucfirst($bind->getLeftKey()).$postfix."(), '"
             . $bind->getLeftKey() . "', '"
             . $bind->getRightKey() . "', '"
             . $bind->getType() . "');\n";

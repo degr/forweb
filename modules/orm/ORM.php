@@ -29,6 +29,15 @@ class ORM{
         return ORM::getPersistObjectsFolder()."extend/";
     }
 
+    /**
+     * Load binded data for object. Use on lazy load
+     * @param $tableName string
+     * @param $keyValue
+     * @param $leftKey
+     * @param $rightKey
+     * @param $type
+     * @return ORM_Objects_PersistBase|ORM_Objects_PersistBase[]
+     */
     public static function loadBinded($tableName, $keyValue, $leftKey, $rightKey, $type){
         $mainTable = ORM::getTable($tableName);
         $tail = ORM_QueryBuilder::buildQueryForBind($mainTable, $keyValue, $leftKey);
