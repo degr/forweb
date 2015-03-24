@@ -35,7 +35,7 @@ class Page_Install implements Module_IInstall{
         foreach($tables as $table) {
             ORM::registerTableOnFly($table);
         }
-        $tables['pages']->bindTable('template', 'id', 'templates', ORM_Objects_Table::MANY_TO_ONE, false, false);
+        $tables['pages']->bindTable('template', 'id', 'templates', ORM_Objects_Table::MANY_TO_ONE, false, true);
         $pagesBind = $this->tables['pages']->bindTable('parent', 'id', 'pages', ORM_Objects_Table::MANY_TO_ONE, false, true);
         $pagesBind->setCustomLeftField("parentPage");
 

@@ -1,5 +1,6 @@
 <?php
 class ORM_Utils{
+    const BIND_PREFIX = 'Id';
 
     /**
      * Load data from persistence storage
@@ -83,13 +84,18 @@ class ORM_Utils{
     protected static function fromArrayToObject(ORM_Objects_Table $table, $row){
         $class = $table->getPersistClassName();
         $out = new $class();
-        foreach ($row as $field => $value) {
-            if(strpos($field, $table->getName()."_") !== 0){
-                continue;
+
+        $binds = $table->getBinds();
+        foreach ($table->getFields() as $field) {
+            $prefix = "";
+            foreach($binds as $bind) {
+                if($bind->getLeftKey() == $field->getName() && $bind->getLeftField() == $field->getName()) {
+                    $prefix = ORM_Utils::BIND_PREFIX;
+                    break;
+                }
             }
-            $normalizedKey = str_replace($table->getName()."_", "", $field);
-            $method = "set".ucfirst($normalizedKey);
-            $out->$method($value);
+            $method = "set".ucfirst($field->getName().$prefix);
+            $out->$method($row[$table->getName()."_".$field->getName()]);
         }
         return $out;
     }

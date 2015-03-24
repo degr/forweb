@@ -40,7 +40,7 @@ class ORM{
      */
     public static function loadBinded($tableName, $keyValue, $leftKey, $rightKey, $type){
         $mainTable = ORM::getTable($tableName);
-        $tail = ORM_QueryBuilder::buildQueryForBind($mainTable, $keyValue, $leftKey);
+        $tail = ORM_QueryBuilder::buildQueryForBind($mainTable, $keyValue, $rightKey);
         if($type == ORM_Objects_Table::ONE_TO_ONE || $type == ORM_Objects_Table::MANY_TO_ONE){
             $one = true;
         } else {

@@ -106,6 +106,7 @@ class Page extends Module{
 		Access::denied("can_edit_pages");
 		$pagesArray = $this->pageService->loadAll('');
 		$out = array();
+
 		/* @var $value PersistPages */
 		foreach($pagesArray as $key => $value) {
 			$out['pages'][$key] = $value->toArray();

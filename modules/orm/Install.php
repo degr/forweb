@@ -53,7 +53,7 @@ class ORM_Install implements Module_IInstall{
         foreach($table->getFields() as $field) {
             $currentBind = ORM_Install::getBindForField($field, $binds);
             if(!empty($currentBind)){
-                $postfix = $currentBind->getLeftField() === $field->getName() ? "Id" : "";
+                $postfix = $currentBind->getLeftField() === $field->getName() ? ORM_Utils::BIND_PREFIX : "";
                 $text .= ORM_Install::getTextForBindVariable($currentBind, $postfix);
             } else {
                 $postfix = "";
@@ -69,7 +69,7 @@ class ORM_Install implements Module_IInstall{
 
             if(!empty($currentBind)){
                 $text .= "//////////////Persist object " . $field->getName(). "  getter and setter ///////////////\n";
-                $postfix = $currentBind->getLeftField() === $field->getName() ? "Id" : "";
+                $postfix = $currentBind->getLeftField() === $field->getName() ? ORM_Utils::BIND_PREFIX : "";
                 $text .= ORM_Install::getTextForBindGetter($currentBind, $postfix);
                 $text .= ORM_Install::getTextForBindSetter($currentBind);
             } else {
