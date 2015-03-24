@@ -125,7 +125,7 @@ class Page extends Module{
 
 		$dir = glob("modules/*");
 		$out = array();
-		$exclude = array('Core', 'Db', 'Files', 'Module', 'Orm', 'Ui', 'Fwexception');
+		$exclude = array('Core', 'Debug', 'Db', 'Files', 'Module', 'Orm', 'Ui', 'FwException');
 		foreach($dir as $name) {
 			if(is_dir($name)) {
 				$v = ucfirst(basename($name));

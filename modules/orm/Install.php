@@ -316,9 +316,9 @@ class ORM_Install implements Module_IInstall{
      */
     private static function getTextForPrimaryKey($field, $postfix)
     {
-        $text = "\t/**";
-        $text .= "\t * Primary key getter";
-        $text .= "\t */";
+        $text = "\t/**\n";
+        $text .= "\t * Primary key getter\n";
+        $text .= "\t */\n";
 
         $text .= "\tpublic function getPrimaryKey(){\n";
         $text .= "\t\treturn \$this->" . $field->getName().$postfix . ";\n";
