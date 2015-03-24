@@ -72,7 +72,7 @@ class Core_Install implements Module_IInstall{
     public function install()
     {
         ORM::createTable($this->getConfigTable());
-        $query = "SELECT id FROM config where name='url' AND module = ''";
+        $query = "SELECT id FROM config where name='url' AND module = 'Core'";
         $id = DB::getCell($query);
         if(empty($id)) {
             $query = "insert into config (module, name, value) values ('Core', 'url', '')";

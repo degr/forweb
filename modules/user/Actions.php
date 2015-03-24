@@ -15,7 +15,8 @@ class User_Actions{
         }
         $email = $_POST['email'];
         $password = $_POST['password'];
-        $usersList = $this->getService()->loadAll(" WHERE user.email='".DB::escape($email)
+        $userController = Core::getModule("User");
+        $usersList = $userController->getService()->loadAll(" WHERE user.email='".DB::escape($email)
             ."' AND user.password='".DB::escape($password)."'");
 
         $out = null;

@@ -15,6 +15,10 @@ class Core_Utils {
     }
 
     public static function redirect($url){
+        if(empty($url)) {
+            $params = parse_url($_SERVER['HTTP_REFERER']);
+            $url = $params['scheme']."://".$params['host']."/";
+        }
         header('location: '.$url);
         exit;
     }

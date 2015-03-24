@@ -49,6 +49,7 @@ class ORM_Install implements Module_IInstall{
         $binds = $table->getBinds();
         //write all class properties, including binded properties and their doc
         /* @var $field ORM_Objects_Field */
+
         foreach($table->getFields() as $field) {
             $currentBind = ORM_Install::getBindForField($field, $binds);
             if(!empty($currentBind)){
@@ -114,7 +115,14 @@ class ORM_Install implements Module_IInstall{
             ." ".$bind->getRightTable()->getName()."\n";
         $out .= "\t * object bind options: \$this->".$bind->getLeftField().$postfix." on "
             .$bind->getRightTable()->getPersistClassName()."->".$bind->getRightField(). "\n";
-        $out .="\t * @var ".$bind->getRightTable()->getPersistClassName()." $".$bind->getLeftField()."\n";
+        $type = $bind->getType();
+        if($type == ORM_Objects_Table::MANY_TO_MANY || $type == ORM_Objects_Table::ONE_TO_MANY) {
+            $typePrefix = "[]";
+        } else {
+            $typePrefix = "";
+        }
+
+        $out .="\t * @var ".$bind->getRightTable()->getPersistClassName().$typePrefix." $".$bind->getLeftField()."\n";
         $out .="\t */\n";
         $out .="\tprotected $".$bind->getLeftField().";\n";
         return $out;
@@ -139,7 +147,19 @@ class ORM_Install implements Module_IInstall{
 
     protected static function getTextForBindGetter(ORM_Objects_Bind $bind)
     {
-        $text = ORM_Install::getCommentText($bind->getLeftField(), $bind->getRightTable()->getPersistClassName());
+        $type = $bind->getType();
+        if($type == ORM_Objects_Table::MANY_TO_MANY || $type == ORM_Objects_Table::ONE_TO_MANY) {
+            $typePrefix = "[]";
+        } else {
+            $typePrefix = "";
+        }
+
+        $name = $bind->getLeftField();
+        $text ="\t/**\n";
+        $text .="\t * `".$name."` field getter\n";
+        $text .="\t * @return ".$bind->getLeftTable()->getPersistClassName().$typePrefix."\n";
+        $text .="\t */\n";
+
         $text .= "\tpublic function get" . ucfirst($bind->getLeftField()) . "(){\n";
         if ($bind->getLazyLoad()) {
             $text .= ORM_Install::getLazyLoadTextForBind($bind);
@@ -150,11 +170,18 @@ class ORM_Install implements Module_IInstall{
     }
     protected static function getTextForBindSetter(ORM_Objects_Bind $bind)
     {
+        $type = $bind->getType();
+        if($type == ORM_Objects_Table::MANY_TO_MANY || $type == ORM_Objects_Table::ONE_TO_MANY) {
+            $typePrefix = "[]";
+        } else {
+            $typePrefix = "";
+        }
+
         $persistClassName = $bind->getRightTable()->getPersistClassName();
         $name = $bind->getLeftField();
         $text ="\t/**\n";
         $text .="\t * `".$name."` field setter\n";
-        $text .="\t * @var ".$persistClassName." $".$name."\n";
+        $text .="\t * @var ".$persistClassName.$typePrefix." $".$name."\n";
         $text .="\t * @return ".$bind->getLeftTable()->getPersistClassName()."\n";
         $text .="\t */\n";
         $text .="\tpublic function set".ucfirst($name)."($".$name."){\n";

@@ -111,9 +111,9 @@ class User extends Module{
     /**
      * User authorization form UI controller.
      * Prepare data for form rendering
-     * @param UI $ui
+     * @param FormHandler $handler
      */
-    public function logout(){
+    public function logout(FormHandler $handler){
         if(User::getUser() != null) {
             User::setUserId(0);
             User::$user = null;
