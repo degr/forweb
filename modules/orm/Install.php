@@ -26,6 +26,12 @@ class ORM_Install implements Module_IInstall{
 
         $query .= implode(", ", $fields).") ENGINE=InnoDB CHARACTER SET=UTF8;";
         DB::query($query);
+        foreach($table->getFields() as $field) {
+            if($field->getIndex()) {
+                $query = 'ALTER TABLE '.$table->getName().' ADD INDEX '.$field->getName().'('.$field->getName().')';
+                DB::query($query);
+            }
+        }
     }
 
     public static function serializeTable(ORM_Objects_Table $table){
@@ -44,7 +50,7 @@ class ORM_Install implements Module_IInstall{
     public static function createPersistanceClass(ORM_Objects_Table $table){
         $text = "<?php \n"
             .ORM_Install::getClassDescription($table)
-            ."\nclass ".$table->getPersistClassName()." extends ORM_Objects_PersistBase {\n";
+            ."\nclass ".$table->getPersistClassName()." extends ORM_Persistence_Base {\n";
 
         $binds = $table->getBinds();
         //write all class properties, including binded properties and their doc

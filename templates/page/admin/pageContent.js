@@ -9,13 +9,13 @@ var PageContent = {
         e.page = {tag:"input",name:"page",attributes:{type:'hidden'},layout:"grid"};
         e.template = {tag:"input",name:"template",attributes:{"type":"hidden"},layout:"grid"};
         e.positionNumber = {"tag":"input","name":"positionNumber","attributes":{"type":"hidden"},"layout":"grid"};
-        e.type = {tag:"select",name:"type",value:"html",options:{"html":"html","text":"text","image":"image","executable":"executable"},"class":"content_type",id:"Persist_includes_type",title:"type",description:null,error:null,validation:null,layout:"grid"};
+        e.type = {tag:"select",name:"type",value:"html",options:AdminIncludeOptions,"class":"content_type",id:"Persist_includes_type",title:Admin.getWord("field_type"),description:null,error:null,validation:null,layout:"grid"};
         e.content = {"tag":"input","name":"content",attributes:{type:'hidden'},"layout":"grid"};
         //e.position = {"tag":"select","name":"position","value":"before","options":{"before":"before","template":"template","after":"after"},"attributes":null,"class":"template","title":"position","description":null,"error":null,"validation":null,"layout":"grid"};
         e.position = {"tag":"input","name":"position","value":(forPage ? "after" : 'template'),"attributes":{"type":"hidden"},"validation":null,"layout":"grid"};
-        e.module = {"tag":"select","name":"module",attributes:{'onchange':'PageContent.updateMethods(this);'},"options":Admin.modulesList,"title":"module","layout":"grid"};
-        e.method = {"tag":"select","name":"method","options":null,"title":"method","layout":"grid"};
-        e.comment = {"tag":"input","name":"comment",attributes:{type:'text','placeholder':'Put a comment'},"layout":"grid"};
+        e.module = {"tag":"select","name":"module",attributes:{'onchange':'PageContent.updateMethods(this);'},"options":Admin.modulesList,"title":Admin.getWord("field_module"),"layout":"grid"};
+        e.method = {"tag":"select","name":"method","options":null,"title":Admin.getWord("field_method"),"layout":"grid"};
+        e.comment = {"tag":"input","name":"comment",attributes:{type:'text','placeholder':Admin.getWord('put_comment')},"layout":"grid"};
         var checkForValues = v ? true : false;
 
         e.page['class'] = active ? 'dynamic' : 'static';
@@ -70,7 +70,7 @@ var PageContent = {
     },
     getContentWindow: function(content, module, method){
         var a = newElement('a', {'href':'#','class':'showContentToggler', 'onclick':'PageContent.showContent(this);return false;'});
-        a.innerHTML = 'Show content';
+        a.innerHTML = Admin.getWord('show_content');
         var w1 = newElement('div', {'class':'staticContent hidden'}, [content]);
         var w2 = newElement('div', {'class':'dynamicContent hidden'}, [module, method]);
         return newElement('div', {'class':'left content_toggler'}, [a,w1,w2]);
@@ -134,7 +134,7 @@ var PageContent = {
         var p=el.parentNode;
         var showContent = el.getAttribute("data-shown");
         if(!showContent || showContent == '0') {
-            el.innerHTML = "Hide content";
+            el.innerHTML = Admin.getWord('hide_content');
             el.setAttribute("data-shown", '1');
             var i = p.parentNode.get('select[name="type"]').value;
 
@@ -160,7 +160,7 @@ var PageContent = {
                 p.get('.dynamicContent').hide();
             }
         } else {
-            el.innerHTML = "Show content";
+            el.innerHTML = Admin.getWord('show_content');
             el.setAttribute("data-shown", '0');
             p.get('.staticContent').hide();
             p.get('.dynamicContent').hide();
@@ -194,7 +194,7 @@ var PageContent = {
     getStaticContentTextarea: function (input) {
         if(PageContent.staticContentTextarea == null) {
             var p = newElement('p', {});
-            p.innerHTML = "Insert any text content here, and than push red cross on left top angle."
+            p.innerHTML = Admin.getWord('include_textarea');
             var t = newElement('textarea', {onblur:'PageContent.closeTextarea();'});
             var c = newElement('a', {href:'#',onclick:'PageContent.closeTextarea();return false;'});
             c.innerHTML = "x";
@@ -247,7 +247,8 @@ var PageContent = {
         }
     },
     deleteIclude: function(el){
-        var clb = function() {
+        var clb = function(r) {
+            if(!r)return;
             var b = el.parentNode;
             var id = b.get('input[name="id"]').value;
             var success = function (text, v) {
@@ -265,9 +266,9 @@ var PageContent = {
         };
         DialogWindow.Confirm(
             'delete_include',
-            "Are you realy want to delete this include?<br/> Some site content can disappear.",
+            Admin.getWord('delete_include_confirm'),
             clb,
-            "I know what I do",
+            Admin.getWord('confirm_yes'),
             "No"
         )
     }

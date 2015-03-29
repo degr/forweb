@@ -22,6 +22,10 @@ class Page_Admin_Page{
         $table = ORM::getTable($pageService->getTable()->getName());
 
         $form = UI::getFormForTable($table, null, $layout);
+        foreach($form['fields'] as &$field) {
+            $field['title'] = Word::get('admin', 'admin_page_'.$field['title']);
+        }
+        unset($field);
         $form['fields']['parent']['tag'] = UI::TAG_SELECT;
         $query = "SELECT id, name FROM ".$table->getName();
         $parentsArray = DB::getAssoc($query, 'id', 'name');
@@ -59,11 +63,11 @@ class Page_Admin_Page{
                     'tag' => 'html',
                     'value' => '<a href="'.Config::get("url").$link.'">'.$link.'</a>',
                     'layout' => $layout,
-                    'title' => 'Page link'
+                    'title' => Word::get('admin', 'page_form_field_url')
                 );
                 $form['fields']['delete'] = array(
                     'tag' => 'html',
-                    'value' => '<a href="#" onclick="Admin.deletePage(event);">To delete page, press here</a>',
+                    'value' => '<a href="#" onclick="Admin.deletePage(event);">'.Word::get('admin', 'delete_page').'</a>',
                     'layout' => $layout
                 );
             }
@@ -92,8 +96,8 @@ class Page_Admin_Page{
             if(!empty($_POST['deletePage'])){
                 /* @var $parent PersistPages */
                 $parent = $page->getParentPage();
-                if($parent->getId() == 0){
-                    $deleteText = "You can't delete home page.";
+                if($parent == null){
+                    $deleteText = Word::get('admin', 'home_page_delete');
                 } else {
                     $tail = "WHERE pages.parent = '".$page->getId()."'";
 
@@ -104,10 +108,10 @@ class Page_Admin_Page{
                             $deleteText = "Page was deleted.";
                             $parentLink = $pageService->getPagePath($parent);
                         }else{
-                            $deleteText = "Something goes wrong. We are sorry...";
+                            $deleteText = Word::get('admin', 'unknown_error');
                         }
                     } else {
-                        $deleteText = "You can't delete page width child pages.";
+                        $deleteText = Word::get('admin', 'page_contain_children');
                     }
                 }
             } else {
@@ -123,23 +127,23 @@ class Page_Admin_Page{
                         }
                     }
 
-                    $check = $pageService->loadAll($tail);
-                    if(empty($check[$pageService->getTable()->getName()])) {
+                    $check = $pageService->loadWithCondition($tail);
+                    if($check != null) {
                         $id = $page->getId();
                         ORM::saveData($table, $page);
                         if(empty($id)){
-                            $saveText = 'Page created.';
+                            $saveText = Word::get('admin', 'page_created');
                             $savedStatus = true;
                         } else {
-                            $saveText = 'Page data modified.';
+                            $saveText = Word::get('admin', 'page_modified');
                             $savedStatus = false;
                         }
                     } else {
-                        $saveText = 'Table with such url is already exist. Change url, or parent page.';
+                        $saveText = Word::get('admin','page_url_not_unique');
                         $savedStatus = false;
                     }
                 }else {
-                    $saveText = 'Page url can\'t be empty.';
+                    $saveText = Word::get('admin', 'page_url_empty');
                     $savedStatus = false;
                 }
             }

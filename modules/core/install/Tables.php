@@ -22,12 +22,16 @@ class Core_Install_Tables{
         $table->addField($url);
 
         $parent = new ORM_Objects_Field("parent", "integer");
-        $url->setLength(11);
+        $parent->setLength(11);
         $table->addField($parent);
 
         $template = new ORM_Objects_Field("template", "integer");
         $template->setLength(11);
         $table->addField($template);
+
+        $position = new ORM_Objects_Field("position", "integer");
+        $position->setLength(11);
+        $table->addField($position);
         return $table;
     }
 

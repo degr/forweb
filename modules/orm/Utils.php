@@ -8,7 +8,7 @@ class ORM_Utils{
      * @param $tail string - any conditions
      * @param $binds boolean - use binds on query, or not
      * @param $one - return array, or first row only
-     * @return ORM_Objects_PersistBase[]|ORM_Objects_PersistBase
+     * @return ORM_Persistence_Base[]|ORM_Persistence_Base
      */
     public static function load(ORM_Objects_Table $mainTable, $tail, $binds, $one){
         $query = ORM_QueryBuilder::getLoadQuery($mainTable, $tail, $binds, $one);
@@ -21,7 +21,7 @@ class ORM_Utils{
      * @param ORM_Objects_Table $mainTable
      * @param $result array data of previous query [[person_id=>1, person_name=>2, address_id=1, address_name='Lenina st 45']]
      * @param $one boolean - if true, will be returned one object, of false, array of objects
-     * @return ORM_Objects_PersistBase|ORM_Objects_PersistBase[]
+     * @return ORM_Persistence_Base|ORM_Persistence_Base[]
      * @throws Exception
      */
     protected static function resultToArray(ORM_Objects_Table $mainTable, $result, $one){
@@ -103,7 +103,7 @@ class ORM_Utils{
     /**
      * Save one multy leveled data array. Structure element - PersistBase class object
      * @param ORM_Objects_Table $mainTable
-     * @param $object ORM_Objects_PersistBase[]
+     * @param $object ORM_Persistence_Base[]
      * @throws Exception
      */
     public static function saveArray(ORM_Objects_Table $mainTable, $object){
@@ -135,9 +135,9 @@ class ORM_Utils{
     /**
      * Save or update PersistBase object
      * @param ORM_Objects_Table $table
-     * @param ORM_Objects_PersistBase $object
+     * @param ORM_Persistence_Base $object
      */
-    public static function saveData(ORM_Objects_Table $table, ORM_Objects_PersistBase $object){
+    public static function saveData(ORM_Objects_Table $table, ORM_Persistence_Base $object){
         $valuesToInsert = array();
         $keysToInsert = array();
         $pairsToUpdate = array();
@@ -186,10 +186,10 @@ class ORM_Utils{
     /**
      * Delete object from data base
      * @param ORM_Objects_Table $table
-     * @param ORM_Objects_PersistBase $object
+     * @param ORM_Persistence_Base $object
      * @return bool
      */
-    public static function delete(ORM_Objects_Table $table, ORM_Objects_PersistBase $object){
+    public static function delete(ORM_Objects_Table $table, ORM_Persistence_Base $object){
         $pkField = ORM_Utils::getPrimaryKeyField($table);
         $name = $pkField->getName();
         $getter = "get".ucfirst($name);

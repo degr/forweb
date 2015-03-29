@@ -24,10 +24,10 @@ class Service{
 
     /**
      * Save or update current object in database
-     * @param $object ORM_Objects_PersistBase
+     * @param $object ORM_Persistence_Base
      * @throws Exception is this->table still undefined
      */
-    public function save($object){
+    public function save(ORM_Persistence_Base $object){
         if($this->table == null){
             throw new Exception("There is no persistance model!");
         }
@@ -43,9 +43,9 @@ class Service{
 
     /**
      *
-     * @return ORM_Objects_PersistBase class object without joins
+     * @return ORM_Persistence_Base class object without joins
      * @param $key integer object id value
-     * @return ORM_Objects_PersistBase
+     * @return ORM_Persistence_Base
      * @throws Exception if result set contain more than one row
      */
     public function load($key) {
@@ -57,7 +57,7 @@ class Service{
      * Load data from database using condition
      *
      * @param $tail string as example: 'where id=10 order by date'
-     * @return ORM_Objects_PersistBase
+     * @return ORM_Persistence_Base
      * @throws Exception if result set contain more than one row
      */
     public function loadWithCondition($tail) {
@@ -77,7 +77,7 @@ class Service{
      *
      * @param array $keys [1,3,5,6,7]
      * @param string $order 'ORDER BY date'
-     * @return ORM_Objects_PersistBase[]
+     * @return ORM_Persistence_Base[]
      */
     public function loadUsingKeys(array $keys, $order="") {
         foreach($keys as &$key){
@@ -91,7 +91,7 @@ class Service{
     /**
      * Load data with joins
      * @param $tail string
-     * @return ORM_Objects_PersistBase[]
+     * @return ORM_Persistence_Base[]
      * @throws Exception if result set contain more than one row
      */
     public function loadJoined($tail) {
@@ -110,7 +110,7 @@ class Service{
     /**
      * Load all data with/without setted condition
      * @param $tail 'WHERE name like 'a%' ORDER BY birthday DESC'
-     * @return ORM_Objects_PersistBase[]
+     * @return ORM_Persistence_Base[]
      */
     public function loadAll($tail) {
         return ORM::load($this->table->getName(), $tail, true, false);
@@ -119,7 +119,7 @@ class Service{
     /**
      * Delete current object from database.
      * Object must contain primary key field != null
-     * @param $object ORM_Objects_PersistBase
+     * @param $object ORM_Persistence_Base
      * @return bool
      */
     public function delete($object){

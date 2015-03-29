@@ -13,13 +13,22 @@ var Admin = {
         this.initPagesTree();
         this.initPageСontent();
         this.addSeparator();
-        this.initTemplateCreate();
-        this.initTemplateEdit();
-        this.initTemplateDelete();
+        this.initTemplateMenu();
         this.addSeparator();
         this.addAccess();
         this.addSeparator();
         this.initConfig();
+        this.addSeparator();
+        this.initWord();
+        this.addSeparator();
+        this.initPosition();
+
+    },
+    getWord: function(key){
+        if(AdminWords[key]){
+            return AdminWords[key];
+        }
+        return "::"+key;
     },
     getModulesList: function(){
         var params = {
@@ -59,48 +68,80 @@ var Admin = {
     },
     initNewPageButton: function(){
         var a = newElement('a', {"class":'button', 'onclick': 'Admin.newPage();return false;', 'href': '#'});
-        a.innerHTML = "New page";
+        a.innerHTML = Admin.getWord('panel_new_page');
         Admin.panel.add(a);
     },
     initEditPageButton: function(){
         var a = newElement('a', {"class":'button', 'onclick': 'Admin.editPage();return false;', 'href': '#'});
-        a.innerHTML = "Edit page";
+        a.innerHTML = Admin.getWord('panel_edit_page');
         Admin.panel.add(a);
     },
     initPagesTree: function(){
-        var a = newElement('a', {"class":'button', 'onclick': 'Admin.showPagesTree();return false;', 'href': '#'});
-        a.innerHTML = "Show pages";
+        var a = newElement('a', {"class":'button', 'onclick': 'PagesTree.showPagesTree();return false;', 'href': '#'});
+        a.innerHTML = Admin.getWord("panel_show_pages");
         Admin.panel.add(a);
     },
     addAccess: function(){
         var a = newElement('a', {"class":'button', 'onclick': 'AccessForm.createForm();return false;', 'href': '#'});
-        a.innerHTML = "Edit access";
+        a.innerHTML = Admin.getWord("panel_edit_access");
         Admin.panel.add(a);
     },
-    initTemplateCreate: function(){
-        var a = newElement('a', {"class":'button', 'onclick': 'TemplateForm.createTemplate();return false;', 'href': '#'});
-        a.innerHTML = "Create template";
-        Admin.panel.add(a);
-    },
-    initTemplateDelete: function(){
-        var a = newElement('a', {"class":'button', 'onclick': 'TemplateForm.deleteTemplateForm();return false;', 'href': '#'});
-        a.innerHTML = "Delete template";
-        Admin.panel.add(a);
-    },
-    initTemplateEdit: function(){
-        var a = newElement('a', {"class":'button', 'onclick': 'Admin.editTemplate();return false;', 'href': '#'});
-        a.innerHTML = "Edit template";
-        Admin.panel.add(a);
+    initTemplateMenu: function(){
+        var toggler = newElement('a', {"class":'button', 'onclick': 'return false;', 'href': '#'});
+        toggler.innerHTML = Admin.getWord('panel_templates');
+
+        var create = newElement('a', {"class":'button', 'onclick': 'TemplateForm.createTemplate();return false;', 'href': '#'});
+        create.innerHTML = Admin.getWord("panel_create_template");
+        var del = newElement('a', {"class":'button', 'onclick': 'TemplateForm.deleteTemplateForm();return false;', 'href': '#'});
+        del.innerHTML = Admin.getWord("panel_delete_template");
+        var edit = newElement('a', {"class":'button', 'onclick': 'Admin.editTemplate();return false;', 'href': '#'});
+        edit.innerHTML = Admin.getWord("panel_edit_template");
+
+        var innerDiv = newElement('div', {'class':'menu_holder'}, [create, edit, del]);
+        var div = newElement('div',{'class':'templates_holder'}, [toggler, innerDiv]);
+        Admin.panel.add(div);
     },
     initPageСontent: function(){
         var a = newElement('a', {"class":'button', 'onclick': 'Admin.pageContent();return false;', 'href': '#'});
-        a.innerHTML = "Page content";
+        a.innerHTML = Admin.getWord("panel_page_content");
         Admin.panel.add(a);
     },
     initConfig: function(){
         var a = newElement('a', {"class":'button', 'onclick': 'ConfigForm.showForm();return false;', 'href': '#'});
-        a.innerHTML = "Configuration";
+        a.innerHTML = Admin.getWord("panel_configuration");
         Admin.panel.add(a);
+    },
+    initPosition: function(){
+        var a = newElement('a', {"class":'button', 'onclick': 'Admin.changePosition();return false;', 'href': '#'});
+        a.innerHTML = Admin.getWord("panel_position");
+        var position = Core.cookie.getCookie('admin_panel_position');
+        if(!position)position = 'left';
+        Admin.panel.position = position;
+        if(position=='right')Admin.panel.panel.addClass('rightPosition');
+        Admin.panel.add(a);
+    },
+    initWord: function(){
+        var toggler = newElement('a', {"class":'button', 'onclick': 'return false;', 'href': '#'});
+        toggler.innerHTML = Admin.getWord("panel_word");
+        var lang = newElement('a', {"class":'button', 'onclick': 'Word.showLanguagesForm();return false;', 'href': '#'});
+        lang.innerHTML = Admin.getWord("panel_languages");
+        var modules = newElement('a', {"class":'button', 'onclick': 'Word.showModulesForm();return false;', 'href': '#'});
+        modules.innerHTML = Admin.getWord("panel_modules");
+        var word = newElement('a', {"class":'button', 'onclick': 'Word.showTermsForm();return false;', 'href': '#'});
+        word.innerHTML = Admin.getWord("panel_word");
+        var innerDiv = newElement('div', {'class':'menu_holder'}, [lang, modules, word]);
+        var div = newElement('div',{'class':'word_holder'}, [toggler, innerDiv]);
+        Admin.panel.add(div);
+    },
+    changePosition: function(){
+        if(Admin.panel.position == 'right') {
+            Admin.panel.position = 'left';
+            Admin.panel.panel.removeClass('rightPosition');
+        } else {
+            Admin.panel.position = 'right';
+            Admin.panel.panel.addClass('rightPosition');
+        }
+        Core.cookie.setCookie('admin_panel_position', Admin.panel.position, 1);
     },
     newPage: function(){
         if(Admin.nowDisplayed == 'newPage'){
@@ -161,7 +202,7 @@ var Admin = {
         w.setContent('');
         Admin.setResponseText(response);
         w.appendContent(form);
-        w.setWidth(0);
+        w.setWidth(800);
         w.show();
     },
     submitPageForm: function(e){
@@ -199,159 +240,7 @@ var Admin = {
         Ajax.request(params);
     },
 
-    showPagesTree: function(){
-        if(Admin.nowDisplayed == 'pagesTree') {
-            Admin.getWindow().show();
-            return;
-        }
-        Admin.nowDisplayed = 'pagesTree';
-        var params = {
-            url: Admin.url + "page/showPagesTree?ajax=1",
-            type: "get",
-            success: Admin.renderPagesTree,
-            response: 'json',
-            data: {href: document.location.href}
-        };
-        Ajax.request(params);
-    },
-    renderPagesTree: function(response){
-        var table = newElement('table', {});
-        Admin.fillPagesTree(table, response.pages, 0);
-        var colspan = Admin.setPaddingsPagesTree(table);
-        Admin.generateLinks(table);
-        Admin.buildTableHead(table, ['Page name', 'Page url'], colspan);
 
-        var w = Admin.getWindow();
-        w.setContent(table);
-        w.setWidth(400);
-        w.show();
-
-    },
-    buildTableHead: function(table, headers, colspan){
-        var row = newElement('tr', {'class': 'head'});
-
-        for(var i=0; i<headers.length;i++){
-            var th = newElement('th', {});
-            th.innerHTML = headers[i];
-            if(i == 0){
-                th.setAttribute('colspan', colspan);
-            }
-            row.appendChild(th);
-        }
-        var first = table.get('tr');
-        table.insertBefore(row, first);
-    },
-
-    generateLinks: function(table){
-        var links = [];
-        var rows = table.getAll('tr');
-        for(var i = 0; i < rows.length; i++){
-            var url = rows[i].get('td.url').innerHTML;
-            var depth = rows[i].getAttribute('data-depth');
-            if(depth > links.length) {
-                links.push(url);
-            }else if(links.length == 0){
-                //home page
-                links.push(url);
-            }else if(depth == links.length){
-                links.pop();
-                links.push(url);
-            }else if(depth < links.length){
-                //exit from top branch
-                while(depth != links.length + 1)
-                    links.pop();
-                links.push(url);
-            }
-            var path = links.join("/");
-            var a = newElement('a', {href: Admin.url + path});
-            a.innerHTML = path;
-            rows[i].get('td.url').innerHTML = '';
-            rows[i].get('td.url').appendChild(a);
-        }
-    },
-    setPaddingsPagesTree: function(table){
-        var rows = table.getAll('tr');
-        var calculate = {};
-        for(var i=0; i<rows.length;i++){
-            var key = rows[i].getAttribute('data-parent');
-            calculate[key] = key;
-        }
-        var length = 0;
-        for(var i in calculate){
-            length++;
-        }
-        var cycle = length;
-        for(var i in calculate){
-            var depthRows = table.getAll('tr[data-parent="'+i+'"]');
-            for(var x = 0; x < depthRows.length; x++){
-                for(var j = 0; j < length - cycle; j++){
-                    var td = newElement('td', {'data-depth': j+1, "class": "tree placeholder"});
-                    depthRows[x].insertBefore(td, depthRows[x].get('.name'))
-
-                }
-                depthRows[x].get('td.name').setAttribute('colspan', cycle);
-                depthRows[x].setAttribute('data-depth', length - cycle);
-            }
-            cycle--;
-        }
-        return length;
-    },
-    fillPagesTree: function(table, obj, parent){
-        var out = {};
-        var empty = true;
-        for(var i in obj){
-            if(obj[i].parent == parent){
-                var row = newElement('tr', {'data-parent':parent,'data-id':obj[i].id, 'id':'page_'+obj[i].id});
-                var tdName = newElement('td', {'class':'name'});
-                tdName.innerHTML = obj[i].name;
-                var tdUrl = newElement('td', {'class':'url'});
-                tdUrl.innerHTML = obj[i].url;
-                row.appendChild(tdName)
-                row.appendChild(tdUrl);
-                if(parent == 0) {
-                    table.appendChild(row);
-                } else {
-                    var rows = table.getAll('tr');
-                    var target = table.get('#page_'+parent);
-
-                    var next = null;
-                    var detected = false;
-                    var last = 0;
-                    for(var i=0; i<rows.length;i++){
-                        if(rows[i] === target){
-                            if(rows[i+1]){
-                                next = rows[i+1]
-                            }else{
-                                next = null;
-                            }
-                            detected = true;
-                        }
-                        if(detected && rows[i].getAttribute('data-parent') == parent){
-                            if(rows[i+1]){
-                                next = rows[i+1]
-                            }else{
-                                next = null;
-                            }
-                        }else if(detected){
-                            break;
-                        }
-                    }
-                    if(next){
-                        table.insertBefore(row, next)
-                    }else{
-                        table.appendChild(row);
-                    }
-                }
-            }else{
-                empty = false;
-                out[i] = obj[i];
-            }
-        }
-        if(!empty){
-            parent++;
-            Admin.fillPagesTree(table, out, parent);
-        }
-    },
     showPageContentForm: function(response){
         var div = newElement("div");
         div.setStyle({height:'700px',overflow:'auto'});

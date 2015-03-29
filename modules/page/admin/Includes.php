@@ -50,9 +50,11 @@ class Page_Admin_Includes{
         array_unshift($modulesList, ' --- ');
         $methodsList = array();
         if ($includes) {
+            $typesList = Page::getIncludeTypesList();
             /* @var $include PersistIncludes */
             foreach ($includes as $include) {
                 $form = UI::usePersistObject($include, $includesTable, UI::LAYOUT_OVERVIEW);
+                $form['type']['options'] = $typesList;
                 $form['module']['options'] = $modulesList;
                 $form['module']['tag'] = UI::TAG_SELECT;
                 $form['method']['tag'] = UI::TAG_SELECT;
@@ -74,9 +76,6 @@ class Page_Admin_Includes{
                     'layout' => UI::LAYOUT_OVERVIEW
                 );
                 $out[$blocks[$include->getBlock()]]['fields'][$include->getPosition()][] = $data;
-
-                //$out['fields'][$blocks[$include->getBlock()]]['type'] = UI::TYPE_FIELDSET;
-
             }
 
             foreach($out as $key => &$block) {
@@ -85,7 +84,6 @@ class Page_Admin_Includes{
                 $block['fields']['submit'] = UI::getSubmitButton();
             }
         }
-        //$out['type'] = UI::TYPE_FORM;
         return $out;
     }
 

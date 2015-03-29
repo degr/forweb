@@ -75,7 +75,7 @@ var ConfigForm = {
             Ajax.request(params);
             el.parentNode.remove();
         }
-        DialogWindow.Confirm("config_delete_form", "Realy delete this option?<br/>All options required for stable system work.",clb,"I know what I do","No")
+        DialogWindow.Confirm("config_delete_form", Admin.getWord('delete_config_option'),clb,Admin.getWord('confirm_yes'),Admin.getWord("confirm_no"))
     },
     addProperty: function(m, key){
         var clb = function(a, b){

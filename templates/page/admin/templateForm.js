@@ -164,10 +164,10 @@ var TemplateForm = {
     deleteBlock: function(el, id){
         DialogWindow.Confirm(
             "templates_delete_block",
-            "Realy delete this block?<br/> Some site content can suddenly disappear.",
+            Admin.getWord('delete_template_block'),
             function(a){if(!a)return;TemplateForm.processDelete(id)},
-            "I know what I do",
-            "No"
+            Admin.getWord('confirm_yes'),
+            Admin.getWord("confirm_no")
         );
     },
     processDelete: function(id){

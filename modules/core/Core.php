@@ -111,8 +111,7 @@ class Core implements IModule{
 	public function process(){
 		$dispatcher = new Page_Dispatcher($_SERVER['REQUEST_URI']);
 		$dispatcher->handleRequest();
-		$this->pageModule = new Page();
-		$this->setModule($this->pageModule, 'Page');
+		$this->pageModule = Core::getModule("Page");
 
 		if($_REQUEST['ajax'] == 1){
 			CMS::ajaxHandler($dispatcher->getParam(0), $dispatcher->getParam(1));
@@ -128,7 +127,7 @@ class Core implements IModule{
 		}
 		$params = $dispatcher->getParams();
 		/* @var $pageService Page_Service */
-		$pageService = Core::getModule("Page_Service");
+		$pageService = $this->pageModule->getService();
 		$page = $pageService->findPage($params);
 
 		$pageService->setCurrentPage($page);
@@ -175,7 +174,7 @@ class Core implements IModule{
 
 	protected function processBlocks($blocks){
 		/* @var $pageService Page_Service */
-		$pageService = Core::getModule("Page_Service");
+		$pageService = $this->pageModule->getService();
 		$includes = $this->getPageIncludes($pageService->getCurrentPage());
 		$out = array();
 		$data = array();

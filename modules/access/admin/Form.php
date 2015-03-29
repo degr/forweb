@@ -15,6 +15,9 @@ class Access_Admin_Form{
         array_unshift($accessGroups, 'action');
         $accessGroups = array_combine($accessGroups, $accessGroups);
         $out = UI::getOverviewTable($table, $accessGroups, array('id'));
+        $out['controls'] = array(
+            'delete' => array('href'=>'#','onclick'=>'AccessForm.confirmDeleteAction(this);return false;','class'=>'icon-delete')
+        );
         return $out;
     }
 

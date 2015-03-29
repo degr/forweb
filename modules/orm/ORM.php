@@ -36,7 +36,7 @@ class ORM{
      * @param $leftKey
      * @param $rightKey
      * @param $type
-     * @return ORM_Objects_PersistBase|ORM_Objects_PersistBase[]
+     * @return ORM_Persistence_Base|ORM_Persistence_Base[]
      */
     public static function loadBinded($tableName, $keyValue, $leftKey, $rightKey, $type){
         $mainTable = ORM::getTable($tableName);
@@ -66,7 +66,7 @@ class ORM{
     }
 
     /**
-     * Save one multy leveled data array. Structure element - ORM_Objects_PersistBase class object
+     * Save one multy leveled data array. Structure element - ORM_Persistence_Base class object
      *
      * @param ORM_Objects_Table $mainTable
      * @param $object
@@ -76,16 +76,16 @@ class ORM{
     }
 
     /**
-     * Save or update ORM_Objects_PersistBase object
+     * Save or update ORM_Persistence_Base object
      */
-    public static function saveData (ORM_Objects_Table $table, ORM_Objects_PersistBase $object){
+    public static function saveData (ORM_Objects_Table $table, ORM_Persistence_Base $object){
         ORM_Utils::saveData($table, $object);
     }
 
     /**
      * Delete object from data base
      */
-    public static function delete(ORM_Objects_Table $table, ORM_Objects_PersistBase $object){
+    public static function delete(ORM_Objects_Table $table, ORM_Persistence_Base $object){
         return ORM_Utils::delete($table, $object);
     }
 
@@ -93,7 +93,7 @@ class ORM{
      * Build object from json data
      * @param $table ORM_Objects_Table
      * @param $data array[id=1, name='Serg', birthdate='1986-02-21']
-     * @return array[0=>ORM_Objects_PersistBase, 1=>errors[]]
+     * @return array[0=>ORM_Persistence_Base, 1=>errors[]]
      */
     public static function buildObject($table, $data)
     {

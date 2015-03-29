@@ -21,6 +21,10 @@ class Page_Admin_Template{
         $out['baseForm'] = UI::getFormForTable(ORM::getTable("templates"), $template, UI::LAYOUT_TABLE);
         $templatesArray = $this->getParentOptions();
         $fields = &$out['baseForm']['fields'];
+        foreach($fields as &$field){
+            $field['title'] = Word::get('admin', 'template_field_'.$field['name']);
+        }
+
         $fields['template']['tag'] = UI::TAG_SELECT;
         $fields['template']['options'] = $templatesArray;
         $fields['parent']['tag'] = UI::TAG_SELECT;
@@ -93,9 +97,9 @@ class Page_Admin_Template{
     public function processTemplateEdit()
     {
         if(empty($_POST['id'])) {
-            $out = "New template was created";
+            $out = Word::get('admin', 'new_template_created');
         } else {
-            $out = "Template updated";
+            $out = Word::get('admin', 'template_updated');
         }
         $table = ORM::getTable("templates");
         if(empty($_POST['parent'])) {
@@ -130,6 +134,10 @@ class Page_Admin_Template{
         $table = ORM::getTable("templates");
         $form = UI::getFormForTable($table, array(), UI::LAYOUT_GRID);
         unset($form['fields']['id']);
+        foreach($form['fields'] as &$field) {
+            $field['title'] = Word::get('admin', 'template_field_'.$field['name']);
+        }
+        unset($field);
         $form['fields']['parent']['tag'] = UI::TAG_SELECT;
         $form['fields']['parent']['options'] = $this->getParentOptions();
         $form['fields']['template']['tag'] = UI::TAG_SELECT;
@@ -143,7 +151,7 @@ class Page_Admin_Template{
         $table = ORM::getTable("templates");
         $template = ORM::buildObject($table, json_decode($_POST['form'], true));
         ORM::saveData($table, $template[0]);
-        return array('text'=>"New template created. It can be used with page edit form.");
+        return array('text'=>Word::get("admin",'new_page_template'));
     }
 
     /**
@@ -172,16 +180,16 @@ class Page_Admin_Template{
     {
         $name = $_POST['name'];
         if(empty($name)) {
-            return array('text' => 'Block name must be specified', 'errors'=>1);
+            return array('text' => Word::get('admin','block_name_empty'), 'errors'=>1);
         }
         $templateId = intval($_POST['templateId']);
         if(empty($templateId)) {
-            return array('text' => 'Template id must be specified', 'errors'=>1);
+            return array('text' => Word::get('admin','template_id_empty'), 'errors'=>1);
         }
         $allBlocksQuery = "SELECT * FROM blocks where template=".$templateId." ORDER BY position DESC";
         $blockData = DB::getTable($allBlocksQuery, 'name');
         if(!empty($blockData[$name])) {
-            return array('text'=>'This template already contain block with this name.', 'errors'=>1);
+            return array('text'=>Word::get('admin','block_name_not_unique'), 'errors'=>1);
         }
         $currentPosition = 1;
         if(count($blockData) > 0) {
@@ -195,7 +203,7 @@ class Page_Admin_Template{
         $block = DB::getRow($allBlocksQuery." LIMIT 1");
         $inc = $this->getIncludes($templateId, $block['id']);
 
-        return array('text'=>'Block was created.', 'errors'=>0, 'block'=>reset($inc));
+        return array('text'=>Word::get('admin', 'block_created'), 'errors'=>0, 'block'=>reset($inc));
     }
 
     public function deleteBlock()

@@ -3,8 +3,9 @@ require_once 'modules/Config.php';
 
 class UI{
 	protected $layout;
-	
 	const TAG_SELECT = 'select';
+
+	const TAG_MULTYLANGUAGE = 'multylanguage';
 	const TAG_INPUT = 'input';
 	const TAG_TEXTAREA = 'textarea';
 	const TAG_FIELDSET = 'fieldset';
@@ -51,7 +52,7 @@ class UI{
 
 	/**
 	 * Get overview table json representation
-	 * @param $data array|ORM_Objects_PersistBase[]
+	 * @param $data array|ORM_Persistence_Base[]
 	 * @param $headers array
 	 * @param $hiddenFields array
 	 * @return array
@@ -60,7 +61,9 @@ class UI{
 	{
 		$out = array(
 			'type' => 'table',
-			'headers' => $headers
+			'headers' => $headers,
+			'hiddenFields' => $hiddenFields,
+			'data' => null
 		);
 
 		foreach($data as $row) {
@@ -71,14 +74,12 @@ class UI{
 			}
 			$thisData = array();
 			foreach($object as $key => $value) {
-				if(!empty($headers[$key])) {
-					$thisData['fields'][$key] = $value;
-				}elseif(in_array($key, $hiddenFields)) {
-					$thisData['hiddenFields'][$key] = $value;
-				}
+				$thisData['fields'][$key] = $value;
 			}
 			if(count($thisData) > 0) {
 				$out['data'][] = $thisData;
+			} else {
+				$out['data'] = array();
 			}
 		}
 		return $out;
@@ -167,7 +168,7 @@ class UI{
 	 * Process persistance table and return array with fields description
 	 * for this table
 	 * @param ORM_Objects_Table $table object to parse
-	 * @param $data array|ORM_Objects_PersistBase (data of current row)
+	 * @param $data array|ORM_Persistence_Base (data of current row)
 	 * @param $layout - string, see LAYOUT_* constants for more info
 	 * @return array
 	 */
@@ -203,11 +204,10 @@ class UI{
 	 */
 	public static function getSubmitButton(){
 		$out = new UI_Formfield();
-		$out->setValue('submit');
+		$out->setValue(Word::get('common','submit'));
 		$out->setTag(UI::TAG_INPUT);
 		$out->setAttribute('type', 'submit');
 		$out->setLayout(UI::LAYOUT_GRID);
-		
 		return $out->toJSON();
 	}
 

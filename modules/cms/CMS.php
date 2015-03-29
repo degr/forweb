@@ -75,6 +75,11 @@ class CMS implements IModule{
 	 */
 	public function getAdminPanel(UI $ui) {
 		if(Access::can("can_see_admin_panel")) {
+			$ui->addVariable(
+				'admin_translations',
+				addslashes(json_encode(Word::get('admin')))
+			);
+			$ui->addVariable('adminIncludeOptions', addslashes(json_encode(Page::getIncludeTypesList())));
 			$ui->addVariable('url', Config::get("url"));
 			$ui->setLayout('page/admin/main.tpl');
 		}

@@ -1,6 +1,16 @@
 <?
 class Page extends Module{
 
+	public static function getIncludeTypesList()
+	{
+		return array(
+			'html'=>Word::get('common', 'include_type_html'),
+			'text'=>Word::get('common', 'include_type_text'),
+			'image'=>Word::get('common', 'include_type_image'),
+			'executable'=>Word::get('common', 'include_type_executable')
+		);
+	}
+
 	public function getAjaxHandlers()
 	{
 		if($this->ajaxHandlers == null) {

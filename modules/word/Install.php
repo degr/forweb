@@ -16,13 +16,17 @@ class Word_Install implements Module_IInstall{
     public function install()
     {
         $languages = $this->getLanguagesTable();
+        $wordModules = $this->getModulesTable();
         $word = $this->getWordTable();
         ORM::registerTableOnFly($languages);
+        ORM::registerTableOnFly($wordModules);
         ORM::registerTableOnFly($word);
 
         $word->bindTable('language', 'id', $languages->getName(), ORM_Objects_Table::MANY_TO_ONE, true, true);
+        $word->bindTable('module', 'id', $wordModules->getName(), ORM_Objects_Table::MANY_TO_ONE, true, true);
 
         ORM::createTable($languages);
+        ORM::createTable($wordModules);
         ORM::createTable($word);
 
         $query = "SELECT id FROM languages ";
@@ -32,13 +36,17 @@ class Word_Install implements Module_IInstall{
                 ."('en', 1), ('ru', 0)";
             DB::query($query);
 
+            $query = "INSERT INTO word_modules (id, module) VALUES"
+                ."(1, 'user')";
+            DB::query($query);
+
             $query = "INSERT INTO `word` "
                 ."(`id`, `language`, `module`, `name`, `value`)"
                 ." VALUES "
-                ." (1,'1','user','field_email','email'),"
-                ." (2,'2','user','field_email','Емейл'),"
-                ." (3,'1','user','field_password','Password'),"
-                ." (4,'2','user','field_password','Пароль')";
+                ." (1,1,1,'field_email','email'),"
+                ." (2,2,1,'field_email','Емейл'),"
+                ." (3,1,1,'field_password','Password'),"
+                ." (4,2,1,'field_password','Пароль')";
             DB::query($query);
 
         }
@@ -52,8 +60,9 @@ class Word_Install implements Module_IInstall{
     {
         ob_start();
         echo '<h3>ForWeb framework Translations package</h3>';
-        echo '<p>Contain two tables: language and word. Language table contain info about site languages, '
-            .'word table contain text translations for all languages.</p>';
+        echo '<p>Contain three tables: language, word_module and word. Language table contain info about site languages, '
+            .' word modules about this module modules, word table contain text translations for all languages. '
+            .'Each term from word table have alias to language and to module.</p>';
         $out = ob_get_contents();
         ob_end_clean();
         return $out;
@@ -111,6 +120,21 @@ class Word_Install implements Module_IInstall{
 
         $value = new ORM_Objects_Field('value', 'text');
         $out->addField($value);
+
+        return $out;
+    }
+
+    private function getModulesTable()
+    {
+        $out = new ORM_Objects_Table("word_modules");
+        $id = new ORM_Objects_Field('id', 'integer');
+        $id->setAutoIncrement()->setPrimary();
+        $out->addField($id);
+
+        $module = new ORM_Objects_Field('module', 'varchar');
+        $module->setLength(50)
+            ->setIndex(true);
+        $out->addField($module);
 
         return $out;
     }

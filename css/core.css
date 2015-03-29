@@ -9,6 +9,7 @@ ul, li, p, div, span, fieldset, legend, ol, dt, dl, dd, a, html, body{
 input:disabled, textarea:disabled, select:disabled{
   background-color: rgb(235, 235, 228);
 }
+
 div.pop-up-message{
   position: fixed;
   z-index: 1000;
@@ -44,7 +45,28 @@ div.pop-up-message-neutral{
   border-color: black;
   padding-left: 5px;
 }
+.multylanguage textarea{
+  width: 500px;
+  min-height: 200px;
+  display: none;
+}
+.multylanguage input[type="radio"]{
+   display: none;
+ }
+.multylanguage input[type="radio"]:checked + textarea{
+  display: block;
+}
+.multylanguage label{
+  margin: 5px 15px 5px 0;
+  padding: 5px 10px;
+  background-color: rgba(0, 63, 255, 0.50);
+  display: block;
+  float: left;
+}
+.multylanguage label.active{
+  background-color: rgba(255, 230, 0, 0.49);
 
+}
 
 .dialog-window {
 	clear: both;
@@ -94,13 +116,16 @@ div.pop-up-message-neutral{
 .right{
   float: right;
 }
-.icon-arrow-up, .icon-arrow-down, .icon-delete{
+.icon-arrow-up, .icon-arrow-down, .icon-delete, .icon-edit{
   width: 16px;
   height: 16px;
   display: block;
 }
 .icon-delete{
   background-image: url('../img/system/delete.png')
+}
+.icon-edit{
+  background-image: url('../img/system/edit.png')
 }
 .icon-arrow-up{
   background-image: url('../img/system/arrow-up.png')

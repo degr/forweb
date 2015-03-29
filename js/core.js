@@ -125,6 +125,50 @@ var UI = {
 				return null;
 		}
 	},
+	addRowToTable: function(table, values){
+		var row = newElement('tr', {});
+		var hidden = table.getAttribute('data-hidden-fields');
+		if(hidden) {
+			var h = hidden.split("|");
+			for(var i =0;i< h.length;i++) {
+				var v = values ? values.fields[h[i]] : "";
+				row.setAttribute("data-field-" + h[i], v ? v : "");
+			}
+		}
+		var fields = table.getAttribute('data-header-keys');
+		var editable = table.getAttribute('data-editable');
+		var controlsString = table.getAttribute('data-controls');
+		var controls = {};
+		if(controlsString) {
+			try{
+				controls = JSON.parse(controlsString);
+			}catch (e){}
+		}
+		if(editable == 1 || editable == '1')editable = true;else editable = false;
+		if(fields) {
+			var f = fields.split("|");
+			for(var i =0;i< f.length;i++) {
+				var td = newElement('td',{'data-name':f[i]});
+				var v = values ? values.fields[f[i]] : "";
+				if(editable) {
+					var input = newElement('input', {type: 'text', value: v ? v : "", name: f[i]});
+					td.appendChild(input);
+				} else {
+					td.innerHTML = v ? v : "";
+				}
+				row.appendChild(td);
+			}
+			if (controls) {
+				var c = newElement('td');
+				for (var ck in controls) {
+					c.appendChild(newElement('a', controls[ck]));
+				}
+				row.appendChild(c);
+			}
+		}
+		table.appendChild(row);
+		return row;
+	},
 	/**
 	 * @param str any string, or node
 	 * @param type [info, success, warning, error, neutral]
@@ -139,33 +183,43 @@ var UI = {
 }
 UI.builder = {
 	asForm: function(object){
+		if(object.layout == 'overview'){
+			return this.buildAsOverview();
+		}
+
 		return this.addFormElements(object, 'form', this.getAttributesForForm(object));
 	},
+	buildAsOverview: function (form) {
+
+	},
 	asTable: function (object) {
-		var data = [newElement("tr", {})];
+		var data = [newElement("thead", {})];
 		var h = object.headers;
+		var attributes = {'data-header-keys':Object.keys(h).join("|")};
 		for(var i in h) {
 			var c=newElement('th',{});
 			c.innerHTML = h[i];
 			data[0].appendChild(c);
+
 		}
+		if(object.controls) {
+			var c = newElement('th');
+			c.innerHTML = object.controlsTitle  ? object.controlsTitle : "Controls";
+			data[0].appendChild(c);
+		}
+
+		if(object.id)attributes['id'] = object.id;
+		if(object.editable)attributes['data-editable'] = 1;
+		if(object.hiddenFields)attributes['data-hidden-fields'] = object.hiddenFields.join("|");
+		if(object.controls)attributes['data-controls'] = JSON.stringify(object.controls);
+		var table = newElement('table', attributes, data);
 		var d = object.data;
-		for(var i = 0; i < d.length; i++) {
-			var cells = [];
-			var a = {};
-			for(var k in d[i].hiddenFields){
-				a['data-field-' + k] = d[i].hiddenFields[k];
+		if(d) {
+			for (var i = 0; i < d.length; i++) {
+				UI.addRowToTable(table, d[i]);
 			}
-			var r = newElement('tr', a);
-			for(var k in h) {
-				var c=newElement('td',{'data-name':k});
-				var v = d[i].fields[k]
-				c.innerHTML = v ? v : "";
-				cells.push(c);
-			}
-			data.push(newElement('tr', a, cells));
 		}
-		return newElement('table', {}, data);
+		return table;
 	},
 	addFormElements: function(object, tag, attributes){
 		var table = null;
@@ -243,6 +297,11 @@ UI.builder = {
 	},
 
 	buildFormfield: function(f){
+		if(f.tag == 'multylanguage') {
+			return this.multyLanguageField(f);
+		}
+
+
 		switch(f.layout){
 			case 'grid':
 				return	this.gridFormfield(f);
@@ -256,6 +315,30 @@ UI.builder = {
 				console.error("Undefined layout type: " + f.layout + " in object", f);
 				throw new Exception(e);
 		}
+	},
+	multyLanguageField: function(f){
+		var labelholder = newElement('div', {'class':'labels clearfix'});
+		var out = newElement('div', {'class':'multylanguage', 'data-name': f.name},[labelholder]);
+
+		for(var l in f.languages) {
+			var lang = f.languages[l];
+			var textarea = newElement('textarea', {name: f.name+"["+l+"]"})
+			if(f.options && f.options[l]){
+				textarea.innerHTML = f.options[l];
+			}
+			var label = newElement('label', {'for': f.id+"_"+l,
+				onclick:"this.parentNode.get('label.active').removeClass('active');this.addClass('active');"});
+			label.innerHTML = lang;
+			var radio = newElement('input', {type:'radio', name: f.id+"___", id:f.id+"_"+l});
+			if(f.language == l) {
+				radio.checked = true;
+				label.addClass('active');
+			}
+			labelholder.appendChild(label);
+			out.appendChild(radio);
+			out.appendChild(textarea);
+		}
+		return out;
 	},
 	gridFormfield: function(f){
 		var formfield = this.buildActiveElement(f);
@@ -290,7 +373,7 @@ UI.builder = {
 		rowDescription.addClass('description');
 		
 		var title = this.getFormfieldElement(f, 'label', 'title');
-		var error = this.getFormfieldElement(f, 'div', 'error')
+		var error = this.getFormfieldElement(f, 'div', 'error');
 		
 		var titleHolder = newElement('td', {'class': 'title'});
 		var formfieldHolder = newElement('td', {'class': 'formfield'});
@@ -304,7 +387,9 @@ UI.builder = {
 		rowBase.appendChild(formfieldHolder);
 		rowBase.appendChild(errorHolder);
 		
-		var description = this.getFormfieldElement(f, 'td', 'description')
+		var description = this.getFormfieldElement(f, 'td', 'description');
+		description.setAttribute('colspan', 3);
+		description.removeClass('hidden');
 		rowDescription.appendChild(description);
 		return {base: rowBase, description: rowDescription};
 	},
@@ -344,7 +429,6 @@ UI.builder = {
 		} else {
 			out.addClass('hidden');
 		}
-		
 		return out
 	},
 	getFormfieldElementLabel: function(f, tag, key){
@@ -764,3 +848,32 @@ Event = (function() {
 		} 
 	};
 }())
+
+
+Core.cookie = {
+	setCookie: function (name, value, days) {
+		if(!days)days = 1;
+		var d = new Date();
+		d.setTime(d.getTime() + (days*24*60*60*1000));
+		var expires = "expires="+d.toUTCString();
+		document.cookie = name + "=" + value + "; " + expires;
+	},
+	getCookie: function(name) {
+		var name = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0; i<ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1);
+			if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+		}
+		return "";
+	},
+	checkCookie: function (name) {
+		var v = Core.cookie.getCookie(name);
+		if (v != "") {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}

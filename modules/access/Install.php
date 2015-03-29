@@ -87,7 +87,9 @@ class Access_Install implements Module_IInstall {
                     . "(5, 'can_edit_user_groups', 0, 0, 1),"
                     . "(6, 'can_edit_access_actions', 0, 0, 1),"
 
-                    . "(7, 'can_edit_config', 0, 0, 1)";
+                    . "(7, 'can_edit_config', 0, 0, 1),"
+                    . "(8, 'can_edit_languages', 0, 0, 1),"
+                    . "(9, 'can_edit_terms', 0, 0, 1)";
 
                 DB::query($query);
             } else {
