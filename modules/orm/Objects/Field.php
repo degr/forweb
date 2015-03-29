@@ -1,16 +1,49 @@
 <?
 class ORM_Objects_Field{
+	/**
+	 * @var string
+	 */
 	protected $name;
+	/**
+	 * @var string
+	 */
 	protected $type;
+	/**
+	 * @var bool
+	 */
 	protected $canBeNull;
+	/**
+	 * @var bool
+	 */
 	protected $autoIncrement;
+	/**
+	 * @var bool
+	 */
 	protected $unique;
+	/**
+	 * @var bool
+	 */
 	protected $primary;
+	/**
+	 * @var string
+	 */
 	protected $defaultValue;
+	/**
+	 * @var int
+	 */
 	protected $length;
+	/**
+	 * @var string[]
+	 */
 	protected $enumValues;
 
+	/**
+	 * @var boolean
+	 */
 	protected $lazyLoad;
+	/**
+	 * @var boolean
+	 */
 	protected $index;
 
 	public function __construct($name, $type){
@@ -29,6 +62,11 @@ class ORM_Objects_Field{
 		$this->index = $index;
 		return $this;
 	}
+
+	/**
+	 * Set index to this field
+	 * @return boolean
+	 */
 	public function getIndex(){
 		return $this->index;
 	}
