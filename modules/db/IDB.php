@@ -32,16 +32,19 @@ interface  DB_IDB{
 
     /**
      * return affected rows of last query
+     * @return int
      */
     public static function getAffectedRows();
     /**
      * Get query count of current script execution time
+     * return integer
      */
     public static function getQueriesCount();
 
     /**
      * Get columns of selected table
      * @param String $table
+     * @return array
      */
     public static function getColumns($table);
 
@@ -62,7 +65,7 @@ interface  DB_IDB{
      * }
      * @param string $query
      * @param string $key
-     * return array
+     * @return array
      */
     public static function getTable($query, $key = "");
 
@@ -77,23 +80,27 @@ interface  DB_IDB{
      * @param string $query
      * @param string $key
      * @param string $value
+     * @return array(key=>value)
      */
     public static function getAssoc($query, $key, $value);
 
     /**
      * Return first row of result set (one-leveled assoc array)
      * @param string $query
+     * @return array(key=>value)
      */
     public static function getRow($query);
 
     /**
      * return first column of result set
      * @param string $query
+     * @return array(value)
      */
     public static function getColumn($query);
     /**
      * Return first cell of first column.
      * @param string $query
+     * @return string
      */
     public static function getCell($query);
 

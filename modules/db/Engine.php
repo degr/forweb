@@ -1,51 +1,5 @@
 <?php
-class DB_Engine implements DB_IEngine{
-
-    public function connect()
-    {
-        throw new Exception("Method `".__FUNCTION__. "` was not implemented in this DB source. Sorry...");
-    }
-
-    public function disconnect()
-    {
-        throw new Exception("Method `".__FUNCTION__. "` was not implemented in this DB source. Sorry...");
-    }
-
-    /**
-     * Return result set on 'select' statement
-     * @param string $query
-     * @return result set
-     */
-    public function getResultSet($query)
-    {
-        throw new Exception("Method `".__FUNCTION__. "` was not implemented in this DB source. Sorry...");
-    }
-
-    /**
-     * Return last inserted id
-     * @return mixed
-     */
-    public function getLastId(){
-        throw new Exception("Method `".__FUNCTION__. "` was not implemented in this DB source. Sorry...");
-    }
-
-
-    /**
-     * Execute query for 'insert', 'update' and 'delete' statements
-     * @param string $query
-     * @return boolean
-     */
-    public function query($query)
-    {
-        throw new Exception("Method `".__FUNCTION__. "` was not implemented in this DB source. Sorry...");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getColumns($table) {
-        throw new Exception("Method `".__FUNCTION__. "` was not implemented in this DB source. Sorry...");
-    }
+abstract class DB_Engine implements DB_IEngine{
 
 
     public function setEncoding($encoding){

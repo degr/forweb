@@ -7,7 +7,7 @@
 class DB implements DB_IDB{
 
     /**
-     * @var database $instance
+     * @var DB_IEngine $instance
      */
     protected static $instance;
     /**
@@ -28,7 +28,9 @@ class DB implements DB_IDB{
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $table
+     * @param array $data
+     * @return mixed
      */
     public static function insert($table, $data) {
         $fields = array();
@@ -42,7 +44,10 @@ class DB implements DB_IDB{
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $table
+     * @param array $fields
+     * @param array $values
+     * @return mixed
      */
     public static function insertMulty($table, $fields, $values){
         $valuesParam = array();
@@ -63,100 +68,112 @@ class DB implements DB_IDB{
 
 
     /**
-     * {@inheritdoc}
+     * @return mixed
+     * @throws FwException
      */
     public static function getAffectedRows(){
         if(empty(DB::$instance)){
-            throw new Exception("DB not initted");
+            throw new FwException("DB not initted");
         }
         return DB::$instance->affected_rows;
     }
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
     public static function getQueriesCount() {
         return DB::$queriesCount;
     }
 
-    /**
-     * display error message, if can'y connect to database,
-     * and than exit from script.
-     */
-    private static function error() {
-        echo DB::$errorMessage;
-        exit ();
-    }
 
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getColumns($table) {
         return DB::getInstance()->getColumns($table);
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $query
+     * @param string $key
+     * @return mixed
      */
     public static function getTable($query, $key = "") {
         return DB::getInstance()->getTable($query, $key);
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $query
+     * @param string $key
+     * @param string $value
+     * @return mixed
      */
     public static function getAssoc($query, $key, $value) {
         return DB::getInstance()->getAssoc($query, $key, $value);
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $query
+     * @return mixed
      */
     public static function getRow($query) {
         return DB::getInstance()->getRow($query);
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $query
+     * @return mixed
      */
     public static function getColumn($query) {
         return DB::getInstance()->getColumn($query);
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $query
+     * @return mixed
      */
     public static function getCell($query) {
         return DB::getInstance()->getCell($query);
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $query
+     * @return mixed
      */
     public static function query($query) {
         return DB::getInstance()->query($query);
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
     public static function getLastInsertedId(){
         return DB::$instance->insert_id;
     }
 
+    /**
+     * @return DB_IEngine
+     */
     public static function getInstance(){
         return DB::$instance;
     }
 
+    /**
+     * @param string $value
+     * @return mixed
+     */
     public static function escape($value){
         return DB::getInstance()->escape($value);
     }
 
+    /**
+     * Close this connection
+     */
     public static function close(){
         DB::getInstance()->close();
     }
 
+    /**
+     *
+     */
     public static function incrementQueries(){
         DB::$queriesCount++;
     }

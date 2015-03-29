@@ -29,27 +29,14 @@ class Word_Install implements Module_IInstall{
         ORM::createTable($wordModules);
         ORM::createTable($word);
 
-        $query = "SELECT id FROM languages ";
-        $ids = DB::getColumn($query);
-        if(empty($ids)) {
-            $query = "INSERT INTO languages (locale, is_default) VALUES"
-                ."('en', 1), ('ru', 0)";
-            DB::query($query);
+        $langInstaller = new Word_Install_Language();
+        $languages = $langInstaller->install();
 
-            $query = "INSERT INTO word_modules (id, module) VALUES"
-                ."(1, 'user')";
-            DB::query($query);
+        $dictionariesInstaller = new Word_Install_Dictionary();
+        $modules = $dictionariesInstaller->install();
 
-            $query = "INSERT INTO `word` "
-                ."(`id`, `language`, `module`, `name`, `value`)"
-                ." VALUES "
-                ." (1,1,1,'field_email','email'),"
-                ." (2,2,1,'field_email','Емейл'),"
-                ." (3,1,1,'field_password','Password'),"
-                ." (4,2,1,'field_password','Пароль')";
-            DB::query($query);
-
-        }
+        $wordInstaller = new Word_Install_Words();
+        $wordInstaller->install($languages, $modules);
     }
 
     /**

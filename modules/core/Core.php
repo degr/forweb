@@ -1,7 +1,13 @@
 <?
-class Core implements IModule{
+class Core extends Module{
 
 	const FORM_ERRORS = 'form_errors';
+	const INIT_REQUEST = "init";
+	const RESOURCES_FOLDER = "resources/";
+	const MODULES_FOLDER = "modules/";
+	const FORM_HANDLER_NAME = "form";
+	const DEVELOPMENT = true;
+	const MULTIPLE_LANGUAGES = true;
 
 	public function getAjaxHandlers()
 	{
@@ -28,11 +34,7 @@ class Core implements IModule{
 		return Core::$instance;
 	}
 
-	const INIT_REQUEST = "init";
-	const RESOURCES_FOLDER = "resources/";
-	const MODULES_FOLDER = "modules/";
-	const FORM_HANDLER_NAME = "form";
-	const DEVELOPMENT = true;
+
 	/**
 	 * Array with modules
 	 * @var IModule[]
@@ -257,6 +259,16 @@ class Core implements IModule{
 
 		return $out;
 	}
+
+
+	private function getIncludeStaticContent(PersistIncludes $include){
+		if(Core::MULTIPLE_LANGUAGES) {
+			Word::get("sys_includes", $include->getId());
+		} else {
+			return $include->getContent();
+		}
+	}
+
 
 	public function getAdminScript(){
 		$adminScript = Core::getResource("admin.js");
