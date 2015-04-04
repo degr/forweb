@@ -47,7 +47,7 @@ class Page_Service extends Service {
      */
     public function findPage($params){
         $filterQuery = " pages.id=1 OR pages.url IN ('".implode("','", $params)."') ORDER BY pages.id";
-        $filter = new ORM_Query_CustomFilter($this->table->getName(), '',$filterQuery, true);
+        $filter = new ORM_Query_CustomFilter($filterQuery, true);
         $pages = $this->loadAll($filter);
 
         $detectedPage = reset($pages);

@@ -14,8 +14,7 @@ class ORM_Query_CustomFilter extends  ORM_Query_AbstractItem{
      */
     protected $query;
 
-    public function __construct($table, $field, $query, $active){
-        parent::__construct($table, $field);
+    public function __construct($query, $active){
         $this->setActive($active);
         $this->query = $query;
     }

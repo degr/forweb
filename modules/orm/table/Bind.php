@@ -43,7 +43,6 @@ class ORM_Table_Bind{
 	
 	public function loadBindedData($id){
 		$customFilter = new ORM_Query_CustomFilter(
-			'','',
 			$this->getRightTable()->getName().".".$this->getRightField()." = '".DB::escape($id)."'",
 			true
 		);

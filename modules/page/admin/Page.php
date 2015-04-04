@@ -99,7 +99,7 @@ class Page_Admin_Page{
                 if($parent == null){
                     $deleteText = Word::get('admin', 'home_page_delete');
                 } else {
-                    $deleteFilter = new ORM_Query_CustomFilter('','',"pages.parent = '".$page->getId()."'", true);
+                    $deleteFilter = new ORM_Query_CustomFilter("pages.parent = '".$page->getId()."'", true);
 
                     $childs = $pageService->loadAll($deleteFilter);
                     if(empty($childs[$pageService->getTable()->getName()])){
@@ -119,12 +119,12 @@ class Page_Admin_Page{
 
                 if($url != '') {
                     $filters = array(
-                        new ORM_Query_CustomFilter('', '', " pages.parent='".$page->getParent()."' AND pages.url='".$page->getUrl()."'", true)
+                        new ORM_Query_CustomFilter(" pages.parent='".$page->getParent()."' AND pages.url='".$page->getUrl()."'", true)
                     );
 
                     $id = $page->getId();
                     if(!empty($id)){
-                        $filters[] = new ORM_Query_CustomFilter('','', " pages.id != '".$id."'", true);
+                        $filters[] = new ORM_Query_CustomFilter(" pages.id != '".$id."'", true);
                         if($id == 1){
                             $page->setUrl('home');
                             $page->setParent(0);

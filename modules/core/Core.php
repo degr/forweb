@@ -168,7 +168,7 @@ class Core extends Module{
 	public function getPageIncludes(PersistPages $page){
 		$customFilterQuery = " (page='".$page->getId()."')"
 			." OR (template = '".$page->getTemplate()->getId()."')";
-		$customFilter = new ORM_Query_CustomFilter("includes", "", $customFilterQuery, true);
+		$customFilter = new ORM_Query_CustomFilter($customFilterQuery, true);
 		return ORM::load("includes", false,	$customFilter, null, null);
 	}
 
