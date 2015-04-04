@@ -14,26 +14,26 @@ class User_Install implements Module_IInstall{
      */
     public function install()
     {
-        $userTable = new ORM_Objects_Table('user');
+        $userTable = new ORM_Table('user');
 
-        $id = new ORM_Objects_Field('id', 'integer');
+        $id = new ORM_Table_Field('id', 'integer');
         $id->setAutoIncrement();
         $id->setPrimary();
         $userTable->addField($id);
 
-        $name = new ORM_Objects_Field('name', 'varchar');
+        $name = new ORM_Table_Field('name', 'varchar');
         $name->setLength(50);
         $userTable->addField($name);
 
-        $password = new ORM_Objects_Field('password', 'varchar');
+        $password = new ORM_Table_Field('password', 'varchar');
         $password->setLength(50);
         $userTable->addField($password);
 
-        $email = new ORM_Objects_Field('email', 'varchar');
+        $email = new ORM_Table_Field('email', 'varchar');
         $email->setLength(255);
         $userTable->addField($email);
 
-        $accessGroup = new ORM_Objects_Field('access', 'varchar');
+        $accessGroup = new ORM_Table_Field('access', 'varchar');
         $accessGroup->setLength(50);
         $userTable->addField($accessGroup);
 

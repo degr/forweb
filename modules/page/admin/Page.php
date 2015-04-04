@@ -99,9 +99,9 @@ class Page_Admin_Page{
                 if($parent == null){
                     $deleteText = Word::get('admin', 'home_page_delete');
                 } else {
-                    $tail = "WHERE pages.parent = '".$page->getId()."'";
+                    $deleteFilter = new ORM_Query_CustomFilter('','',"pages.parent = '".$page->getId()."'", true);
 
-                    $childs = $pageService->loadAll($tail);
+                    $childs = $pageService->loadAll($deleteFilter);
                     if(empty($childs[$pageService->getTable()->getName()])){
                         if(ORM::delete($table, $page)) {
                             $page = null;
@@ -116,20 +116,23 @@ class Page_Admin_Page{
                 }
             } else {
                 $url = $page->getUrl();
+
                 if($url != '') {
-                    $tail = "WHERE pages.parent='".$page->getParent()."' AND pages.url='".$page->getUrl()."'";
+                    $filters = array(
+                        new ORM_Query_CustomFilter('', '', " pages.parent='".$page->getParent()."' AND pages.url='".$page->getUrl()."'", true)
+                    );
+
                     $id = $page->getId();
                     if(!empty($id)){
-                        $tail .= " AND pages.id != '".$id."'";
+                        $filters[] = new ORM_Query_CustomFilter('','', " pages.id != '".$id."'", true);
                         if($id == 1){
                             $page->setUrl('home');
                             $page->setParent(0);
                         }
                     }
 
-                    $check = $pageService->loadWithCondition($tail);
-                    if($check != null) {
-                        $id = $page->getId();
+                    $check = $pageService->loadOneWithFilters($filters);
+                    if($check === null) {
                         ORM::saveData($table, $page);
                         if(empty($id)){
                             $saveText = Word::get('admin', 'page_created');

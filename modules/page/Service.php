@@ -46,7 +46,9 @@ class Page_Service extends Service {
      * @return PersistPages
      */
     public function findPage($params){
-        $pages = $this->loadAll(" WHERE pages.id=1 OR pages.url IN ('".implode("','", $params)."') ORDER BY pages.id");
+        $filterQuery = " pages.id=1 OR pages.url IN ('".implode("','", $params)."') ORDER BY pages.id";
+        $filter = new ORM_Query_CustomFilter($this->table->getName(), '',$filterQuery, true);
+        $pages = $this->loadAll($filter);
 
         $detectedPage = reset($pages);
         foreach($params as $param) {

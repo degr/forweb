@@ -167,14 +167,14 @@ class UI{
 	/**
 	 * Process persistance table and return array with fields description
 	 * for this table
-	 * @param ORM_Objects_Table $table object to parse
+	 * @param ORM_Table $table object to parse
 	 * @param $data array|ORM_Persistence_Base (data of current row)
 	 * @param $layout - string, see LAYOUT_* constants for more info
 	 * @return array
 	 */
-	public static function getFormForTable(ORM_Objects_Table $table, $data, $layout){
+	public static function getFormForTable(ORM_Table $table, $data, $layout){
 		$out = array();
-		/* @var $field ORM_Objects_Field*/
+		/* @var $field ORM_Table_Field*/
 		foreach($table->getFields() as $field){
 			$formfield = new UI_Formfield();
 			$formfield->useField($field, $table->getName());
@@ -211,7 +211,7 @@ class UI{
 		return $out->toJSON();
 	}
 
-	public static function usePersistObject($object, ORM_Objects_Table $table, $layout){
+	public static function usePersistObject($object, ORM_Table $table, $layout){
 		$out = array();
 		foreach($table->getFields() as $name => $field){
 			$getter = "get".ucfirst($name);

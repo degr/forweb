@@ -1,14 +1,14 @@
 <?
-class ORM_Objects_Table{
+class ORM_Table{
 
 	/**
-	 * @var ORM_Objects_Field[]
+	 * @var ORM_Table_Field[]
 	 */
 	protected $fields;
 	protected $name;
 	protected $shortName;
 	/**
-	 * @var ORM_Objects_Bind[]
+	 * @var ORM_Table_Bind[]
 	 */
 	protected $binds;
 	protected $persistClassName;
@@ -32,7 +32,7 @@ class ORM_Objects_Table{
 
 	/**
 	 * get this table binds array
-	 * @return ORM_Objects_Bind[]
+	 * @return ORM_Table_Bind[]
 	 */
 	public function getBinds(){
 		if(count($this->binds) > 0){
@@ -43,7 +43,7 @@ class ORM_Objects_Table{
 
 	/**
 	 * @param $name
-	 * @return ORM_Objects_Bind
+	 * @return ORM_Table_Bind
 	 * @throws Exception
 	 */
 	public function getBind($name){
@@ -53,7 +53,7 @@ class ORM_Objects_Table{
 			throw new Exception("Undefined bind name $name");
 		}
 	}
-	public function addField(ORM_Objects_Field $field){
+	public function addField(ORM_Table_Field $field){
 		$primaryKey = $this->getPrimaryKey();
 		if($field->getPrimary() && !empty($primaryKey)){
 			throw new Exception("Declaring table with two or more primary key denied. We are sorry...");
@@ -69,7 +69,7 @@ class ORM_Objects_Table{
 
 	/**
 	 * @param $name
-	 * @return ORM_Objects_Field
+	 * @return ORM_Table_Field
 	 * @throws Exception
 	 */
 	public function getField($name){
@@ -81,7 +81,7 @@ class ORM_Objects_Table{
 	}
 
 	/**
-	 * @return ORM_Objects_Field[]
+	 * @return ORM_Table_Field[]
 	 */
 	public function getFields(){
 		return $this->fields;
@@ -94,7 +94,7 @@ class ORM_Objects_Table{
 	 * @param String $type
 	 * @param bool $twoSides
 	 * @param $lazy
-	 * @return ORM_Objects_Bind
+	 * @return ORM_Table_Bind
 	 * @throws Exception
 	 */
 	public function bindTable($thisKey, $thatKey, $thatTable, $type, $twoSides, $lazy){
@@ -109,21 +109,21 @@ class ORM_Objects_Table{
 				
 			}
 		}
-		$this->binds[$thatTable] = new ORM_Objects_Bind($this->getName(), $thisKey, $type, $thatTable, $thatKey, $lazy);
+		$this->binds[$thatTable] = new ORM_Table_Bind($this->getName(), $thisKey, $type, $thatTable, $thatKey, $lazy);
 		$out = $this->binds[$thatTable];
 		if(!$twoSides){
 			return $out;
 		}
 		switch($type) {
-			case ORM_Objects_Table::ONE_TO_ONE:
-			case ORM_Objects_Table::MANY_TO_MANY:
+			case ORM_Table::ONE_TO_ONE:
+			case ORM_Table::MANY_TO_MANY:
 				$newType = $type;
 				break;
-			case ORM_Objects_Table::ONE_TO_MANY:
-				$newType = ORM_Objects_Table::MANY_TO_ONE;
+			case ORM_Table::ONE_TO_MANY:
+				$newType = ORM_Table::MANY_TO_ONE;
 				break;
-			case ORM_Objects_Table::MANY_TO_ONE:
-				$newType = ORM_Objects_Table::ONE_TO_MANY;
+			case ORM_Table::MANY_TO_ONE:
+				$newType = ORM_Table::ONE_TO_MANY;
 				break;
 			default:
 				throw new FwException("Invalid bind type - ".$type);
@@ -141,8 +141,12 @@ class ORM_Objects_Table{
 	 */
 	public function getPersistClassName(){
 		if($this->persistClassName === null) {
-			$this->persistClassName = ORM_Objects_Table::PERSIST_CLASS_PREFIX.ucfirst($this->getName());
+			$this->persistClassName = ORM_Table::PERSIST_CLASS_PREFIX.ucfirst($this->getName());
+			if(is_file(ORM::getPersistExtendedObjectsFolder().ORM::EXTEND.$this->persistClassName.".php")){
+				$this->persistClassName = ORM::EXTEND.$this->persistClassName;
+			}
 		}
+
 		return $this->persistClassName;
 	}
 

@@ -28,7 +28,11 @@ var TemplateForm = {
                 var fields = {};
                 for(var ff in block.includes[i]){
                     fields[ff] = {value:block.includes[i][ff]};
+                    if(ff == 'method') {
+                        fields[ff].options = block.includes[i].methods_list;
+                    }
                 }
+
                 var dto = {fields:fields};
                 incHolder.appendChild(PageContent.getTemplate(true, dto));
             }

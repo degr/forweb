@@ -36,7 +36,7 @@ class Page_Admin_Includes{
     protected function getIncludesRepresentation($blocks, $includes, $page)
     {
         $out = array();
-        /* @var $includesTable ORM_Objects_Table */
+        /* @var $includesTable ORM_Table */
         $includesTable = ORM::getTable("includes");
         foreach($blocks as $blockId => $block){
             $out[$block] = UI::getFormForTable($includesTable, null, UI::LAYOUT_OVERVIEW);

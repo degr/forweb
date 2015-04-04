@@ -67,10 +67,19 @@ class Page_Admin_Template{
             .$blockCondition2." ORDER BY positionNumber";
 
         $includes = DB::getTable($query);
+        $pageModule = Core::getModule("Page");
+        $methods = array();
         foreach($includes as $include) {
             foreach($out as $key => $item) {
                 if($item['id'] == $include['block']) {
+                    if($include['type'] == 'executable') {
+                        if(empty($methods[$include['module']])) {
+                            $methods[$include['module']] = $pageModule->getMethodsList($include['module']);
+                        }
+                        $include['methods_list'] = $methods[$include['module']];
+                    }
                     $out[$key]['includes'][] = $include;
+
                     break;
                 }
             }

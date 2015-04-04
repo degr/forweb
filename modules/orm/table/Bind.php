@@ -1,5 +1,5 @@
 <?
-class ORM_Objects_Bind{
+class ORM_Table_Bind{
 
 	protected $leftTable;
 	protected $leftKey;
@@ -42,22 +42,26 @@ class ORM_Objects_Bind{
 	}
 	
 	public function loadBindedData($id){
-		$tail = " WHERE ".$this->getRightTable()->getName().".".$this->getRightField()." = '".DB::escape($id)."'";
-		if($this->type === ORM_Objects_Table::ONE_TO_ONE || ORM_Objects_Table::MANY_TO_ONE === $this->type) {
+		$customFilter = new ORM_Query_CustomFilter(
+			'','',
+			$this->getRightTable()->getName().".".$this->getRightField()." = '".DB::escape($id)."'",
+			true
+		);
+		if($this->type === ORM_Table::ONE_TO_ONE || ORM_Table::MANY_TO_ONE === $this->type) {
 			$one = true;
-		} elseif($this->type === ORM_Objects_Table::ONE_TO_MANY || ORM_Objects_Table::MANY_TO_MANY === $this->type) {
+		} elseif($this->type === ORM_Table::ONE_TO_MANY || ORM_Table::MANY_TO_MANY === $this->type) {
 			$one = false;
 		} else{
 			throw new Exception('undefined bind type: '.$this->type);
 		}
 		
-		$result = ORM::load($this->getRightTable()->getName(), $tail, false, $one);
+		$result = ORM::load($this->getRightTable()->getName(), $one, $customFilter, null, null);
 		return $result;
 	}
 
 	/**
 	 * Get bind right table
-	 * @return ORM_Objects_Table
+	 * @return ORM_Table
 	 */
 	public function getRightTable(){
 		return ORM::getTable($this->rightTable);
@@ -65,7 +69,7 @@ class ORM_Objects_Bind{
 
 	/**
 	 * Get bind left table
-	 * @return ORM_Objects_Table
+	 * @return ORM_Table
 	 */
 	public function getLeftTable(){
 		return ORM::getTable($this->leftTable);

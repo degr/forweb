@@ -7,12 +7,12 @@
  */
 class Page_Install implements Module_IInstall{
     /**
-     * @var ORM_Objects_Table[]
+     * @var ORM_Table[]
      */
     protected $tables;
 
     /**
-     * @return ORM_Objects_Table[]
+     * @return ORM_Table[]
      */
     public function getTables(){
         if(empty($this->tables)) {
@@ -35,19 +35,19 @@ class Page_Install implements Module_IInstall{
         foreach($tables as $table) {
             ORM::registerTableOnFly($table);
         }
-        $tables['pages']->bindTable('template', 'id', 'templates', ORM_Objects_Table::MANY_TO_ONE, false, true);
-        $pagesBind = $this->tables['pages']->bindTable('parent', 'id', 'pages', ORM_Objects_Table::MANY_TO_ONE, false, true);
+        $tables['pages']->bindTable('template', 'id', 'templates', ORM_Table::MANY_TO_ONE, false, true);
+        $pagesBind = $this->tables['pages']->bindTable('parent', 'id', 'pages', ORM_Table::MANY_TO_ONE, false, true);
         $pagesBind->setCustomLeftField("parentPage");
 
-        $pageToIncludeBind = $tables['pages']->bindTable('id', 'page', 'includes', ORM_Objects_Table::ONE_TO_MANY, true, true);
+        $pageToIncludeBind = $tables['pages']->bindTable('id', 'page', 'includes', ORM_Table::ONE_TO_MANY, true, true);
         $pageToIncludeBind->setCustomLeftField("includes");
 
 
         //@TODO includes table must be binded to blocks, blocks to templates. Templates need no bind to includes.
-        $templateToIncludeBind = $tables['templates']->bindTable('id', 'template', 'includes', ORM_Objects_Table::ONE_TO_MANY, true, true);
+        $templateToIncludeBind = $tables['templates']->bindTable('id', 'template', 'includes', ORM_Table::ONE_TO_MANY, true, true);
         $templateToIncludeBind->setCustomLeftField("includes");
 
-        $templateToBlockBind = $tables['templates']->bindTable('id', 'template', 'blocks', ORM_Objects_Table::ONE_TO_MANY, true, true);
+        $templateToBlockBind = $tables['templates']->bindTable('id', 'template', 'blocks', ORM_Table::ONE_TO_MANY, true, true);
         $templateToBlockBind->setCustomLeftField("blocks");
 
         foreach($tables as $table) {

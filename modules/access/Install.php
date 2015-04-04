@@ -15,28 +15,28 @@ class Access_Install implements Module_IInstall {
      */
     public function install()
     {
-        $table = new ORM_Objects_Table("access");
+        $table = new ORM_Table("access");
 
-        $id = new ORM_Objects_Field("id", "integer");
+        $id = new ORM_Table_Field("id", "integer");
         $id->setAutoIncrement();
         $id->setPrimary();
         $table->addField($id);
 
-        $action = new ORM_Objects_Field("action", "varchar");
+        $action = new ORM_Table_Field("action", "varchar");
         $action->setLength(100);
         $table->addField($action);
 
-        $anonymous = new ORM_Objects_Field(Access::GROUP_ANONIMOUS, "tinyint");
+        $anonymous = new ORM_Table_Field(Access::GROUP_ANONIMOUS, "tinyint");
         $anonymous->setLength(1);
         $anonymous->setDefaultValue(0);
         $table->addField($anonymous);
 
-        $authorized = new ORM_Objects_Field(Access::GROUP_AUTHORIZED, "tinyint");
+        $authorized = new ORM_Table_Field(Access::GROUP_AUTHORIZED, "tinyint");
         $authorized->setLength(1);
         $authorized->setDefaultValue(0);
         $table->addField($authorized);
 
-        $administrator = new ORM_Objects_Field(Access::GROUP_ADMINISTRATOR, "tinyint");
+        $administrator = new ORM_Table_Field(Access::GROUP_ADMINISTRATOR, "tinyint");
         $administrator->setLength(1);
         $administrator->setDefaultValue(0);
         $table->addField($administrator);

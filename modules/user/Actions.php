@@ -16,8 +16,12 @@ class User_Actions{
         $email = $_POST['email'];
         $password = $_POST['password'];
         $userController = Core::getModule("User");
-        $usersList = $userController->getService()->loadAll(" WHERE user.email='".DB::escape($email)
-            ."' AND user.password='".DB::escape($password)."'");
+
+        $emailFilter = new ORM_Query_Filter('user', 'email', ORM_Query_Filter::TYPE_EQUAL);
+        $emailFilter->setValue($email);
+        $passwordFilter =  new ORM_Query_Filter('password', 'email', ORM_Query_Filter::TYPE_EQUAL);
+        $passwordFilter->setValue($password);
+        $usersList = $userController->getService()->loadAll(array($emailFilter, $passwordFilter), null, null);
 
         $out = null;
         /* @var $user PersistUser */

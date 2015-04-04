@@ -127,11 +127,11 @@ class Core extends Module{
 			// Script will exit in CMS::ajaxHandler;
 			return;
 		}
+
 		$params = $dispatcher->getParams();
 		/* @var $pageService Page_Service */
 		$pageService = $this->pageModule->getService();
 		$page = $pageService->findPage($params);
-
 		$pageService->setCurrentPage($page);
 		$template = $pageService->getTemplate();
 		$blocks = $this->getBlocks($template->getId());
@@ -166,12 +166,10 @@ class Core extends Module{
 	}
 
 	public function getPageIncludes(PersistPages $page){
-		return ORM::load("includes",
-			" WHERE (page='".$page->getId()."')"
-			." OR (template = '".$page->getTemplate()->getId()."')",
-			false,
-			false
-		);
+		$customFilterQuery = " (page='".$page->getId()."')"
+			." OR (template = '".$page->getTemplate()->getId()."')";
+		$customFilter = new ORM_Query_CustomFilter("includes", "", $customFilterQuery, true);
+		return ORM::load("includes", false,	$customFilter, null, null);
 	}
 
 	protected function processBlocks($blocks){

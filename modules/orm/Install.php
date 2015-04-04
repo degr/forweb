@@ -1,7 +1,7 @@
 <?php
 class ORM_Install implements Module_IInstall{
 
-    public static function createDBTable(ORM_Objects_Table $table){
+    public static function createDBTable(ORM_Table $table){
         $primaryKey = $table->getPrimaryKey();
         if(empty($primaryKey)){
             throw new Exception("Can't create table with no primary keys, please define it (".$table->getName().")");
@@ -9,7 +9,7 @@ class ORM_Install implements Module_IInstall{
         $query = "CREATE TABLE IF NOT EXISTS ".$table->getName()." (";
         $fields = array();
 
-        /* @var $field ORM_Objects_Field */
+        /* @var $field ORM_Table_Field */
         foreach($table->getFields() as $field){
             $defaultValue = $field->getDefaultValue();
             $enumValues = $field->getEnumValues();
@@ -28,13 +28,15 @@ class ORM_Install implements Module_IInstall{
         DB::query($query);
         foreach($table->getFields() as $field) {
             if($field->getIndex()) {
-                $query = 'ALTER TABLE '.$table->getName().' ADD INDEX '.$field->getName().'('.$field->getName().')';
-                DB::query($query);
+                if(!ORM_Install::isIndexExist($table->getName(), $field->getName())) {
+                    $query = 'ALTER TABLE ' . $table->getName() . ' ADD INDEX ' . $field->getName() . '(' . $field->getName() . ')';
+                    DB::query($query);
+                }
             }
         }
     }
 
-    public static function serializeTable(ORM_Objects_Table $table){
+    public static function serializeTable(ORM_Table $table){
         $data = serialize($table);
         $folder = ORM::getTablesFolder();
         if(!is_dir($folder)){
@@ -47,14 +49,14 @@ class ORM_Install implements Module_IInstall{
         file_put_contents($filename, $data);
     }
 
-    public static function createPersistanceClass(ORM_Objects_Table $table){
+    public static function createPersistanceClass(ORM_Table $table){
         $text = "<?php \n"
             .ORM_Install::getClassDescription($table)
             ."\nclass ".$table->getPersistClassName()." extends ORM_Persistence_Base {\n";
 
         $binds = $table->getBinds();
         //write all class properties, including binded properties and their doc
-        /* @var $field ORM_Objects_Field */
+        /* @var $field ORM_Table_Field */
 
         foreach($table->getFields() as $field) {
             $currentBind = ORM_Install::getBindForField($field, $binds);
@@ -68,9 +70,9 @@ class ORM_Install implements Module_IInstall{
         }
 
         //write all class setters and getters, include binded
-        /* @var $field ORM_Objects_Field */
+        /* @var $field ORM_Table_Field */
         foreach($table->getFields() as $field) {
-            /* @var $bind ORM_Objects_Bind */
+            /* @var $bind ORM_Table_Bind */
             $currentBind = ORM_Install::getBindForField($field, $binds);
 
             if(!empty($currentBind)){
@@ -101,7 +103,7 @@ class ORM_Install implements Module_IInstall{
         file_put_contents($path, $text);
     }
 
-    protected static function getClassDescription(ORM_Objects_Table $table){
+    protected static function getClassDescription(ORM_Table $table){
         $fileName = $table->getPersistClassName().ORM::EXTEND;
         return "/**\n"
             ." * Warning! Auto-generated code.\n"
@@ -113,7 +115,7 @@ class ORM_Install implements Module_IInstall{
             ." */";
     }
 
-    protected static function getTextForBindVariable(ORM_Objects_Bind $bind, $postfix)
+    protected static function getTextForBindVariable(ORM_Table_Bind $bind, $postfix)
     {
         $out = '';
         $out .="\t/**\n";
@@ -122,7 +124,7 @@ class ORM_Install implements Module_IInstall{
         $out .= "\t * object bind options: \$this->".$bind->getLeftField().$postfix." on "
             .$bind->getRightTable()->getPersistClassName()."->".$bind->getRightField(). "\n";
         $type = $bind->getType();
-        if($type == ORM_Objects_Table::MANY_TO_MANY || $type == ORM_Objects_Table::ONE_TO_MANY) {
+        if($type == ORM_Table::MANY_TO_MANY || $type == ORM_Table::ONE_TO_MANY) {
             $typePrefix = "[]";
         } else {
             $typePrefix = "";
@@ -134,7 +136,7 @@ class ORM_Install implements Module_IInstall{
         return $out;
     }
 
-    protected static function getTextForVariable(ORM_Objects_Field $field, $postfix)
+    protected static function getTextForVariable(ORM_Table_Field $field, $postfix)
     {
         $enumValues = $field->getEnumValues();
         $name = $field->getName().$postfix;
@@ -151,10 +153,10 @@ class ORM_Install implements Module_IInstall{
         return $out;
     }
 
-    protected static function getTextForBindGetter(ORM_Objects_Bind $bind, $postfix)
+    protected static function getTextForBindGetter(ORM_Table_Bind $bind, $postfix)
     {
         $type = $bind->getType();
-        if($type == ORM_Objects_Table::MANY_TO_MANY || $type == ORM_Objects_Table::ONE_TO_MANY) {
+        if($type == ORM_Table::MANY_TO_MANY || $type == ORM_Table::ONE_TO_MANY) {
             $typePrefix = "[]";
         } else {
             $typePrefix = "";
@@ -174,10 +176,10 @@ class ORM_Install implements Module_IInstall{
         $text .="\t}\n";
         return $text;
     }
-    protected static function getTextForBindSetter(ORM_Objects_Bind $bind)
+    protected static function getTextForBindSetter(ORM_Table_Bind $bind)
     {
         $type = $bind->getType();
-        if($type == ORM_Objects_Table::MANY_TO_MANY || $type == ORM_Objects_Table::ONE_TO_MANY) {
+        if($type == ORM_Table::MANY_TO_MANY || $type == ORM_Table::ONE_TO_MANY) {
             $typePrefix = "[]";
         } else {
             $typePrefix = "";
@@ -197,7 +199,7 @@ class ORM_Install implements Module_IInstall{
         return $text;
     }
 
-    protected static function getTextForFieldGetter(ORM_Objects_Field $field, ORM_Objects_Table $table, $postfix)
+    protected static function getTextForFieldGetter(ORM_Table_Field $field, ORM_Table $table, $postfix)
     {
         $name = $field->getName().$postfix;
         $type = ORM_Install::defineFieldType($field);
@@ -222,7 +224,7 @@ class ORM_Install implements Module_IInstall{
         return $text;
     }
 
-    protected static function getLazyLoadTextForBind(ORM_Objects_Bind $bind, $postfix){
+    protected static function getLazyLoadTextForBind(ORM_Table_Bind $bind, $postfix){
         $propertyName = $bind->getLeftField();
         $text = "\t\tif(\$this->" . $propertyName . " === null){\n";
         $text .= "\t\t\t\$this->" . $propertyName . " = ORM::loadBinded('"
@@ -235,7 +237,7 @@ class ORM_Install implements Module_IInstall{
         return $text;
     }
 
-    protected static function getLazyLoadTextForField(ORM_Objects_Field $field, ORM_Objects_Table $table, $suffix){
+    protected static function getLazyLoadTextForField(ORM_Table_Field $field, ORM_Table $table, $suffix){
         $propertyName = $field->getName().$suffix;
 
 
@@ -248,7 +250,7 @@ class ORM_Install implements Module_IInstall{
         return $text;
     }
 
-    protected static function getTextForSetter(ORM_Objects_Field $field, ORM_Objects_Table $table, $suffix)
+    protected static function getTextForSetter(ORM_Table_Field $field, ORM_Table $table, $suffix)
     {
         $name = $field->getName().$suffix;
         $type = ORM_Install::defineFieldType($field);
@@ -282,9 +284,9 @@ class ORM_Install implements Module_IInstall{
     }
 
     /**
-     * @param $field ORM_Objects_Field
-     * @param $binds ORM_Objects_Bind[]
-     * @return null|ORM_Objects_Bind
+     * @param $field ORM_Table_Field
+     * @param $binds ORM_Table_Bind[]
+     * @return null|ORM_Table_Bind
      */
     private static function getBindForField($field, $binds)
     {
@@ -296,7 +298,7 @@ class ORM_Install implements Module_IInstall{
         return null;
     }
 
-    private static function defineFieldType(ORM_Objects_Field $field)
+    private static function defineFieldType(ORM_Table_Field $field)
     {
         $type = $field->getType();
         $string = array('varchar', 'enum', 'text');
@@ -316,7 +318,7 @@ class ORM_Install implements Module_IInstall{
 
     /**
      * Get method getter for primary key
-     * @param $field ORM_Objects_Field
+     * @param $field ORM_Table_Field
      * @param $postfix string
      * @return string
      */
@@ -331,6 +333,18 @@ class ORM_Install implements Module_IInstall{
         $text .= "\t}\n";
         $text .= "\t\n";
         return $text;
+    }
+
+    private static function isIndexExist($tableName, $fieldName)
+    {
+        $query = "SHOW INDEXES FROM ".$tableName;
+        $indexes = DB::getTable($query);
+        foreach($indexes as $index) {
+            if($index['Column_name'] == $fieldName) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -351,9 +365,9 @@ class ORM_Install implements Module_IInstall{
     {
         ob_start();
         echo '<h3>ForWeb framework ORM package</h3>';
-        echo "<p>Object relationship mapper package. Main idea of this package is in class ORM_Objects_Table.</p>";
-        echo "<p>Each instance of this class are equal to database table. It contain ORM_Objects_Field list,"
-            ." and ORM_Objects_Bind list. Field is equal to database field, and bind is equal to data base join.</p>";
+        echo "<p>Object relationship mapper package. Main idea of this package is in class ORM_Table.</p>";
+        echo "<p>Each instance of this class are equal to database table. It contain ORM_Table_Field list,"
+            ." and ORM_Table_Bind list. Field is equal to database field, and bind is equal to data base join.</p>";
         echo "<p>As usual, ORM tables instances stored as serialized string in cache folder. Use for it"
             ." ORM::saveTable() method. This method do 3 actions :</p>"
             ."<ul>"

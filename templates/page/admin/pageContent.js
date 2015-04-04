@@ -144,11 +144,15 @@ var PageContent = {
                 if(method.options.length == 0) {
                     var mod = p.get('.dynamicContent select[name="module"]');
                     var val = null;
-                    for(var o =0; 0<mod.options.length; o++){
-                        if(mod.options[o].value != 0) {
-                            val = mod.options[o].value;
-                            mod.options[o].selected = true;
-                            break;
+                    if(mod.value) {
+                        val = mod.value;
+                    } else {
+                        for (var o = 0; 0 < mod.options.length; o++) {
+                            if (mod.options[o].value != 0) {
+                                val = mod.options[o].value;
+                                mod.options[o].selected = true;
+                                break;
+                            }
                         }
                     }
                     if(val)Admin.setMethodsTo(method, val);

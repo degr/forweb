@@ -28,7 +28,6 @@ exit;
 
 
 function __autoload($class) {
-    //echo "__autoload function output: ".$class."<br/>";
     if (strpos($class, '_') !== false) {
         $path = strtolower($class);
         $parts = explode('_', $path);
@@ -45,6 +44,10 @@ function __autoload($class) {
         }
     }
     if(!is_file($file)){
+        if(is_file(ORM::getPersistExtendedObjectsFolder().$class.".php")){
+            require_once ORM::getPersistObjectsFolder().$class.".php";
+            return;
+        }
         if(is_file(ORM::getPersistObjectsFolder().$class.".php")){
             require_once ORM::getPersistObjectsFolder().$class.".php";
             return;

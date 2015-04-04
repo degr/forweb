@@ -190,21 +190,21 @@ class Core_Install implements Module_IInstall{
 
     private function getConfigTable()
     {
-        $table = new ORM_Objects_Table("config", 'config');
-        $id = new ORM_Objects_Field("id", "integer");
+        $table = new ORM_Table("config", 'config');
+        $id = new ORM_Table_Field("id", "integer");
         $id->setAutoIncrement()->setPrimary()->setLength(11);
         $table->addField($id);
 
-        $module = new ORM_Objects_Field("module", "varchar");
+        $module = new ORM_Table_Field("module", "varchar");
         $module->setLength(50);
         $module->setDefaultValue("");
         $table->addField($module);
 
-        $key = new ORM_Objects_Field("name", "varchar");
+        $key = new ORM_Table_Field("name", "varchar");
         $key->setLength(50);
         $table->addField($key);
 
-        $value = new ORM_Objects_Field("value", "varchar");
+        $value = new ORM_Table_Field("value", "varchar");
         $value->setLength(255);
         $table->addField($value);
 

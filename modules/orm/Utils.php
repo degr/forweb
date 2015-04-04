@@ -4,27 +4,29 @@ class ORM_Utils{
 
     /**
      * Load data from persistence storage
-     * @param ORM_Objects_Table $mainTable main query table.
-     * @param $tail string - any conditions
-     * @param $binds boolean - use binds on query, or not
+     * @param ORM_Table $mainTable main query table.
+     * @param $useBinds boolean - use binds on query, or not
      * @param $one - return array, or first row only
+     * @param $filters ORM_Query_Filter[]
+     * @param $sorters ORM_Query_Sorter[]
+     * @param $paginator ORM_Query_Paginator
      * @return ORM_Persistence_Base[]|ORM_Persistence_Base
      */
-    public static function load(ORM_Objects_Table $mainTable, $tail, $binds, $one){
-        $query = ORM_QueryBuilder::getLoadQuery($mainTable, $tail, $binds, $one);
+    public static function load(ORM_Table $mainTable, $one, $filters, $sorters, $paginator){
+        $query = ORM_QueryBuilder::getLoadQuery($mainTable, $filters, $sorters, $paginator);
         $result = DB::getTable($query);
         return ORM_Utils::resultToArray($mainTable, $result, $one);
     }
 
     /**
      * Transform assoc array into objects array
-     * @param ORM_Objects_Table $mainTable
+     * @param ORM_Table $mainTable
      * @param $result array data of previous query [[person_id=>1, person_name=>2, address_id=1, address_name='Lenina st 45']]
      * @param $one boolean - if true, will be returned one object, of false, array of objects
      * @return ORM_Persistence_Base|ORM_Persistence_Base[]
      * @throws Exception
      */
-    protected static function resultToArray(ORM_Objects_Table $mainTable, $result, $one){
+    protected static function resultToArray(ORM_Table $mainTable, $result, $one){
 
         $tables = array($mainTable);
         foreach($mainTable->getBinds() as $bind) {
@@ -35,9 +37,9 @@ class ORM_Utils{
         $orderedObject = ORM_Utils::buildOrderedObject($mainTable, $result, $tables);
 
 
-        /* @var $table ORM_Objects_Table */
+        /* @var $table ORM_Table */
         foreach($tables as $table) {
-            /* @var $bind ORM_Objects_Bind */
+            /* @var $bind ORM_Table_Bind */
             foreach ($table->getBinds() as $bind) {
                 if (empty($orderedObject[$bind->getRightTable()->getName()])) {
                     continue;
@@ -55,7 +57,7 @@ class ORM_Utils{
                         if($bind->getLazyLoad()){
                             continue;
                         }
-                        if ($bind->getType() == ORM_Objects_Table::ONE_TO_ONE || $bind->getType() == ORM_Objects_Table::MANY_TO_ONE) {
+                        if ($bind->getType() == ORM_Table::ONE_TO_ONE || $bind->getType() == ORM_Table::MANY_TO_ONE) {
                             if ($entity->$lKeyMethod() == $binded->$rKeyMethod()) {
                                 $entity->$lKeySetter($binded);
                                 break;
@@ -74,14 +76,15 @@ class ORM_Utils{
             }
         }
         if($one) {
-            return reset($orderedObject[$mainTable->getName()]);
+            $out = reset($orderedObject[$mainTable->getName()]);
+            return !empty($out)? $out : null;
         } else {
             return $orderedObject[$mainTable->getName()];
         }
 
     }
 
-    protected static function fromArrayToObject(ORM_Objects_Table $table, $row){
+    protected static function fromArrayToObject(ORM_Table $table, $row){
         $class = $table->getPersistClassName();
         $out = new $class();
 
@@ -102,11 +105,11 @@ class ORM_Utils{
 
     /**
      * Save one multy leveled data array. Structure element - PersistBase class object
-     * @param ORM_Objects_Table $mainTable
+     * @param ORM_Table $mainTable
      * @param $object ORM_Persistence_Base[]
      * @throws Exception
      */
-    public static function saveArray(ORM_Objects_Table $mainTable, $object){
+    public static function saveArray(ORM_Table $mainTable, $object){
         foreach($object as $value){
             if(is_array($value)){
                 ORM_Utils::saveArray($mainTable, $value);
@@ -134,10 +137,10 @@ class ORM_Utils{
 
     /**
      * Save or update PersistBase object
-     * @param ORM_Objects_Table $table
+     * @param ORM_Table $table
      * @param ORM_Persistence_Base $object
      */
-    public static function saveData(ORM_Objects_Table $table, ORM_Persistence_Base $object){
+    public static function saveData(ORM_Table $table, ORM_Persistence_Base $object){
         $valuesToInsert = array();
         $keysToInsert = array();
         $pairsToUpdate = array();
@@ -168,10 +171,10 @@ class ORM_Utils{
 
     /**
      * Set id to inserted object, if necessary
-     * @param ORM_Objects_Table $table
+     * @param ORM_Table $table
      * @param $object
      */
-    protected static function fixId(ORM_Objects_Table $table, $object){
+    protected static function fixId(ORM_Table $table, $object){
         $pkField = ORM_Utils::getPrimaryKeyField($table);
         $name = $pkField->getName();
         $getter = "get".ucfirst($name);
@@ -185,11 +188,11 @@ class ORM_Utils{
 
     /**
      * Delete object from data base
-     * @param ORM_Objects_Table $table
+     * @param ORM_Table $table
      * @param ORM_Persistence_Base $object
      * @return bool
      */
-    public static function delete(ORM_Objects_Table $table, ORM_Persistence_Base $object){
+    public static function delete(ORM_Table $table, ORM_Persistence_Base $object){
         $pkField = ORM_Utils::getPrimaryKeyField($table);
         $name = $pkField->getName();
         $getter = "get".ucfirst($name);
@@ -199,18 +202,18 @@ class ORM_Utils{
             $allBinds = array();
 
             foreach ($table->getBinds() as $bind) {
-                if ($bind->getType() == ORM_Objects_Table::ONE_TO_ONE
+                if ($bind->getType() == ORM_Table::ONE_TO_ONE
                 ) {
                     ORM_Utils::collectJoins($allBinds, $bind->getLeftTable());
                 }
-                if ($bind->getType() == ORM_Objects_Table::ONE_TO_MANY) {
+                if ($bind->getType() == ORM_Table::ONE_TO_MANY) {
                     foreach ($bind->loadBindedData($object->getPrimaryKey()) as $joined) {
                         ORM_Utils::delete($bind->getRightTable(), $joined);
                     }
                 }
             }
             $query = "DELETE ".$table->getName()." FROM ".$table->getName().' AS '.$table->getName();
-            /* @var $bind ORM_Objects_Bind */
+            /* @var $bind ORM_Table_Bind */
             foreach($allBinds as $bind) {
                 if($bind->getLeftTable()->getName() == $bind->getRightTable()->getName()){
                     //parent bind type
@@ -240,11 +243,11 @@ class ORM_Utils{
     }
 
     /**
-     * Get primary key field from ORM_Objects_Table object
-     * @param ORM_Objects_Table $table
-     * @return ORM_Objects_Field
+     * Get primary key field from ORM_Table object
+     * @param ORM_Table $table
+     * @return ORM_Table_Field
      */
-    public function getPrimaryKeyField(ORM_Objects_Table $table){
+    public function getPrimaryKeyField(ORM_Table $table){
         foreach($table->getFields() as $field){
             if($field->getPrimary()){
                 return $field;
@@ -255,12 +258,12 @@ class ORM_Utils{
 
     /**
      * Build ordered object before data transformation into Persist objects
-     * @param ORM_Objects_Table $mainTable
+     * @param ORM_Table $mainTable
      * @param $result
-     * @param $tables ORM_Objects_Table[]
+     * @param $tables ORM_Table[]
      * @return array
      */
-    private static function buildOrderedObject(ORM_Objects_Table $mainTable, $result, $tables)
+    private static function buildOrderedObject(ORM_Table $mainTable, $result, $tables)
     {
         $out = array();
         $out[$mainTable->getName()] = array();
@@ -284,13 +287,13 @@ class ORM_Utils{
     }
 
     /**
-     * @param $allBinds ORM_Objects_Bind[]
-     * @param $table ORM_Objects_Table
+     * @param $allBinds ORM_Table_Bind[]
+     * @param $table ORM_Table
      */
     private static function collectJoins(&$allBinds, $table)
     {
         foreach ($table->getBinds() as $localBind) {
-            if($localBind->getType() != ORM_Objects_Table::ONE_TO_ONE) {
+            if($localBind->getType() != ORM_Table::ONE_TO_ONE) {
                 continue;
             }
             foreach($allBinds as $storedBind) {
@@ -326,9 +329,29 @@ class ORM_Utils{
         }
     }
 
-    public function createTable(ORM_Objects_Table $table){
-        ORM_Install::createDBTable($table);
-        ORM_Install::serializeTable($table);
-        ORM_Install::createPersistanceClass($table);
+    /**
+     * Build object from json data
+     * @param $table ORM_Table
+     * @param $data array[id=1, name='Serg', birthdate='1986-02-21']
+     * @return array[0=>ORM_Persistence_Base, 1=>errors[]]
+     */
+    public static function buildObject($table, $data)
+    {
+        $objectClass = $table->getPersistClassName();
+        $object = new $objectClass;
+        $errors = array();
+
+        foreach($table->getFields() as $field) {
+            $name = $field->getName();
+            if (!isset($data[$name])) {
+                $data[$name] = null;
+            }
+            if ($field->validateValue($data[$name], $errors)) {
+                $setter = "set" . ucfirst($name);
+                $object->$setter($data[$name]);
+            }
+        }
+        return array($object, $errors);
     }
+
 }

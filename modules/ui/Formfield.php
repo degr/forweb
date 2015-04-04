@@ -42,7 +42,7 @@ class UI_Formfield{
 	public function getLayout(){return $this->layout;}
 	public function setLayout($layout){$this->layout = $layout;}
 
-	public function useField(ORM_Objects_Field $field, $tableName){
+	public function useField(ORM_Table_Field $field, $tableName){
 		$tag = $this->defineType($field->getType());
 		$this->setTag($tag);
 		if($tag == UI::TAG_SELECT){
@@ -53,7 +53,7 @@ class UI_Formfield{
 			$this->setAttribute('type', 'text');
 		}
 		
-		$this->setId(ORM_Objects_Table::PERSIST_CLASS_PREFIX."_".$tableName."_".$field->getName());
+		$this->setId(ORM_Table::PERSIST_CLASS_PREFIX."_".$tableName."_".$field->getName());
 		$this->setTitle($field->getName());
 		$this->setName($field->getName());
 		//$this->defineValidation($field);

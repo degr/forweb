@@ -8,7 +8,7 @@
 class Service{
     /**
      * Service main table
-     * @var ORM_Objects_Table
+     * @var ORM_Table
      */
     protected $table;
 
@@ -35,8 +35,8 @@ class Service{
             ORM::saveArray($this->getTable(), $object);
             return;
         }
-        if(!is_subclass_of ($object, 'PersistBase')){
-            throw new Exception("This is not persistence object!");
+        if(!is_subclass_of ($object, 'ORM_Persistence_Base')){
+            throw new FwException("This is not persistence object!");
         }
         ORM::saveData($this->getTable(), $object);
     }
@@ -49,71 +49,52 @@ class Service{
      * @throws Exception if result set contain more than one row
      */
     public function load($key) {
-        $tail = " WHERE ".$this->table->getPrimaryKey()."='".DB::escape($key)."'";
-        return $this->loadWithCondition($tail);
+        $filter = new ORM_Query_Filter(
+            $this->table->getName(),
+            $this->table->getPrimaryKey(),
+            ORM_Query_Filter::TYPE_EQUAL
+        );
+        $filter->setActive(true);
+        $filter->setValue($key);
+        return $this->loadOneWithFilters($filter);
     }
 
     /**
      * Load data from database using condition
      *
-     * @param $tail string as example: 'where id=10 order by date'
+     * @param ORM_Query_Filter|ORM_Query_Filter[] $filters
      * @return ORM_Persistence_Base
-     * @throws Exception if result set contain more than one row
      */
-    public function loadWithCondition($tail) {
-        $out = ORM::load($this->table->getName(), $tail, false, true);
-        $count = count($out);
-        if( $count > 1){
-            throw new Exception('query return more than one row');
-        }elseif ($count === 0){
-            return null;
-        }else{
-            return $out;
-        }
+    public function loadOneWithFilters($filters) {
+        return ORM::load($this->table->getName(), true, $filters, null, null);
     }
 
     /**
      * Load data from database using keys (id's) with/without setted order
      *
      * @param array $keys [1,3,5,6,7]
-     * @param string $order 'ORDER BY date'
+     * @param ORM_Query_Sorter|ORM_Query_Sorter[]|null
      * @return ORM_Persistence_Base[]
      */
-    public function loadUsingKeys(array $keys, $order="") {
-        foreach($keys as &$key){
-            $key = DB::escape($key);
-        }
-        unset($key);
-        $tail = "WHERE ".$this->table->getPrimaryKey()." IN ('".implode("','",$keys)."') ".$order;
-        return $this->loadAll($tail);
+    public function loadUsingKeys(array $keys, $sorters = null) {
+        $filter = new ORM_Query_Filter($this->table->getName(), $this->table->getPrimaryKey(), ORM_Query_Filter::TYPE_IN);
+        $filter->setValue($keys);
+        $filter->setActive(true);
+        return ORM::load($this->table->getName(), true, $filter, $sorters, null);
     }
 
-    /**
-     * Load data with joins
-     * @param $tail string
-     * @return ORM_Persistence_Base[]
-     * @throws Exception if result set contain more than one row
-     */
-    public function loadJoined($tail) {
-        $out = ORM::load($this->table, $tail, true, true);
-        $count = count($out[$this->table->getName()]);
-        if( $count > 1){
-            throw new Exception('query return more than one row');
-        }elseif ($count === 0){
-            return null;
-        }else{
-            $out[$this->table->getName()] = $out[$this->table->getName()][0];
-            return $out;
-        }
-    }
 
     /**
+     * **
      * Load all data with/without setted condition
-     * @param $tail 'WHERE name like 'a%' ORDER BY birthday DESC'
+     *
+     * @param ORM_Query_Filter|ORM_Query_Filter[]|null $filters
+     * @param ORM_Query_Sorter|ORM_Query_Sorter[]|null $sorters
+     * @param ORM_Query_Paginator|null $pager
      * @return ORM_Persistence_Base[]
      */
-    public function loadAll($tail) {
-        return ORM::load($this->table->getName(), $tail, true, false);
+    public function loadAll($filters = null, $sorters = null, $pager = null) {
+        return ORM::load($this->table->getName(), false, $filters, $sorters, $pager);
     }
 
     /**
@@ -128,7 +109,7 @@ class Service{
 
     /**
      * Get this module main table
-     * @return ORM_Objects_Table
+     * @return ORM_Table
      */
     public function getTable(){
         return $this->table;

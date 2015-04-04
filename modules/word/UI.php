@@ -192,7 +192,7 @@ class Word_UI {
         $name = $table->getField('name');
         $value = $table->getField('value');
 
-        $pseudo = new ORM_Objects_Table('pseudo_languages');
+        $pseudo = new ORM_Table('pseudo_languages');
         $pseudo->addField($name);
         $pseudo->addField($value);
         $form = UI::getFormForTable($pseudo, array(), UI::LAYOUT_BLOCK);

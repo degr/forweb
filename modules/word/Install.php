@@ -22,13 +22,13 @@ class Word_Install implements Module_IInstall{
         ORM::registerTableOnFly($wordModules);
         ORM::registerTableOnFly($word);
 
-        $word->bindTable('language', 'id', $languages->getName(), ORM_Objects_Table::MANY_TO_ONE, true, true);
-        $word->bindTable('module', 'id', $wordModules->getName(), ORM_Objects_Table::MANY_TO_ONE, true, true);
+        $word->bindTable('language', 'id', $languages->getName(), ORM_Table::MANY_TO_ONE, true, true);
+        $word->bindTable('module', 'id', $wordModules->getName(), ORM_Table::MANY_TO_ONE, true, true);
 
         ORM::createTable($languages);
         ORM::createTable($wordModules);
         ORM::createTable($word);
-
+/*
         $langInstaller = new Word_Install_Language();
         $languages = $langInstaller->install();
 
@@ -36,7 +36,7 @@ class Word_Install implements Module_IInstall{
         $modules = $dictionariesInstaller->install();
 
         $wordInstaller = new Word_Install_Words();
-        $wordInstaller->install($languages, $modules);
+        $wordInstaller->install($languages, $modules);*/
     }
 
     /**
@@ -68,16 +68,16 @@ class Word_Install implements Module_IInstall{
 
 
     private function getLanguagesTable(){
-        $languages = new ORM_Objects_Table("languages");
-        $id = new ORM_Objects_Field('id', 'integer');
+        $languages = new ORM_Table("languages");
+        $id = new ORM_Table_Field('id', 'integer');
         $id->setAutoIncrement()->setPrimary();
         $languages->addField($id);
 
-        $locale = new ORM_Objects_Field('locale', 'varchar');
+        $locale = new ORM_Table_Field('locale', 'varchar');
         $locale->setLength(2);
         $languages->addField($locale);
 
-        $isDefault = new ORM_Objects_Field('is_default', 'bit');
+        $isDefault = new ORM_Table_Field('is_default', 'bit');
         $isDefault->setLength(1);
         $languages->addField($isDefault);
         return $languages;
@@ -85,27 +85,27 @@ class Word_Install implements Module_IInstall{
 
     private function getWordTable()
     {
-        $out = new ORM_Objects_Table("word");
-        $id = new ORM_Objects_Field('id', 'integer');
+        $out = new ORM_Table("word");
+        $id = new ORM_Table_Field('id', 'integer');
         $id->setAutoIncrement()->setPrimary();
         $out->addField($id);
 
-        $language = new ORM_Objects_Field('language', 'integer');
+        $language = new ORM_Table_Field('language', 'integer');
         $language->setLength(11)
             ->setIndex(true);
         $out->addField($language);
 
-        $module = new ORM_Objects_Field('module', 'varchar');
+        $module = new ORM_Table_Field('module', 'varchar');
         $module->setLength(100)
             ->setIndex(true);
         $out->addField($module);
 
-        $name = new ORM_Objects_Field('name', 'varchar');
+        $name = new ORM_Table_Field('name', 'varchar');
         $name->setLength(100)
             ->setIndex(true);
         $out->addField($name);
 
-        $value = new ORM_Objects_Field('value', 'text');
+        $value = new ORM_Table_Field('value', 'text');
         $out->addField($value);
 
         return $out;
@@ -113,12 +113,12 @@ class Word_Install implements Module_IInstall{
 
     private function getModulesTable()
     {
-        $out = new ORM_Objects_Table("word_modules");
-        $id = new ORM_Objects_Field('id', 'integer');
+        $out = new ORM_Table("word_modules");
+        $id = new ORM_Table_Field('id', 'integer');
         $id->setAutoIncrement()->setPrimary();
         $out->addField($id);
 
-        $module = new ORM_Objects_Field('module', 'varchar');
+        $module = new ORM_Table_Field('module', 'varchar');
         $module->setLength(50)
             ->setIndex(true);
         $out->addField($module);

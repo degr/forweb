@@ -1,5 +1,5 @@
 <?
-class ORM_Objects_Field{
+class ORM_Table_Field{
 	/**
 	 * @var string
 	 */
