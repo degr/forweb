@@ -83,13 +83,28 @@ All options required for stable system work.'),
             'back_to_current_dict'=>array('language'=>'2', 'module'=>'4','name'=>'back_to_current_dict', 'value'=>'Back to current dictionary'),
             'word_name_filter'=>array('language'=>'2', 'module'=>'4','name'=>'word_name_filter', 'value'=>'Filter by name'),
             'word_value_filter'=>array('language'=>'2', 'module'=>'4','name'=>'word_value_filter', 'value'=>'Filter by value'),
+            'back_to_page_blocks'=>array('language'=>'2', 'module'=>'4','name'=>'back_to_page_blocks', 'value'=>'Back, to page edit form'),
+            'include_not_saved'=>array('language'=>'2', 'module'=>'4','name'=>'include_not_saved', 'value'=>'You can\'t edit include content before include save.'),
+            'panel_edit_files'=>array('language'=>'2', 'module'=>'4','name'=>'panel_edit_files', 'value'=>'Files'),
+            'panel_word_keys'=>array('language'=>'2', 'module'=>'4','name'=>'panel_word_keys', 'value'=>'Show keys'),
+            'panel_file_images'=>array('language'=>'2', 'module'=>'4','name'=>'panel_file_images', 'value'=>'Images'),
+            'panel_file_templates'=>array('language'=>'2', 'module'=>'4','name'=>'panel_file_templates', 'value'=>'Templates'),
+            'panel_file_js'=>array('language'=>'2', 'module'=>'4','name'=>'panel_file_js', 'value'=>'JavaScript'),
+            'panel_file_css'=>array('language'=>'2', 'module'=>'4','name'=>'panel_file_css', 'value'=>'Styles (css)'),
+            'files_delete_file'=>array('language'=>'2', 'module'=>'4','name'=>'files_delete_file', 'value'=>'Are you realy want to delete this file? Operation can not be undone.'),
+            'file_path_empty'=>array('language'=>'2', 'module'=>'4','name'=>'file_path_empty', 'value'=>'File path is empty.'),
+            'file_not_deleted'=>array('language'=>'2', 'module'=>'4','name'=>'file_not_deleted', 'value'=>'Can\'t delete file. Perhaps you have no access, or file is not exist.'),
+            'file_deleted'=>array('language'=>'2', 'module'=>'4','name'=>'file_deleted', 'value'=>'File was deleted.'),
+            'file_uploaded'=>array('language'=>'2', 'module'=>'4','name'=>'file_uploaded', 'value'=>'File uploaded to server.'),
+            'file_or_folder_exist'=>array('language'=>'2', 'module'=>'4','name'=>'file_or_folder_exist', 'value'=>'File with this name already exist in current folder. Are you want to continue? (old file will be deleted)'),
+            'enter_new_file_name'=>array('language'=>'2', 'module'=>'4','name'=>'enter_new_file_name', 'value'=>'Enter new file (directory) name.'),
         );
         $check = DB::getColumn('SELECT name FROM word WHERE language = 2 AND module = "4"', "module", "name");
         foreach ($check as $name) {
             unset($words[$name]);
         }
         foreach($words as $word) {
-            DB::query($insertQuery."(".$word['language'], $word['module'], $word['name'], $word['value']);
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
         }
         $words = array(
             'panel_new_page'=>array('language'=>'1', 'module'=>'4','name'=>'panel_new_page', 'value'=>'Создать страницу'),
@@ -163,13 +178,28 @@ All options required for stable system work.'),
             'back_to_current_dict'=>array('language'=>'1', 'module'=>'4','name'=>'back_to_current_dict', 'value'=>'Назад, к текущему словарю'),
             'word_name_filter'=>array('language'=>'1', 'module'=>'4','name'=>'word_name_filter', 'value'=>'Фильтр по имени'),
             'word_value_filter'=>array('language'=>'1', 'module'=>'4','name'=>'word_value_filter', 'value'=>'Фильтр по значению'),
+            'back_to_page_blocks'=>array('language'=>'1', 'module'=>'4','name'=>'back_to_page_blocks', 'value'=>'Назад, к редактированию страницы'),
+            'include_not_saved'=>array('language'=>'1', 'module'=>'4','name'=>'include_not_saved', 'value'=>'Нельзя редактировать контент инклуда, если он не был сохранен.'),
+            'panel_edit_files'=>array('language'=>'1', 'module'=>'4','name'=>'panel_edit_files', 'value'=>'Файлы'),
+            'panel_word_keys'=>array('language'=>'1', 'module'=>'4','name'=>'panel_word_keys', 'value'=>'Показать ключи'),
+            'panel_file_images'=>array('language'=>'1', 'module'=>'4','name'=>'panel_file_images', 'value'=>'Картинки'),
+            'panel_file_templates'=>array('language'=>'1', 'module'=>'4','name'=>'panel_file_templates', 'value'=>'Шаблоны'),
+            'panel_file_js'=>array('language'=>'1', 'module'=>'4','name'=>'panel_file_js', 'value'=>'JavaScript'),
+            'panel_file_css'=>array('language'=>'1', 'module'=>'4','name'=>'panel_file_css', 'value'=>'Стили (css)'),
+            'files_delete_file'=>array('language'=>'1', 'module'=>'4','name'=>'files_delete_file', 'value'=>'Действительно удалить этот файл? Операцию нельзя будет отменить.'),
+            'file_path_empty'=>array('language'=>'1', 'module'=>'4','name'=>'file_path_empty', 'value'=>'Не указан путь к удаляемому файлу.'),
+            'file_not_deleted'=>array('language'=>'1', 'module'=>'4','name'=>'file_not_deleted', 'value'=>'Не удалось удалить файл. Возможно нет доступа, или файл не существует.'),
+            'file_deleted'=>array('language'=>'1', 'module'=>'4','name'=>'file_deleted', 'value'=>'Файл успешно удален.'),
+            'file_uploaded'=>array('language'=>'1', 'module'=>'4','name'=>'file_uploaded', 'value'=>'Файл загружен на сервер.'),
+            'file_or_folder_exist'=>array('language'=>'1', 'module'=>'4','name'=>'file_or_folder_exist', 'value'=>'Файл с таким именем уже существует в данной папке. Продолжить? (старый файл отправится в ад, например).'),
+            'enter_new_file_name'=>array('language'=>'1', 'module'=>'4','name'=>'enter_new_file_name', 'value'=>'Введите название нового файла (папки)'),
         );
         $check = DB::getColumn('SELECT name FROM word WHERE language = 1 AND module = "4"', "module", "name");
         foreach ($check as $name) {
             unset($words[$name]);
         }
         foreach($words as $word) {
-            DB::query($insertQuery."(".$word['language'], $word['module'], $word['name'], $word['value']);
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
         }
         $words = array(
             'submit'=>array('language'=>'2', 'module'=>'5','name'=>'submit', 'value'=>'Submit'),
@@ -183,7 +213,7 @@ All options required for stable system work.'),
             unset($words[$name]);
         }
         foreach($words as $word) {
-            DB::query($insertQuery."(".$word['language'], $word['module'], $word['name'], $word['value']);
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
         }
         $words = array(
             'submit'=>array('language'=>'1', 'module'=>'5','name'=>'submit', 'value'=>'Отправить'),
@@ -197,7 +227,84 @@ All options required for stable system work.'),
             unset($words[$name]);
         }
         foreach($words as $word) {
-            DB::query($insertQuery."(".$word['language'], $word['module'], $word['name'], $word['value']);
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
+        }
+        $words = array(
+            'dir_write_forbidden'=>array('language'=>'2', 'module'=>'11','name'=>'dir_write_forbidden', 'value'=>'This folder protected from writing.'),
+            'file_save'=>array('language'=>'2', 'module'=>'11','name'=>'file_save', 'value'=>'File saved'),
+        );
+        $check = DB::getColumn('SELECT name FROM word WHERE language = 2 AND module = "11"', "module", "name");
+        foreach ($check as $name) {
+            unset($words[$name]);
+        }
+        foreach($words as $word) {
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
+        }
+        $words = array(
+            'dir_write_forbidden'=>array('language'=>'1', 'module'=>'11','name'=>'dir_write_forbidden', 'value'=>'Директория защищена от записи.'),
+            'file_save'=>array('language'=>'1', 'module'=>'11','name'=>'file_save', 'value'=>'Файл сохранен'),
+        );
+        $check = DB::getColumn('SELECT name FROM word WHERE language = 1 AND module = "11"', "module", "name");
+        foreach ($check as $name) {
+            unset($words[$name]);
+        }
+        foreach($words as $word) {
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
+        }
+        $words = array(
+            '12'=>array('language'=>'2', 'module'=>'10','name'=>'12', 'value'=>'include content 12'),
+            '4'=>array('language'=>'2', 'module'=>'10','name'=>'4', 'value'=>'sdasklfjsakfjsadklfsadfds'),
+            '15'=>array('language'=>'2', 'module'=>'10','name'=>'15', 'value'=>'
+Congratulations, just now you install ForWeb framework
+
+
+This PHP based framework have modules structure. It\\\'s scalable flexible, and simple in understanding and controlling by administrator. Also, this framework writed for single-page applications
+
+
+For quick strart user must understand how does it create pages, and understand what admin panel doing. As ususal, adin panel is fixes at left side of your screen.
+
+
+Data output system have unusual but simple structure and each developer, who will maintenace application must understand how it work. ForWeb framework documentation is available on http://forweb.org/.
+
+
+Administator panel provide functionality for page creating and editing, page templates creating and editing, access operations, such as allow/disallow access to user group, new user groups creating, provide access to some files, that stored on your hosting, upload images and some more. Also, ForWeb have multy-language support, and using admin panel you can edit translations.
+
+'),
+        );
+        $check = DB::getColumn('SELECT name FROM word WHERE language = 2 AND module = "10"', "module", "name");
+        foreach ($check as $name) {
+            unset($words[$name]);
+        }
+        foreach($words as $word) {
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
+        }
+        $words = array(
+            '12'=>array('language'=>'1', 'module'=>'10','name'=>'12', 'value'=>'Содержимое инклуда 12'),
+            '2'=>array('language'=>'1', 'module'=>'10','name'=>'2', 'value'=>''),
+            '4'=>array('language'=>'1', 'module'=>'10','name'=>'4', 'value'=>'adsiofhsdkhdskjfhsdkjfhdsjk'),
+            '15'=>array('language'=>'1', 'module'=>'10','name'=>'15', 'value'=>'
+Вы только что установили ForWeb фреймворк
+
+
+Этот фреймворк написан на PHP, и имеет модульную структуру. Его легко расширять новым функционалом, он удобен в использовании для конечного пользователя, и рассчитан на single-page приложения.
+
+
+Для начала работы необходимо понять, каким образом работает приложение, и научится работать с панелью администратора, которая по умолчанию находится слева.
+
+
+Система вывода данных имеет довольно сложную структуру, знать которую должен программист, который будет заниматься сопровождением приложения, подробная документация находится по адресу http://forweb.org/.
+
+
+Панель администратора позволяет создавать страницы, редактировать их, создавать новые шаблоны для страниц, управлять доступом пользователей, создавать новые группы пользователей, менять настройки приложения, редактировать некоторые файлы, которые хранятся на хостинге, заливать картинки. Помимо этого, ForWeb имеет мультиязыковую поддержку, и через админ панель можно с переводами.
+
+'),
+        );
+        $check = DB::getColumn('SELECT name FROM word WHERE language = 1 AND module = "10"', "module", "name");
+        foreach ($check as $name) {
+            unset($words[$name]);
+        }
+        foreach($words as $word) {
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
         }
         $words = array(
             'logout'=>array('language'=>'2', 'module'=>'3','name'=>'logout', 'value'=>'Logout'),
@@ -209,7 +316,7 @@ All options required for stable system work.'),
             unset($words[$name]);
         }
         foreach($words as $word) {
-            DB::query($insertQuery."(".$word['language'], $word['module'], $word['name'], $word['value']);
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
         }
         $words = array(
             'logout'=>array('language'=>'1', 'module'=>'3','name'=>'logout', 'value'=>'Выход'),
@@ -221,7 +328,7 @@ All options required for stable system work.'),
             unset($words[$name]);
         }
         foreach($words as $word) {
-            DB::query($insertQuery."(".$word['language'], $word['module'], $word['name'], $word['value']);
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
         }
         $words = array(
             'module_header_module'=>array('language'=>'2', 'module'=>'1','name'=>'module_header_module', 'value'=>'Module name'),
@@ -239,7 +346,7 @@ All options required for stable system work.'),
             unset($words[$name]);
         }
         foreach($words as $word) {
-            DB::query($insertQuery."(".$word['language'], $word['module'], $word['name'], $word['value']);
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
         }
         $words = array(
             'module_header_module'=>array('language'=>'1', 'module'=>'1','name'=>'module_header_module', 'value'=>'Название модуля'),
@@ -257,7 +364,7 @@ All options required for stable system work.'),
             unset($words[$name]);
         }
         foreach($words as $word) {
-            DB::query($insertQuery."(".$word['language'], $word['module'], $word['name'], $word['value']);
+            DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
         }
     }
 }

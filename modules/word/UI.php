@@ -132,10 +132,10 @@ class Word_UI {
         return $out;
     }
 
-    public function onAjaxGetTermForm()
+    public function onAjaxGetTermForm($id, $module)
     {
-        $id = intval($_POST['id']);
-        $module = intval($_POST['module']);
+        $id = intval($id);
+        $module = intval($module);
         if(empty($module)) {
             return array();
         }

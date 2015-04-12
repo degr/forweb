@@ -28,7 +28,7 @@ class Word_Install implements Module_IInstall{
         ORM::createTable($languages);
         ORM::createTable($wordModules);
         ORM::createTable($word);
-/*
+
         $langInstaller = new Word_Install_Language();
         $languages = $langInstaller->install();
 
@@ -36,7 +36,7 @@ class Word_Install implements Module_IInstall{
         $modules = $dictionariesInstaller->install();
 
         $wordInstaller = new Word_Install_Words();
-        $wordInstaller->install($languages, $modules);*/
+        $wordInstaller->install($languages, $modules);
     }
 
     /**

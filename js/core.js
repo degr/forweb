@@ -58,20 +58,14 @@ var Ajax = {
 		
 		req.onloadend = function() {
 			if(success){
-				var answer;
-				if(response == 'json'){
-					answer = JSON.parse(req.responseText);
-				}else{
-					answer = req.responseText.replace(/(^\s*"|"\s*$)/g, "");
-				}
+				var answer = response == 'text' ? req.responseText : JSON.parse(req.responseText);
 				success(answer, req);
 			}
 		};
 
 		req.open(reqType, url, true);
 		//	if (reqType.toLowerCase() == "post") {
-		req.setRequestHeader('Content-Type',
-					'application/x-www-form-urlencoded');
+		req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		//}
 		if (!data) {
 			req.send(null);

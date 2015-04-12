@@ -238,7 +238,6 @@ var Word = {
         Ajax.request(params);
     },
     buildTermForm: function(r){
-        console.log('asfasdfasd');
         Admin.nowDisplayed = 'showTermsForm';
         var form = UI.build(r.form);
         form.setAttribute('onsubmit', 'Word.submitTerm(this);return false;');
@@ -248,13 +247,13 @@ var Word = {
         }else{
             onclick = 'Word.showModulesForm()';
         }
-        var back = newElement('a', {'href':'#',onclick:onclick});
+        var back = newElement('a', {'href':'#',onclick:onclick, 'class':'backlink'});
         back.innerHTML = Admin.getWord('back_to_current_dict');
-        var reset = newElement('input',{value:Admin.getWord('word_reset_term'),type:'button','onclick':'Word.resetTermForm()'})
+        var reset = newElement('input',{value:Admin.getWord('word_reset_term'),type:'button','class':'new_term','onclick':'Word.resetTermForm()'})
         form.appendChild(reset);
         var div = newElement('div', {}, [back, form]);
-
         Admin.getWindow().setContent(div);
+        return div;
     },
     submitTerm: function(form){
         var data = Core.serialize(form);
@@ -288,8 +287,18 @@ var Word = {
             page: paginator.getAttribute('data-page'),
             oldFilters: paginator.getAttribute('data-filters'),
             module: document.body.get('#word_terms_overview').getAttribute('data-module')
-        }
+        };
         Word.showModuleTerms(null, filters.module, null, JSON.stringify(filters));
+    },
+    showThisPageKeys: function(){
+        if(document.location.search.indexOf("?") != 0) {
+            document.location.search = "?show_keys";
+        } else {
+            if(document.location.search.indexOf("&show_keys") == -1) {
+                document.location.search += "&show_keys";
+            }
+        }
+        console.log(document.location);
     }
 };
 //{/literal}

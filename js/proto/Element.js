@@ -111,7 +111,7 @@ Element.prototype.moveUp = function(){
     var l=n.length;
     var t=null;
     for(var i=0;i<l;i++){if(n[i]===this)break;t=n[i];}
-    if(t!=null)p.insertBefore(this,t);
+    if(t!=null){p.insertBefore(this,t);return true;}else return false;
 }
 Element.prototype.moveDown = function(){
     var p=this.parentNode;
@@ -119,7 +119,7 @@ Element.prototype.moveDown = function(){
     var l=n.length;
     var t=null;
     for(var i=0;i<l;i++){if(n[i]!==this)continue;if(i+1<l)t=n[i+1];break;}
-    if(t!=null)p.insertBefore(t,this);
+    if(t!=null){p.insertBefore(t,this);return true;}else return false;
 }
 Element.prototype.up = function(s){
     if(!s)return this.parentNode;

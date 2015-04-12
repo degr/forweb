@@ -8,8 +8,8 @@
 
 class Word_Install_Dictionary {
     public function install(){
-        $requiredModules = array('admin', 'common', 'user', 'word');
-        $query = "SELECT id, module FROM word_modules WHERE module IN ('".implode("','".$requiredModules)."')";
+        $requiredModules = array(Core::SYS_INCLUDES, 'admin', 'common', 'user', 'word');
+        $query = "SELECT id, module FROM word_modules WHERE module IN ('".implode("','", $requiredModules)."')";
         $modules = DB::getAssoc($query,'module','id');
         foreach($requiredModules as $module) {
             if(empty($modules[$module])) {

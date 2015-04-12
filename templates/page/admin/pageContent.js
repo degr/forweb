@@ -138,30 +138,49 @@ var PageContent = {
             el.setAttribute("data-shown", '1');
             var i = p.parentNode.get('select[name="type"]').value;
 
-            if (i == 'executable') {
-                p.get('.dynamicContent').show();
-                var method = p.get('.dynamicContent select[name="method"]');
-                if(method.options.length == 0) {
-                    var mod = p.get('.dynamicContent select[name="module"]');
-                    var val = null;
-                    if(mod.value) {
-                        val = mod.value;
-                    } else {
-                        for (var o = 0; 0 < mod.options.length; o++) {
-                            if (mod.options[o].value != 0) {
-                                val = mod.options[o].value;
-                                mod.options[o].selected = true;
-                                break;
+            switch (i) {
+                case 'executable':
+                    p.get('.dynamicContent').show();
+                    var method = p.get('.dynamicContent select[name="method"]');
+                    if(method.options.length == 0) {
+                        var mod = p.get('.dynamicContent select[name="module"]');
+                        var val = null;
+                        if(mod.value) {
+                            val = mod.value;
+                        } else {
+                            for (var o = 0; 0 < mod.options.length; o++) {
+                                if (mod.options[o].value != 0) {
+                                    val = mod.options[o].value;
+                                    mod.options[o].selected = true;
+                                    break;
+                                }
                             }
                         }
+                        if(val)Admin.setMethodsTo(method, val);
                     }
-                    if(val)Admin.setMethodsTo(method, val);
-                }
-            } else {
-                var ta = PageContent.getStaticContentTextarea(p.get('.staticContent').get('input'));
-                ta.show();
-                p.up('form').appendChild(ta)
-                p.get('.dynamicContent').hide();
+                    break;
+                case 'text':
+                case 'html':
+                    var id = p.parentNode.get('input[name="id"]').value;
+                    if(!id) {
+                        DialogWindow.Alert('include_not_saved', Admin.getWord('include_not_saved'));
+                        PageContent.showContent(el);
+                        return;
+                    }
+                    var params = {
+                        url:  Admin.url + "page/getIncludeTextForm?ajax=1",
+                        type: "POST",
+                        success: PageContent.buildTermForm,
+                        response: 'json',
+                        data: {id:id}
+                    };
+                    Ajax.request(params);
+                    break;
+                default:
+                    var ta = PageContent.getStaticContentTextarea(p.get('.staticContent').get('input'));
+                    ta.show();
+                    p.up('form').appendChild(ta)
+                    p.get('.dynamicContent').hide();
             }
         } else {
             el.innerHTML = Admin.getWord('show_content');
@@ -172,6 +191,13 @@ var PageContent = {
                 PageContent.staticContentTextarea.hide();
             }
         }
+    },
+    buildTermForm: function(r){
+        var form = Word.buildTermForm(r);
+        var back = form.get('.backlink');
+        back.setAttribute('onclick', 'Admin.pageContent();return false;');
+        back.innerHTML = Admin.getWord('back_to_page_blocks');
+        form.get('.new_term').remove();
     },
     getAddTemplateButton: function(){
         return newElement("input", {type:'button',onclick:'PageContent.addInclude(this);',value:'+','class':'addNewInclude'});

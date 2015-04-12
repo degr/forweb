@@ -43,7 +43,7 @@ class Page_Admin_Page{
 
         $form['fields']['submit'] = UI::getSubmitButton();
         $form['fields']['submit']['layout'] = $layout;
-
+        $form['fields']['position']['attributes']['type'] = "hidden";
         if($page != null){
             $vars = $page->toArray();
             foreach($vars as $key => $value){
@@ -132,6 +132,10 @@ class Page_Admin_Page{
                     }
 
                     $check = $pageService->loadOneWithFilters($filters);
+                    $position = $page->getPosition();
+                    if(empty($position)) {
+                        $page->setPosition(0);
+                    }
                     if($check === null) {
                         ORM::saveData($table, $page);
                         if(empty($id)){
@@ -141,6 +145,7 @@ class Page_Admin_Page{
                             $saveText = Word::get('admin', 'page_modified');
                             $savedStatus = false;
                         }
+                        $this->updatePagePositions($page);
                     } else {
                         $saveText = Word::get('admin','page_url_not_unique');
                         $savedStatus = false;
@@ -178,5 +183,66 @@ class Page_Admin_Page{
             $form['savedStatus'] = $savedStatus;
         }
         return $form;
+    }
+
+    /**
+     * @param $page PersistPages
+     */
+    private function updatePagePositions($page)
+    {
+        $position = $page->getPosition();
+        $positions = DB::getAssoc(
+            "select id, position from pages where parent = ".$page->getParent()." ORDER BY position",
+            "id",
+            "position"
+        );
+        $check = true;
+        foreach($positions as $key => $pos) {
+            if($pos == $position && $key != $page->getId()) {
+                $check = false;
+                break;
+            }
+        }
+        if(!$check) {
+            $i = 0;
+            foreach($positions as $key => $pos) {
+                DB::query("UPDATE pages set position = ".$i." where id=".$key);
+                $i++;
+            }
+        }
+    }
+
+    public function changePagePositions()
+    {
+        $parent = intval($_POST['parent']);
+        $data = json_decode($_POST['items'], true);
+        if(empty($parent)) {
+            return;
+        }
+        $ids = DB::getColumn("select id from pages where parent = ".$parent);
+        if(count($ids) != count($data)) {
+            return;
+        }
+
+        foreach($ids as $id) {
+            if(!isset($data[$id])) {
+                return;
+            }else {
+                $data[$id] = intval($data[$id]);
+            }
+        }
+        $i = 0;
+        debug($data);
+        foreach($data as $value) {
+            if(!in_array($i, $data)) {
+                return;
+            }
+            $i++;
+        }
+
+        var_dump($data);
+        foreach($data as $key => $value) {
+            DB::query("update pages set position = ".$value." where id = ".$key);
+        }
     }
 }

@@ -15,6 +15,7 @@ class Page extends Module{
 	{
 		if($this->ajaxHandlers == null) {
 			$this->setHandler("editPage", new AjaxHandler("editPage", AjaxHandler::JSON));
+			$this->setHandler("changePagePositions", new AjaxHandler("changePagePositions", AjaxHandler::JSON));
 			$this->setHandler("showPagesTree", new AjaxHandler("getPagesList", AjaxHandler::JSON));
 			$this->setHandler("editTemplateForm", new AjaxHandler("editTemplateForm", AjaxHandler::JSON));
 			$this->setHandler("processPageContent", new AjaxHandler("processPageContent", AjaxHandler::JSON));
@@ -22,6 +23,7 @@ class Page extends Module{
 			$this->setHandler("deletePageInclude", new AjaxHandler("deletePageInclude", AjaxHandler::JSON));
 			$this->setHandler("getMethodsList", new AjaxHandler("getMethodsList", AjaxHandler::JSON));
 			$this->setHandler("getModulesList", new AjaxHandler("getModulesList", AjaxHandler::JSON));
+			$this->setHandler("getIncludeTextForm", new AjaxHandler("getIncludeTextForm", AjaxHandler::JSON));
 
 			$this->setHandler("createTemplate", new AjaxHandler("createTemplate", AjaxHandler::JSON));
 			$this->setHandler("editTemplate", new AjaxHandler("editTemplate", AjaxHandler::JSON));
@@ -263,4 +265,15 @@ class Page extends Module{
 		return $provider->updateBlock();
 	}
 
+	public function getIncludeTextForm(){
+		Access::denied("can_edit_pages");
+		$provider = new Page_Admin_Includes();
+		return $provider->getIncludeTextForm();
+	}
+
+	public function changePagePositions(){
+		Access::denied("can_edit_pages");
+		$provider = new Page_Admin_Page();
+		return $provider->changePagePositions();
+	}
 }

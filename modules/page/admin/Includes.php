@@ -144,4 +144,27 @@ class Page_Admin_Includes{
         return '0';
     }
 
+    public function getIncludeTextForm()
+    {
+        $module = DB::getCell("select id from word_modules where module='".DB::escape(Core::SYS_INCLUDES)."'");
+        $includeId = intval($_POST['id']);
+        if(empty($includeId) || empty($module)) {
+            return array();
+        }
+        $textIdQuery = "select id from word where name=".$includeId." and module = ".$module;
+        $textId = DB::getCell($textIdQuery);
+        if(empty($textId)) {
+            $language = Word::getLanguage();
+            DB::query("insert into word (language, module, name, value) VALUES ("
+                .$language['id'].", ".$module.", ".$includeId.", '')");
+            $textId = DB::getCell($textIdQuery);
+        }
+        $formProvider = new Word_UI();
+        $form = $formProvider->onAjaxGetTermForm($textId, $module);
+        $form['form']['fields']['module']['attributes']['type'] = 'hidden';
+        $form['form']['fields']['module']['tag'] = 'input';
+        $form['form']['fields']['name']['attributes']['type'] = 'hidden';
+        return $form;
+    }
+
 }

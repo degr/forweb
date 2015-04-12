@@ -19,145 +19,92 @@ var PagesTree = {
         Ajax.request(params);
     },
     renderPagesTree: function(response){
-        var table = newElement('table', {});
-        PagesTree.fillPagesTree(table, response.pages, 0);
-        var colspan = PagesTree.setPaddingsPagesTree(table);
-        PagesTree.generateLinks(table);
-        PagesTree.buildTableHead(table, [Admin.getWord('page_form_field_name'), Admin.getWord('page_form_field_url')], colspan);
-
+        var ul = PagesTree.fillPagesTree(response.pages);
+        PagesTree.generateLinks(ul);
         var w = Admin.getWindow();
-        w.setContent(table);
+        w.setContent(ul);
         w.setWidth(700);
         w.show();
-
     },
 
-    buildTableHead: function(table, headers, colspan){
-        var row = newElement('tr', {'class': 'head'});
+    generateLinks: function(list){
 
-        for(var i=0; i<headers.length;i++){
-            var th = newElement('th', {});
-            th.innerHTML = headers[i];
-            if(i == 0){
-                th.setAttribute('colspan', colspan);
+        var home = list.get('li[data-parent="0"]');
+        home.get('a').href = Admin.url;
+        var homeId = home.getAttribute('data-id');
+        var url = "";
+        PagesTree.generateLinksForId(list, homeId, url);
+    },
+    generateLinksForId: function (list, id, url) {
+        url = (url ? url + "/" : "");
+        var items = list.getAll('ul[data-parent="'+id+'"] > li');
+        for(var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var a = item.get('div a');
+            var itemUrl = a.getAttribute('data-url');
+            a.href = Admin.url + url + itemUrl;
+            var sublist = item.get('ul');
+            if(sublist)PagesTree.generateLinksForId(sublist, item.getAttribute('data-id'), url + itemUrl);
+        }
+    },
+    buildListItem: function (obj) {
+        var a = newElement('a', {'href':'#','data-url':obj.url, 'class':'item'});
+        a.innerHTML = obj.name;
+        var a1 = newElement('a', {'href':'#','onclick':"PagesTree.pageShift(this, true);return false;", 'class':'icon-arrow-up'});
+        var a2 = newElement('a', {'href':'#','onclick':"PagesTree.pageShift(this, false);return false;", 'class':'icon-arrow-down'});
+        var container = newElement('div', {'class':'pages-tree-holder clearfix'}, [a, a1, a2]);
+        var li = newElement('li', {'data-id': obj.id, 'data-parent':obj.parent, 'data-position':obj.position}, [container]);
+        return li;
+    },
+    pageShift: function(arrow, up){
+        var item = arrow.up('li');
+        var check = up ? item.moveUp() : item.moveDown();
+        if(check) {
+            var list = item.up();
+            var parent = list.getAttribute('data-parent');
+            var links = list.getAll('li[data-parent="'+parent+'"]');
+            var data = {parent:parent, items:{}};
+            for(var i = 0; i < links.length; i++) {
+                data.items['id_' + links[i].getAttribute('data-id')] = i;
             }
-            row.appendChild(th);
-        }
-        var first = table.get('tr');
-        table.insertBefore(row, first);
-    },
-
-    generateLinks: function(table){
-        var links = [];
-        var rows = table.getAll('tr');
-        for(var i = 0; i < rows.length; i++){
-            var url = rows[i].get('td.url').innerHTML;
-            var depth = rows[i].getAttribute('data-depth');
-            if(depth > links.length) {
-                links.push(url);
-            }else if(links.length == 0){
-                //home page
-                links.push(url);
-            }else if(depth == links.length){
-                links.pop();
-                links.push(url);
-            }else if(depth < links.length){
-                //exit from top branch
-                while(depth != links.length + 1)
-                    links.pop();
-                links.push(url);
-            }
-            var path = links.join("/");
-            var a = newElement('a', {href: Admin.url + path});
-            a.innerHTML = path;
-            rows[i].get('td.url').innerHTML = '';
-            rows[i].get('td.url').appendChild(a);
+            var params = {
+                url: Admin.url + "page/changePagePositions?ajax=1",
+                type: "post",
+                response: 'json',
+                data: data
+            };
+            Ajax.request(params);
         }
     },
-    setPaddingsPagesTree: function(table){
-        var rows = table.getAll('tr');
-        var calculate = {};
-        for(var i=0; i<rows.length;i++){
-            var key = rows[i].getAttribute('data-parent');
-            calculate[key] = key;
-        }
-        var length = 0;
-        for(var i in calculate){
-            length++;
-        }
-        var cycle = length;
-        for(var i in calculate){
-            var depthRows = table.getAll('tr[data-parent="'+i+'"]');
-            for(var x = 0; x < depthRows.length; x++){
-                for(var j = 0; j < length - cycle; j++){
-                    var td = newElement('td', {'data-depth': j+1, "class": "tree placeholder"});
-                    depthRows[x].insertBefore(td, depthRows[x].get('.name'))
-
-                }
-                depthRows[x].get('td.name').setAttribute('colspan', cycle);
-                depthRows[x].setAttribute('data-depth', length - cycle);
-            }
-            cycle--;
-        }
-        return length;
-    },
-    fillPagesTree: function(table, obj, parent){
+    fillPagesTree: function(obj){
         var out = {};
         var empty = true;
-        for(var i in obj){
-            if(obj[i].parent == parent){
-                var row = newElement('tr', {'data-parent':parent,'data-id':obj[i].id, 'id':'page_'+obj[i].id});
-                var tdName = newElement('td', {'class':'name'});
-                tdName.innerHTML = obj[i].name;
-                var tdUrl = newElement('td', {'class':'url'});
-                tdUrl.innerHTML = obj[i].url;
-                row.appendChild(tdName)
-                row.appendChild(tdUrl);
-                if(parent == 0) {
-                    table.appendChild(row);
-                } else {
-                    var rows = table.getAll('tr');
-                    var target = table.get('#page_'+parent);
-
-                    var next = null;
-                    var detected = false;
-                    var last = 0;
-                    for(var i=0; i<rows.length;i++){
-                        if(rows[i] === target){
-                            if(rows[i+1]){
-                                next = rows[i+1]
-                            }else{
-                                next = null;
-                            }
-                            detected = true;
-                        }
-                        if(detected && rows[i].getAttribute('data-parent') == parent){
-                            if(rows[i+1]){
-                                next = rows[i+1]
-                            }else{
-                                next = null;
-                            }
-                        }else if(detected){
-                            break;
-                        }
-                    }
-                    if(next){
-                        table.insertBefore(row, next)
-                    }else{
-                        table.appendChild(row);
-                    }
-                }
-
-            }else{
-                empty = false;
-                out[i] = obj[i];
+        var lists = {};
+        var items = {}
+        for(var i in obj) {
+            var o = obj[i];
+            o.parent = parseInt(o.parent);
+            if(!lists[o.parent])lists[o.parent] = [];
+            var item = PagesTree.buildListItem(o);
+            lists[o.parent].push(item);
+            items[o.id] = item;
+        }
+        var opts = {'class':'pages_tree'};
+        for(var i in lists) {
+            if(i != 0) {
+                opts['data-parent'] = i;
+                items[i].appendChild(newElement('ul', opts, lists[i].sort(PagesTree.sort)));
             }
         }
-        
-        if(!empty){
-            parent++;
-            PagesTree.fillPagesTree(table, out, parent);
-        }
+        return newElement('ul', opts, lists[0]);
+
+    },
+    sort: function(i1, i2) {
+        var v1 = parseInt(i1.getAttribute('data-position'));
+        var v2 = parseInt(i2.getAttribute('data-position'));
+        if(v1 < v2)return -1;
+        if(v1 > v2)return 1;
+        return 0;
     }
 }
 

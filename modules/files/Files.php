@@ -5,7 +5,39 @@
  * Date: 21.03.2015
  * Time: 14:13
  */
-class Files{
+class Files extends Module{
+    /**
+     * Get module ajax handlers
+     * @return AjaxHandler[]
+     */
+    public function getAjaxHandlers()
+    {
+        if($this->ajaxHandlers == null) {
+            $this->ajaxHandlers = array(
+                'getAjaxUserMedia' => new AjaxHandler('getAjaxUserMedia', AjaxHandler::TEXT),
+                'updateTextFile' => new AjaxHandler('updateTextFile', AjaxHandler::TEXT),
+                'showFileContent' => new AjaxHandler('showFileContent', AjaxHandler::TEXT),
+                'adminDeleteFile' => new AjaxHandler('adminDeleteFile', AjaxHandler::TEXT),
+                'adminNewFile' => new AjaxHandler('adminNewFile', AjaxHandler::TEXT)
+            );
+        }
+        return $this->ajaxHandlers;
+    }
+
+    /**
+     * Get module form handlers
+     * @return FormHandler[]
+     */
+    public function getFormHandlers()
+    {
+        if($this->formHandlers == null) {
+            $this->formHandlers = array(
+                'adminUploadFile' => new FormHandler('adminUploadFile'),
+            );
+        }
+        return $this->formHandlers;
+    }
+
     /**
      * download file from url to selected location
      * @param $url string
@@ -23,6 +55,38 @@ class Files{
      */
     public static function extract($archive, $folder)
     {
+    }
+
+    public function getAjaxUserMedia(){
+        Access::denied("can_modify_files");
+        $provider = new Files_Admin();
+        return $provider->getAjaxUserMedia();
+    }
+    public function showFileContent(){
+        Access::denied("can_modify_files");
+        $provider = new Files_Admin();
+        return $provider->showFileContent();
+    }
+    public function updateTextFile(){
+        Access::denied("can_modify_files");
+        $provider = new Files_Admin();
+        return $provider->updateTextFile();
+    }
+
+    public function adminUploadFile(FormHandler $handler){
+        Access::denied('can_modify_files');
+        $provider = new Files_Admin();
+        $provider->adminUploadFile($handler);
+    }
+    public function adminDeleteFile(){
+        Access::denied('can_modify_files');
+        $provider = new Files_Admin();
+        return $provider->adminDeleteFile();
+    }
+    public function adminNewFile(){
+        Access::denied('can_modify_files');
+        $provider = new Files_Admin();
+        return $provider->adminNewFile();
     }
 
 }

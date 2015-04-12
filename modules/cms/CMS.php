@@ -14,15 +14,16 @@ class CMS implements IModule{
 			} else {
 				$handler = null;
 			}
+			/* @var $handler AjaxHandler */
 			if($handler != null) {
 				$function = $handler->getMethod();
 				$out = $obj->$function();
 				if (isset($out)) {
-					if ($handler->getResponse() == AjaxHandler::JSON) {
-						header('Content-Type: application/json');
+					if ($handler->getResponse() === AjaxHandler::JSON) {
+						header('Content-Type: application/json; charset=utf-8');
 						echo json_encode($out);
 					} else {
-						header("Content-Type: text/plain");
+						header('Content-Type: text/html; charset=utf-8');
 						echo $out;
 					}
 				}
@@ -45,7 +46,7 @@ class CMS implements IModule{
 			} else {
 				$handler = null;
 			}
-
+			/* @var $handler FormHandler */
 			if($handler != null) {
 				$function = $handler->getMethod();
 				$obj->$function($handler);
@@ -79,6 +80,7 @@ class CMS implements IModule{
 				'admin_translations',
 				addslashes(json_encode(Word::get('admin')))
 			);
+			$ui->addVariable("isMultipleLanguages", Core::MULTIPLE_LANGUAGES);
 			$ui->addVariable('adminIncludeOptions', addslashes(json_encode(Page::getIncludeTypesList())));
 			$ui->addVariable('url', Config::get("url"));
 			$ui->setLayout('page/admin/main.tpl');

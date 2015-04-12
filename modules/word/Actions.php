@@ -66,6 +66,9 @@ class Word_Actions{
         if(empty($module)) {
             return 0;
         }
+        if($this->isSysIncludes($id)) {
+            return 0;
+        }
         if(empty($id)) {
             $query = "SELECT id from word_modules where module = '".$module."'";
             $id = DB::getCell($query);
@@ -89,11 +92,24 @@ class Word_Actions{
         if(empty($id)) {
             return 0;
         }
+        if($this->isSysIncludes($id)){
+            return 0;
+        }
         $query = "DELETE FROM word where module = ".$id;
         DB::query($query);
         $query = "DELETE FROM word_modules where id =".$id;
         DB::query($query);
         return 1;
+    }
+
+    protected function isSysIncludes($id){
+        $query = "select module from word_modules where id = ".$id;
+        $cell = DB::getCell($query);
+        if($cell == Core::SYS_INCLUDES){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function onAjaxSaveTerm()
@@ -139,7 +155,26 @@ class Word_Actions{
             );
         } else {
             $name = DB::getCell("SELECT name FROM word WHERE id='".$id."'");
+
             $ids = DB::getAssoc("SELECT language, id FROM word WHERE name = '".$name."'", 'language', 'id');
+            /* @var $wordModule Word */
+            $wordModule = Core::getModule("Word");
+            $languages = $wordModule->getLanguages();
+            $checkForNewLanguage = true;
+            foreach($languages as $key => $language) {
+                if(empty($ids[$key])) {
+                    DB::query("INSERT INTO word (language, module, name, value) VALUES "
+                        ."(".$key.", ".$module.", ".$name.", '')"
+                    );
+                    if($checkForNewLanguage) {
+                        $checkForNewLanguage = false;
+                    }
+                }
+            }
+            if(!$checkForNewLanguage) {
+                $ids = DB::getAssoc("SELECT language, id FROM word WHERE name = '".$name."'", 'language', 'id');
+            }
+
             $queryStart = "UPDATE word SET ";
             $queryEnd = "WHERE id = ";
             foreach($values as $val) {

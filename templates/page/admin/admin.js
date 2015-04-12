@@ -5,7 +5,9 @@ var Admin = {
     dialogWindow: null,
     panel: null,
     url: '{/literal}{$url}{literal}',
+    isMultipleLanguages: '{/literal}{$isMultipleLanguages}{literal}',
     init: function(){
+        this.isMultipleLanguages = this.isMultipleLanguages == '1' ? true : false;
         this.getModulesList();
         this.initPanel();
         this.initNewPageButton();
@@ -14,15 +16,13 @@ var Admin = {
         this.initPageСontent();
         this.addSeparator();
         this.initTemplateMenu();
-        this.addSeparator();
         this.addAccess();
-        this.addSeparator();
         this.initConfig();
+        this.initFiles();
         this.addSeparator();
         this.initWord();
         this.addSeparator();
         this.initPosition();
-
     },
     getWord: function(key){
         if(AdminWords[key]){
@@ -86,6 +86,23 @@ var Admin = {
         a.innerHTML = Admin.getWord("panel_edit_access");
         Admin.panel.add(a);
     },
+    initFiles: function(){
+        var toggler = newElement('a', {"class":'button', 'onclick': 'return false;', 'href': '#'});
+        toggler.innerHTML = Admin.getWord('panel_edit_files');
+
+        var images = newElement('a', {"class":'button', 'onclick': 'FilesForm.showImages();return false;', 'href': '#'});
+        images.innerHTML = Admin.getWord("panel_file_images");
+        var templates = newElement('a', {"class":'button', 'onclick': 'FilesForm.showText("templates");return false;', 'href': '#'});
+        templates.innerHTML = Admin.getWord("panel_file_templates");
+        var css = newElement('a', {"class":'button', 'onclick': 'FilesForm.showText("css");return false;', 'href': '#'});
+        css.innerHTML = Admin.getWord("panel_file_css");
+        var js = newElement('a', {"class":'button', 'onclick': 'FilesForm.showText("js");return false;', 'href': '#'});
+        js.innerHTML = Admin.getWord("panel_file_js");
+
+        var innerDiv = newElement('div', {'class':'menu_holder'}, [images, templates, css, js]);
+        var div = newElement('div',{'class':'files_holder'}, [toggler, innerDiv]);
+        Admin.panel.add(div);
+    },
     initTemplateMenu: function(){
         var toggler = newElement('a', {"class":'button', 'onclick': 'return false;', 'href': '#'});
         toggler.innerHTML = Admin.getWord('panel_templates');
@@ -129,7 +146,10 @@ var Admin = {
         modules.innerHTML = Admin.getWord("panel_modules");
         var word = newElement('a', {"class":'button', 'onclick': 'Word.showTermsForm();return false;', 'href': '#'});
         word.innerHTML = Admin.getWord("panel_word");
-        var innerDiv = newElement('div', {'class':'menu_holder'}, [lang, modules, word]);
+        var show_keys = newElement('a', {"class":'button', 'onclick': 'Word.showThisPageKeys();return false;', 'href': '#'});
+        show_keys.innerHTML = Admin.getWord("panel_word_keys");
+
+        var innerDiv = newElement('div', {'class':'menu_holder'}, [lang, modules, word, show_keys]);
         var div = newElement('div',{'class':'word_holder'}, [toggler, innerDiv]);
         Admin.panel.add(div);
     },

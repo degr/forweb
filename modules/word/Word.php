@@ -6,6 +6,7 @@
  * Time: 21:11
  */
 class Word extends Module{
+    const GET_SHOW_KEYS = "show_keys";
     /**
      * Get module ajax handlers
      * @return AjaxHandler[]
@@ -59,6 +60,9 @@ class Word extends Module{
         }
         if($one && empty($term)) {
             throw new FwException("Can't return one term without name.");
+        }
+        if(isset($_GET[self::GET_SHOW_KEYS]) && Access::can("can_edit_terms")){
+            return $module."::".(!empty($term) ? $term : "[ALL]");
         }
 
         $languageObject = Word::getLanguage($language);
@@ -177,7 +181,7 @@ class Word extends Module{
     public function onAjaxGetTermForm(){
         Access::denied('can_edit_terms');
         $provider = new Word_UI();
-        return $provider->onAjaxGetTermForm();
+        return $provider->onAjaxGetTermForm($_POST['id'], $_POST['module']);
     }
     public function onAjaxSaveTerm(){
         Access::denied('can_edit_terms');

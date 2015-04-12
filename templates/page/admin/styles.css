@@ -3,10 +3,10 @@
     right: 0 !important;
     left: initial !important;
 }
-.admin_panel .word_holder, .admin_panel .templates_holder{
+.admin_panel .word_holder, .admin_panel .templates_holder, .admin_panel .files_holder{
     position: relative;
 }
-.admin_panel .word_holder .menu_holder, .admin_panel .templates_holder .menu_holder{
+.admin_panel .word_holder .menu_holder, .admin_panel .templates_holder .menu_holder,.admin_panel .files_holder .menu_holder{
     position: absolute;
     top: 16px;
     left: 0;
@@ -15,12 +15,14 @@
     padding: 5px;
     border: 1px solid black;
     width: 140px;
+    z-index: 10;
 }
-.admin_panel .word_holder .menu_holder a, .admin_panel .templates_holder .menu_holder a {
+.admin_panel .word_holder .menu_holder a, .admin_panel .templates_holder .menu_holder a, .admin_panel .files_holder .menu_holder a {
     display: block;
 }
 .admin_panel .word_holder:hover .menu_holder, .admin_panel .word_holder .menu_holder:hover,
-.admin_panel .templates_holder:hover .menu_holder, .admin_panel .templates_holder .menu_holder:hover{
+.admin_panel .templates_holder:hover .menu_holder, .admin_panel .templates_holder .menu_holder:hover,
+.admin_panel .files_holder:hover .menu_holder, .admin_panel .files_holder .menu_holder:hover{
     display: block;
 }
 #admin_panel .paginator a{
@@ -214,5 +216,50 @@
 }
 #admin_panel #config_form .module_tabs a{
     margin: 4px 0 0 4px;
+}
+#admin_panel .pages_tree {
+    padding-left: 20px;
+}
+#admin_panel .pages-tree-holder a {
+    display: block;
+    height: 16px;
+    float: left;
+}
+#admin_panel .pages-tree-holder{
+    margin-bottom: 3px;
+}
+#admin_panel .pages_tree li{
+    list-style: none;
+}
+#admin_panel #admin_file_content{
+    width: 100%;
+    min-height: 500px;
+}
+#admin_panel .image_wrapper .canvas-wrapper{
+    min-height: 200px;
+    min-width: 200px;
+    margin: 5px;
+    border: 1px dashed #337ab7;
+}
+#admin_panel .image_wrapper input.path{
+    width: 100%;
+}
+#admin_panel .image_wrapper img.canvas{
+    max-width: 100%;
+    margin: 0 auto;
+    display: block;
+}
+#admin_panel .file_manager a, #admin_panel .file_manager label{
+    float: left;
+    display: block;
+    margin-right: 10px;
+}
+#admin_panel .file_manager label, #admin_panel .file_manager input[type="file"]{
+    cursor: pointer;
+}
+#admin_panel .file-manager li.manager-type-folder,
+#admin_panel .file-manager li.manager-type-upfolder,
+#admin_panel .file-manager li.manager-type-file{
+    list-style: none;
 }
 /*{/literal}*/

@@ -116,10 +116,28 @@ div.pop-up-message-neutral{
 .right{
   float: right;
 }
-.icon-arrow-up, .icon-arrow-down, .icon-delete, .icon-edit{
+.opacity-cover{
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+}
+.icon-arrow-up, .icon-arrow-down, .icon-delete, .icon-edit,
+.icon-file-16-folder, .icon-file-16-file, .icon-file-16-upfolder{
   width: 16px;
   height: 16px;
   display: block;
+}
+
+.icon-file-32-new-folder, .icon-file-32-new-file,.icon-file-32-upload{
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+.icon-file-16-file{
+  background-image: url('../img/icons/file/16/file.png')
+}
+.icon-file-16-folder{
+  background-image: url('../img/icons/file/16/folder.png')
 }
 .icon-delete{
   background-image: url('../img/system/delete.png')
@@ -138,6 +156,18 @@ div.pop-up-message-neutral{
 }
 .icon-arrow-down.inactive{
   background-image: url('../img/system/arrow-down-inactive.png')
+}
+.icon-file-32-new-folder{
+  background-image: url('../img/icons/file/32/new-folder.png')
+}
+.icon-file-32-new-file{
+  background-image: url('../img/icons/file/32/new-file.png')
+}
+.icon-file-32-upload{
+  background-image: url('../img/icons/file/32/upload.png')
+}
+.icon-file-16-upfolder{
+  background-image: url('../img/icons/file/16/folder-open.png')
 }
 .block-east, .block-right{
 	float: right;

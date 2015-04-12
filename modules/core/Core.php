@@ -8,6 +8,7 @@ class Core extends Module{
 	const FORM_HANDLER_NAME = "form";
 	const DEVELOPMENT = true;
 	const MULTIPLE_LANGUAGES = true;
+	const SYS_INCLUDES = 'sys_includes';
 
 	public function getAjaxHandlers()
 	{
@@ -215,7 +216,6 @@ class Core extends Module{
 
 
 	protected function processInclude(PersistIncludes $include){
-		$content = $include->getContent();
 		if(Core::DEVELOPMENT && isset($_GET['dbug_functions']) && Core::isModuleExist("Debug")) {
 			return Debug::getIncludeInformation($include);
 		}
@@ -224,14 +224,14 @@ class Core extends Module{
 		}*/
 		switch($include->getType()){
 			case "text":
-				$out = "\t<p>".htmlspecialchars($content)."</p>";
+				$out = "\t<p>".htmlspecialchars(Core::getIncludeStaticContent($include))."</p>";
 				break;
 			case "html":
-				$out = $content."\n";
+				$out = Core::getIncludeStaticContent($include)."\n";
 				break;
 			case "image":
 				$out = '<div class="image-holder image-holder-'.$include->getId().'">'
-				.'<img src="'.$content.'" alt="content_image" title="content_image" />'
+				.'<img src="'.$include->getContent().'" alt="content_image" title="content_image" />'
 				.'</div>';
 				break;
 			case "executable":
@@ -261,7 +261,7 @@ class Core extends Module{
 
 	private function getIncludeStaticContent(PersistIncludes $include){
 		if(Core::MULTIPLE_LANGUAGES) {
-			Word::get("sys_includes", $include->getId());
+			return Word::get(Core::SYS_INCLUDES, $include->getId());
 		} else {
 			return $include->getContent();
 		}

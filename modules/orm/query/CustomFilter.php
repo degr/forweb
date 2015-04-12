@@ -5,7 +5,7 @@
  * Date: 04.04.2015
  * Time: 18:58
  */
-class ORM_Query_CustomFilter extends  ORM_Query_AbstractItem{
+class ORM_Query_CustomFilter extends  ORM_Query_Filter{
 
     /**
      * current filter string in format
@@ -17,28 +17,6 @@ class ORM_Query_CustomFilter extends  ORM_Query_AbstractItem{
     public function __construct($query, $active){
         $this->setActive($active);
         $this->query = $query;
-    }
-    /**
-     * Return command query command name,
-     * to each this item must be applied
-     * Command's is integer, not string,
-     * because, each command define it's position in query.
-     * @see ORM_QueryBuilder::applyQueryItems()
-     * @return int
-     */
-    public function getQueryCommand()
-    {
-        return ORM_Commands::WHERE;
-    }
-
-    /**
-     * Return query separator type:
-     * ',', 'AND', 'OR', etc.
-     * @return string
-     */
-    public function getQuerySeparator()
-    {
-        ORM_Query_IItem::SEPARATOR_COMMA;
     }
 
     /**
