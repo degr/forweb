@@ -1,7 +1,8 @@
 <?php
 class ORM_Utils{
     const BIND_PREFIX = 'Id';
-
+    const DATE_FORMAT = 'Y-m-d';
+    const DATETIME_FORMAT = 'Y-m-d H:i:s';
     /**
      * Load data from persistence storage
      * @param ORM_Table $mainTable main query table.
@@ -151,12 +152,12 @@ class ORM_Utils{
             if(empty($currentData) && $field->getAutoIncrement()){
                 continue;
             }
-            $value = DB::escape($currentData);
-            $valuesToInsert[] = "'".$value."'";
+            $value = ORM_Utils::getValueForField($field, $currentData);
+            $valuesToInsert[] = $value;
             $keysToInsert[] = $field->getName();
 
             if(!$field->getPrimary()){
-                $pairsToUpdate[] = $field->getName()."='".$value."'";
+                $pairsToUpdate[] = $field->getName()."=".$value;
             }
 
         }
@@ -167,6 +168,33 @@ class ORM_Utils{
             .implode(",", $pairsToUpdate);
         DB::query($query);
         ORM_Utils::fixId($table, $object);
+    }
+
+    public static function getValueForField($field, $value) {
+        switch($field->getType()) {
+            case 'bit':
+            case 'boolean':
+                if($value === true || $value === 1 || $value === 'true' || $value === 'on'){
+                    return 1;
+                } elseif(empty($value)){
+                    return 0;
+                } else {
+                    intval($value) === 0 ? 0 : 1;
+                }
+            case 'integer':
+            case 'tinyint':
+                return intval($value);
+            case 'date':
+                if(is_numeric($value)) {
+                    $value = date(ORM_Utils::DATE_FORMAT, $value);
+                }
+            case 'datetime':
+                if(is_numeric($value)) {
+                    $value = date(ORM_Utils::DATETIME_FORMAT, $value);
+                }
+            default:
+                return "'".DB::escape($value)."'";
+        }
     }
 
     /**

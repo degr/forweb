@@ -1,7 +1,8 @@
 //{literal}
 var PageContent = {
     staticContentTextarea: null,
-    getTemplate: function(active, v, forPage){
+    buildTermFormForPage: false,
+    getTemplate: function(active, v, forPage, forPageForm){
         var e = {};
         var out = newElement('div', {'class': 'block include_row '+(active ? "active" : "")})
         e.id = {tag:"input",name:"id",attributes:{type:"hidden"},"class":"template",validation:null,layout:"grid"};
@@ -41,7 +42,7 @@ var PageContent = {
 
         out.appendChild(PageContent.getType(e.type));
         if(active)out.appendChild(PageContent.getArrows(forPage));
-        out.appendChild(PageContent.getContentWindow(e.content, e.module, e.method));
+        out.appendChild(PageContent.getContentWindow(e.content, e.module, e.method, forPageForm));
         if(active)out.appendChild(newElement("a",{href:'#',onclick:'PageContent.deleteIclude(this);return false;','class':'icon-delete left'}));
         out.appendChild(newElement('div', {'class':'left comment_holder'}, [e.comment]));
         out.appendChild(newElement('div', {'class':'clearfix'}));
@@ -68,8 +69,11 @@ var PageContent = {
     getType: function(type){
         return newElement("div", {'class':'left'},[type]);
     },
-    getContentWindow: function(content, module, method){
-        var a = newElement('a', {'href':'#','class':'showContentToggler', 'onclick':'PageContent.showContent(this);return false;'});
+    getContentWindow: function(content, module, method, forPageForm){
+        var a = newElement('a', {
+            'href':'#','class':'showContentToggler',
+            'onclick':'PageContent.showContent(this, '+(forPageForm?'true':'false')+');return false;'
+        });
         a.innerHTML = Admin.getWord('show_content');
         var w1 = newElement('div', {'class':'staticContent hidden'}, [content]);
         var w2 = newElement('div', {'class':'dynamicContent hidden'}, [module, method]);
@@ -130,7 +134,7 @@ var PageContent = {
             p.moveDown();
         }
     },
-    showContent: function(el){
+    showContent: function(el, forPagesForm){
         var p=el.parentNode;
         var showContent = el.getAttribute("data-shown");
         if(!showContent || showContent == '0') {
@@ -161,6 +165,7 @@ var PageContent = {
                     break;
                 case 'text':
                 case 'html':
+                    PageContent.buildTermFormForPage = forPagesForm;
                     var id = p.parentNode.get('input[name="id"]').value;
                     if(!id) {
                         DialogWindow.Alert('include_not_saved', Admin.getWord('include_not_saved'));
@@ -195,7 +200,7 @@ var PageContent = {
     buildTermForm: function(r){
         var form = Word.buildTermForm(r);
         var back = form.get('.backlink');
-        back.setAttribute('onclick', 'Admin.pageContent();return false;');
+        back.setAttribute('onclick', PageContent.buildTermFormForPage ? 'Admin.pageContent();return false;' : 'Admin.editTemplate();return false;');
         back.innerHTML = Admin.getWord('back_to_page_blocks');
         form.get('.new_term').remove();
     },
@@ -219,7 +224,7 @@ var PageContent = {
                 comment:{value:''}
             }
         };
-        var b= e.parentNode.get('.after').appendChild(PageContent.getTemplate(true, values, true));
+        var b= e.parentNode.get('.after').appendChild(PageContent.getTemplate(true, values, true, true));
     },
     getStaticContentTextarea: function (input) {
         if(PageContent.staticContentTextarea == null) {

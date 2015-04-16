@@ -21,7 +21,7 @@ class Page_Admin_Page{
         $pageService = Core::getModule("Page_Service");
         $table = ORM::getTable($pageService->getTable()->getName());
 
-        $form = UI::getFormForTable($table, null, $layout);
+        $form = UI::getFormForTable($table, $page, $layout);
         foreach($form['fields'] as &$field) {
             $field['title'] = Word::get('admin', 'admin_page_'.$field['title']);
         }
@@ -32,6 +32,7 @@ class Page_Admin_Page{
         if($page != null) {
             unset($parentsArray[$page->getId()]);
         }
+
         $form['fields']['parent']['options'] = $parentsArray;
         if($page != null && $page->getId() == 1) {
             unset($form['fields']['parent']);
@@ -44,19 +45,17 @@ class Page_Admin_Page{
         $form['fields']['submit'] = UI::getSubmitButton();
         $form['fields']['submit']['layout'] = $layout;
         $form['fields']['position']['attributes']['type'] = "hidden";
-        if($page != null){
+        /*if($page != null){
             $vars = $page->toArray();
             foreach($vars as $key => $value){
                 if(!empty($form['fields'][$key])){
                     $form['fields'][$key]['value'] = $value;
                 }
             }
-        }
+        }*/
 
         if($page != null) {
-
             $id = $page->getId();
-
             if(!empty($id)){
                 $link = $pageService->getPagePath($page);
                 $form['fields']['link'] = array(

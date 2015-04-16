@@ -6,26 +6,51 @@ class ORM_Install implements Module_IInstall{
         if(empty($primaryKey)){
             throw new Exception("Can't create table with no primary keys, please define it (".$table->getName().")");
         }
-        $query = "CREATE TABLE IF NOT EXISTS ".$table->getName()." (";
-        $fields = array();
 
-        /* @var $field ORM_Table_Field */
-        foreach($table->getFields() as $field){
-            $defaultValue = $field->getDefaultValue();
-            $enumValues = $field->getEnumValues();
-            $fields[] = $field->getName()." ".$field->getType()." "
-                .(!empty($enumValues) ? "('".implode("','", $enumValues)."')" : "")
-                .($field->getLength() !== 0 ? "(".$field->getLength().")" : "" )
-                .($field->getAutoIncrement()?" AUTO_INCREMENT ":"")
-                .($field->getCanBeNull() ? "" : " NOT NULL " )
-                .(!empty($defaultValue ) || $defaultValue === 0 ? " DEFAULT '".DB::escape($field->getDefaultValue())."' " : "")
+        $tables = DB::getColumn("SHOW TABLES");
+        if(in_array($table->getName(), $tables)) {
+            $columns = DB::getColumn("SHOW COLUMNS FROM ".$table->getName());
+            foreach($table->getFields() as $field) {
+                if(!in_array($field->getName(), $columns)) {
+                    $defaultValue = $field->getDefaultValue();
+                    $enumValues = $field->getEnumValues();
+                    $query = "ALTER TABLE ".$table->getName()." ADD "
+                        .$field->getName()." ".$field->getType()
+                        .(!empty($enumValues) ? "('".implode("','", $enumValues)."')" : "")
+                        .($field->getLength() !== 0 ? "(".$field->getLength().")" : "" )
+                        .($field->getAutoIncrement()?" AUTO_INCREMENT ":"")
+                        .($field->getCanBeNull() ? "" : " NOT NULL " )
+                        .(!empty($defaultValue ) || $defaultValue === 0 ? " DEFAULT '".DB::escape($field->getDefaultValue())."' " : "");
+                    DB::query($query);
+                    if($field->getUnique()) {
+                        $query = "ALTER TABLE ".$table->getName()." ADD UNIQUE (".$field->getName().")";
+                        DB::query($query);
+                    }
+                }
+            }
+        } else {
+            $query = "CREATE TABLE ".$table->getName()." (";
+            $fields = array();
+            /* @var $field ORM_Table_Field */
+            foreach($table->getFields() as $field){
+                $defaultValue = $field->getDefaultValue();
+                $enumValues = $field->getEnumValues();
+                $fields[] = $field->getName()." ".$field->getType()." "
+                    .(!empty($enumValues) ? "('".implode("','", $enumValues)."')" : "")
+                    .($field->getLength() !== 0 ? "(".$field->getLength().")" : "" )
+                    .($field->getAutoIncrement()?" AUTO_INCREMENT ":"")
+                    .($field->getCanBeNull() ? "" : " NOT NULL " )
+                    .(!empty($defaultValue ) || $defaultValue === 0 ? " DEFAULT '".DB::escape($field->getDefaultValue())."' " : "")
 
-                .($field->getUnique() ? ", UNIQUE (".$field->getName().")" : "")
-                .($field->getPrimary() ? ", PRIMARY KEY (".$field->getName().")" : "");
+                    .($field->getUnique() ? ", UNIQUE (".$field->getName().")" : "")
+                    .($field->getPrimary() ? ", PRIMARY KEY (".$field->getName().")" : "");
+            }
+
+            $query .= implode(", ", $fields).") ENGINE=InnoDB CHARACTER SET=UTF8;";
+            DB::query($query);
         }
 
-        $query .= implode(", ", $fields).") ENGINE=InnoDB CHARACTER SET=UTF8;";
-        DB::query($query);
+
         foreach($table->getFields() as $field) {
             if($field->getIndex()) {
                 if(!ORM_Install::isIndexExist($table->getName(), $field->getName())) {

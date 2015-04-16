@@ -137,7 +137,13 @@ class Page_Admin_Includes{
 
     public function delete(){
         if(!empty($_GET['include'])) {
-            if(DB::query("DELETE FROM includes where id = '".addslashes($_GET['include'])."'")) {
+            $includeId = DB::escape($_GET['include']);
+            if(DB::query("DELETE FROM includes where id = '".$includeId."'")) {
+                /* @var $word Word */
+                $module = DB::getCell("select id from word_modules where module='".DB::escape(Core::SYS_INCLUDES)."'");
+                $termId = DB::getCell("select id from word where module = '".DB::escape($module)."' and name = '".$includeId."'");
+                $provider = new Word_Actions();
+                $provider->onAjaxDeleteTerm($termId);
                 return 1;
             }
         }

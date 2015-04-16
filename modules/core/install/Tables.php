@@ -32,6 +32,15 @@ class Core_Install_Tables{
         $position = new ORM_Table_Field("position", "integer");
         $position->setLength(11);
         $table->addField($position);
+
+        $active = new ORM_Table_Field("active", "bit");
+        $active->setLength(1);
+        $table->addField($active);
+
+        $inMenu = new ORM_Table_Field("in_menu", "bit");
+        $inMenu->setLength(1);
+        $table->addField($inMenu);
+
         return $table;
     }
 

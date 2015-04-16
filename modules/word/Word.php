@@ -191,7 +191,8 @@ class Word extends Module{
     public function onAjaxDeleteTerm(){
         Access::denied('can_edit_terms');
         $provider = new Word_Actions();
-        return $provider->onAjaxDeleteTerm();
+        $id = intval($_POST['id']);
+        return $provider->onAjaxDeleteTerm($id);
     }
 
 }

@@ -98,6 +98,8 @@ All options required for stable system work.'),
             'file_uploaded'=>array('language'=>'2', 'module'=>'4','name'=>'file_uploaded', 'value'=>'File uploaded to server.'),
             'file_or_folder_exist'=>array('language'=>'2', 'module'=>'4','name'=>'file_or_folder_exist', 'value'=>'File with this name already exist in current folder. Are you want to continue? (old file will be deleted)'),
             'enter_new_file_name'=>array('language'=>'2', 'module'=>'4','name'=>'enter_new_file_name', 'value'=>'Enter new file (directory) name.'),
+            'admin_page_active'=>array('language'=>'2', 'module'=>'4','name'=>'admin_page_active', 'value'=>''),
+            'admin_page_in_menu'=>array('language'=>'2', 'module'=>'4','name'=>'admin_page_in_menu', 'value'=>''),
         );
         $check = DB::getColumn('SELECT name FROM word WHERE language = 2 AND module = "4"', "module", "name");
         foreach ($check as $name) {
@@ -193,6 +195,8 @@ All options required for stable system work.'),
             'file_uploaded'=>array('language'=>'1', 'module'=>'4','name'=>'file_uploaded', 'value'=>'Файл загружен на сервер.'),
             'file_or_folder_exist'=>array('language'=>'1', 'module'=>'4','name'=>'file_or_folder_exist', 'value'=>'Файл с таким именем уже существует в данной папке. Продолжить? (старый файл отправится в ад, например).'),
             'enter_new_file_name'=>array('language'=>'1', 'module'=>'4','name'=>'enter_new_file_name', 'value'=>'Введите название нового файла (папки)'),
+            'admin_page_active'=>array('language'=>'1', 'module'=>'4','name'=>'admin_page_active', 'value'=>'Страница активна'),
+            'admin_page_in_menu'=>array('language'=>'1', 'module'=>'4','name'=>'admin_page_in_menu', 'value'=>'Страница в меню'),
         );
         $check = DB::getColumn('SELECT name FROM word WHERE language = 1 AND module = "4"', "module", "name");
         foreach ($check as $name) {
@@ -252,8 +256,6 @@ All options required for stable system work.'),
             DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
         }
         $words = array(
-            '12'=>array('language'=>'2', 'module'=>'10','name'=>'12', 'value'=>'include content 12'),
-            '4'=>array('language'=>'2', 'module'=>'10','name'=>'4', 'value'=>'sdasklfjsakfjsadklfsadfds'),
             '15'=>array('language'=>'2', 'module'=>'10','name'=>'15', 'value'=>'
 Congratulations, just now you install ForWeb framework
 
@@ -279,9 +281,6 @@ Administator panel provide functionality for page creating and editing, page tem
             DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
         }
         $words = array(
-            '12'=>array('language'=>'1', 'module'=>'10','name'=>'12', 'value'=>'Содержимое инклуда 12'),
-            '2'=>array('language'=>'1', 'module'=>'10','name'=>'2', 'value'=>''),
-            '4'=>array('language'=>'1', 'module'=>'10','name'=>'4', 'value'=>'adsiofhsdkhdskjfhsdkjfhdsjk'),
             '15'=>array('language'=>'1', 'module'=>'10','name'=>'15', 'value'=>'
 Вы только что установили ForWeb фреймворк
 

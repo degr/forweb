@@ -73,6 +73,8 @@ class UI_Formfield{
 	}
 	
 	public function toJSON(){
-		return get_object_vars($this);
+		$out = get_object_vars($this);
+
+		return $out;
 	}
 }

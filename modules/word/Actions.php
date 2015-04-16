@@ -188,9 +188,8 @@ class Word_Actions{
         }
     }
 
-    public function onAjaxDeleteTerm()
+    public function onAjaxDeleteTerm($id)
     {
-        $id = intval($_POST['id']);
         if(empty($id)) {
             return 0;
         }

@@ -191,6 +191,13 @@ class UI{
 			}
 			$formfield->setLayout($layout);
 			$out['fields'][$field->getName()] = $formfield->toJSON();
+			if($field->getType() == 'boolean' || $field->getType() == 'bit') {
+				$value = $formfield->getValue();
+				if(!empty($value)) {
+					$out['fields'][$field->getName()]['attributes']['checked'] = 1;
+				}
+				$out['fields'][$field->getName()]['attributes']['type'] = 'checkbox';
+			}
 		}
 		$out['type'] = 'form';
 		$out['method'] = 'POST';

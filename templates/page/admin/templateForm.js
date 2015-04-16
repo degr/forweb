@@ -34,7 +34,7 @@ var TemplateForm = {
                 }
 
                 var dto = {fields:fields};
-                incHolder.appendChild(PageContent.getTemplate(true, dto));
+                incHolder.appendChild(PageContent.getTemplate(true, dto, false, false));
             }
         }
         form.appendChild(incHolder);

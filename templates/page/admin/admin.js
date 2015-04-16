@@ -237,11 +237,10 @@ var Admin = {
     getPageFormAjaxData: function(){
         var data = Core.serialize(document.body.get('#form_pages'));
         data.ajax_key = 'pageedit';
-        var success = Admin.showPageForm
         return {
             url: Admin.url + "page/editPage?ajax=1",
             type: "POST",
-            success: success,
+            success: Admin.showPageForm,
             response: 'json',
             data: data
         };
@@ -294,7 +293,7 @@ var Admin = {
     buildPageContentBlock: function(clazz, field, forPage, active ) {
         var out = newElement('div', {'class':clazz + " clearfix"});
         for (var i in field){
-            out.appendChild(PageContent.getTemplate(active, field[i], forPage));
+            out.appendChild(PageContent.getTemplate(active, field[i], forPage, true));
         }
         return out;
     },

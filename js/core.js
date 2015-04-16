@@ -31,14 +31,14 @@ var Core = {
 			if(el.name){
 				var value = el.value;
 				if(el.tagName.toLowerCase() == 'input' && (el.type == 'checkbox' || el.type=='radio')){
-					value = el.checked;
+					value = el.checked ? 1 : 0;
 				} else if(el.tagName.toLowerCase() == 'input' && el.type=='radio'){
 					if(!el.checked)continue;
 					else value = el.value;
 				}else{
 					value = el.value;
 				}
-				out[el.name] = el.value;
+				out[el.name] = value;
 			}
 		}
 		return out;
