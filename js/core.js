@@ -505,7 +505,8 @@ function DialogWindow(id, html){
 		this.overlay.show();
 		this.window.style.height = '';
 		var wh = this.window.getHeight();
-		var bh = document.body.getHeight();
+		var bh = window.innerHeight || document.documentElement.clientWidth;
+		if(!bh)bh=0;
 		var style={};
 		if(bh-wh > 0) {
 			style.top = (bh-wh)/2 + "px";

@@ -1,4 +1,4 @@
-<form action="form/User/authorization" method="post">
+<form action="{$c.url}form/User/authorization" method="post">
     <div class="">
         <label>{word module="User" term="field_email"}</label>
         <input type="text" name="email">

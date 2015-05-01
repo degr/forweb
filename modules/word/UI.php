@@ -144,7 +144,7 @@ class Word_UI {
             $data = array();
             $translations = array();
         } else {
-            $data = DB::getRow("SELECT * FROM word WHERE id = ".$id." AND language = ".$currentLanguage['id']);
+            $data = DB::getRow("SELECT * FROM word WHERE id = ".$id);
             if(!empty($data)) {
                 $translations = DB::getAssoc(
                     "SELECT language, value FROM word WHERE name = '".DB::escape($data['name'])."'",

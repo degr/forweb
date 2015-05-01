@@ -40,6 +40,8 @@ class ORM{
     public static function loadBinded($tableName, $keyValue, $leftKey, $rightKey, $type) {
         $mainTable = ORM::getTable($tableName);
         $filter = new ORM_Query_Filter($mainTable->getName(), $rightKey, ORM_Query_Filter::TYPE_EQUAL);
+        $filter->setValue($keyValue);
+        $filter->setActive(true);
         $one = $type == ORM_Table::ONE_TO_ONE || $type == ORM_Table::MANY_TO_ONE;
         return ORM_Utils::load($mainTable, $one, array($filter), null, null);
     }

@@ -164,7 +164,7 @@ class Word_Actions{
             foreach($languages as $key => $language) {
                 if(empty($ids[$key])) {
                     DB::query("INSERT INTO word (language, module, name, value) VALUES "
-                        ."(".$key.", ".$module.", ".$name.", '')"
+                        ."(".$key.", ".$module.", '".$name."', '')"
                     );
                     if($checkForNewLanguage) {
                         $checkForNewLanguage = false;
@@ -180,7 +180,7 @@ class Word_Actions{
             foreach($values as $val) {
                 $toUpdate = array();
                 foreach($val as $key => $value) {
-                    $toUpdate[] = $key . "='" . DB::escape($value) . "'";
+                    $toUpdate[] = $key . "='" . $value . "'";
                 }
                 DB::query($queryStart.implode(",",$toUpdate).$queryEnd.$ids[$val['language']]);
             }

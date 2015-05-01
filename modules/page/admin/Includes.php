@@ -115,15 +115,17 @@ class Page_Admin_Includes{
             }
             $data['template'] = 0;
             $includeObject = ORM::buildObject($table, $data);
-            ORM::saveData($table, $includeObject[0]);
+            $include =  $includeObject[0];
+            $include->setPage($pageId);
+            ORM::saveData($table, $include);
         }
         $ids = array_diff($ids, $newIds);
         if(count($ids) > 0) {
             foreach ($ids as &$id) {
                 $id = DB::escape($id);
             }
-            $out[] = "Was deleted includes with ids: [".implode(", ", $ids)."]";
             unset($id);
+            $out[] = "Was deleted includes with ids: [".implode(", ", $ids)."]";
             DB::query("DELETE FROM includes WHERE id IN('".implode("','", $ids)."')");
         }
         $allIds = array();

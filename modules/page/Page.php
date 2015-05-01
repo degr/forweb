@@ -1,6 +1,8 @@
 <?
 class Page extends Module{
 
+	const PAGE_TITLE_PREFIX = "title_";
+
 	public static function getIncludeTypesList()
 	{
 		return array(
@@ -26,7 +28,7 @@ class Page extends Module{
 			$this->setHandler("getIncludeTextForm", new AjaxHandler("getIncludeTextForm", AjaxHandler::JSON));
 
 			$this->setHandler("createTemplate", new AjaxHandler("createTemplate", AjaxHandler::JSON));
-			$this->setHandler("editTemplate", new AjaxHandler("editTemplate", AjaxHandler::JSON));
+			$this->setHandler("editTemplate", new AjaxHandler("editTemplate", AjaxHandler::TEXT));
 			$this->setHandler("deleteTemplate", new AjaxHandler("deleteTemplate", AjaxHandler::JSON));
 
 			$this->setHandler("deleteTemplateForm", new AjaxHandler("deleteTemplateForm", AjaxHandler::JSON));

@@ -8,11 +8,8 @@ require_once "modules/project.functions.php";
 require_once "modules/module/Module.php";
 require_once "modules/core/Core.php";
 $manager = new DB_Manager("", "MySQL");
-$manager->setCredentials("localhost", "root", "", "php_db");
+$manager->setCredentials("localhost", "root", "", "forweb");
 DB::init($manager);
-
-
-
 
 if($_GET['init'] == 1){
     $coreInstall = new Core_Install();

@@ -48,6 +48,14 @@ class Core extends Module{
 	 */
 	protected $pageModule;
 
+	protected static $pathParams;
+
+	public static function getPathParam($num){
+		if(isset(self::$pathParams[$num])) {
+			return self::$pathParams[$num];
+		}
+		return "";
+	}
 	/**
 	 * Core instance.
 	 * Core class must have singleton model. Do not create core objects,
@@ -129,10 +137,10 @@ class Core extends Module{
 			return;
 		}
 
-		$params = $dispatcher->getParams();
+		self::$pathParams = $dispatcher->getParams();
 		/* @var $pageService Page_Service */
 		$pageService = $this->pageModule->getService();
-		$page = $pageService->findPage($params);
+		$page = $pageService->findPage(self::$pathParams);
 		$pageService->setCurrentPage($page);
 		$template = $pageService->getTemplate();
 		$blocks = $this->getBlocks($template->getId());
@@ -210,7 +218,6 @@ class Core extends Module{
 				}
 			}
 		}
-
 		return $out;
 	}
 
@@ -284,15 +291,11 @@ class Core extends Module{
 		}
 	}
 
-
-
-
 	public function getAjaxConfig(){
 		Access::denied("can_edit_config");
 		$provider = new Core_Config_Config();
 		return $provider->getAjaxConfig();
 	}
-
 	/**
 	 * Ajax handler
 	 */

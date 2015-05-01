@@ -7,6 +7,8 @@
  */
 class Word extends Module{
     const GET_SHOW_KEYS = "show_keys";
+    const SWITCH_LANGUAGE = "lang";
+    const SESSION_LANGUAGE = 'language';
     /**
      * Get module ajax handlers
      * @return AjaxHandler[]
@@ -94,11 +96,11 @@ class Word extends Module{
      * Get current active locale
      * @return array(id=>1,locale=>en,is_default=>1)
      */
-    public static function getLanguage($languageName = ''){
+    public static function getLanguage($locale = ''){
         $languages = &Word::getLanguages();
         if(Word::$language == null) {
-            if(!empty($_SESSION['language']) && !empty($languages[$_SESSION['language']])) {
-                Word::$language = $languages[$_SESSION['language']];
+            if(!empty($_SESSION[Word::SESSION_LANGUAGE]) && !empty($languages[$_SESSION[Word::SESSION_LANGUAGE]])) {
+                Word::$language = $languages[$_SESSION[Word::SESSION_LANGUAGE]];
             }
             if(empty(Word::$language)) {
                 foreach ($languages as $language) {
@@ -108,11 +110,11 @@ class Word extends Module{
                     }
                 }
             }
-            $_SESSION['language'] = Word::$language['id'];
+            $_SESSION[Word::SESSION_LANGUAGE] = Word::$language['id'];
         }
-        if(!empty($languageName)) {
+        if(!empty($locale)) {
             foreach($languages as $language) {
-                if($languageName == $language['name']){
+                if($locale == $language['locale']){
                     return $language;
                 }
             }
@@ -195,4 +197,24 @@ class Word extends Module{
         return $provider->onAjaxDeleteTerm($id);
     }
 
+    public function getLanguageSwitchForm(UI $ui){
+        if(!empty($_REQUEST[Word::SWITCH_LANGUAGE])) {
+            $language = Word::getLanguage($_REQUEST[Word::SWITCH_LANGUAGE]);
+            if(!empty($language) && $_SESSION[Word::SESSION_LANGUAGE] != $language['locale']) {
+                $_SESSION[Word::SESSION_LANGUAGE] = $language['id'];
+                $urlParts = parse_url($_SERVER['REQUEST_URI']);
+                $url = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?') + 1);
+                $query = explode("&", $urlParts['query']);
+                foreach($query as $item) {
+                    if($item == Word::SWITCH_LANGUAGE."=".$language['locale']){
+                        continue;
+                    }
+                    $url.=$item;
+                }
+                Core_Utils::redirect($url);
+            }
+        }
+        $ui->setLayout("word/language.switch.tpl");
+        $ui->addVariable('languages', Word::getLanguages());
+    }
 }
