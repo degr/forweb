@@ -87,6 +87,22 @@ class CMS implements IModule{
 		}
 	}
 
+	/**
+	 * Get page title. Each title must be translated in Word module with key
+	 * Page::PAGE_TITLE_PREFIX.$page->getId();
+	 * @param UI $ui
+	 * @throws Exception
+	 */
+	public function getPageHeader(UI $ui) {
+		/* @var $pageService Page_Service */
+		$pageService = Core::getModule("Page")->getService();
+		$pageId = $pageService->getCurrentPage()->getId();
+		$ui->addVariable(
+			'title',
+			Word::get("page_info", Page::PAGE_TITLE_PREFIX.$pageId, true)
+		);
+		$ui->setLayout('page/common/title.tpl');
+	}
 
 	/**
 	 * Get module ajax handlers

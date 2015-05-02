@@ -23,6 +23,7 @@ class Page_MethodList {
             $methods = $reflectObj->getMethods(ReflectionMethod::IS_PUBLIC);
             foreach($methods as $method) {
                 $parameters = $method->getParameters();
+                echo $method."<br>";
                 if(count($parameters) != 1) {
                     continue;
                 }

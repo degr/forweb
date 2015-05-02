@@ -85,7 +85,7 @@ class ORM_QueryBuilder {
             }
         }
         if(count($out) > 0) {
-            return " ".$condition.implode($separator, $out);
+            return " ".$condition." ".implode($separator, $out);
         } else {
             return "";
         }

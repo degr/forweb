@@ -115,7 +115,9 @@ class Page_Admin_Includes{
             }
             $data['template'] = 0;
             $includeObject = ORM::buildObject($table, $data);
-            ORM::saveData($table, $includeObject[0]);
+            $include =  $includeObject[0];
+            $include->setPage($pageId);
+            ORM::saveData($table, $include);
         }
         $ids = array_diff($ids, $newIds);
         if(count($ids) > 0) {

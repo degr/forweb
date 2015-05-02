@@ -1,6 +1,8 @@
 <?
 class Page extends Module{
 
+	const PAGE_TITLE_PREFIX = "title_";
+
 	public static function getIncludeTypesList()
 	{
 		return array(
@@ -10,7 +12,6 @@ class Page extends Module{
 			'executable'=>Word::get('common', 'include_type_executable')
 		);
 	}
-
 	public function getAjaxHandlers()
 	{
 		if($this->ajaxHandlers == null) {
@@ -27,7 +28,7 @@ class Page extends Module{
 
 			$this->setHandler("createTemplate", new AjaxHandler("createTemplate", AjaxHandler::JSON));
 			$this->setHandler("editTemplate", new AjaxHandler("editTemplate", AjaxHandler::JSON));
-			$this->setHandler("deleteTemplate", new AjaxHandler("deleteTemplate", AjaxHandler::JSON));
+			$this->setHandler("deleteTemplate", new AjaxHandler("deleteTemplate", AjaxHandler::TEXT));
 
 			$this->setHandler("deleteTemplateForm", new AjaxHandler("deleteTemplateForm", AjaxHandler::JSON));
 			$this->setHandler("createBlock", new AjaxHandler("createBlock", AjaxHandler::JSON));

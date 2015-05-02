@@ -1,7 +1,7 @@
 <?php
 class Word_Install_Words {
 	public function install($languages, $modules) {
-	$insertQuery = "INSERT INTO word (language, module, name, value) VALUES ";
+	$insertQuery = "INSERT INTO word (language, module, name, value) VALUES ";//
 	$languageId = $languages['en'];
 	$moduleId = $modules['admin'];
 	$words = array(

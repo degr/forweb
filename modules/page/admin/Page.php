@@ -34,9 +34,6 @@ class Page_Admin_Page{
         }
 
         $form['fields']['parent']['options'] = $parentsArray;
-        if($page != null && $page->getId() == 1) {
-            unset($form['fields']['parent']);
-        }
 
         $form['fields']['template']['tag'] = UI::TAG_SELECT;
         $query = "SELECT id, name FROM templates";
@@ -45,14 +42,6 @@ class Page_Admin_Page{
         $form['fields']['submit'] = UI::getSubmitButton();
         $form['fields']['submit']['layout'] = $layout;
         $form['fields']['position']['attributes']['type'] = "hidden";
-        /*if($page != null){
-            $vars = $page->toArray();
-            foreach($vars as $key => $value){
-                if(!empty($form['fields'][$key])){
-                    $form['fields'][$key]['value'] = $value;
-                }
-            }
-        }*/
 
         if($page != null) {
             $id = $page->getId();
@@ -70,6 +59,10 @@ class Page_Admin_Page{
                     'layout' => $layout
                 );
             }
+            if($id == 1) {
+                unset($form['fields']['parent']);
+            }
+            $form['fields']['template']['value'] = $page->getTemplateId();
         }
 
         return $form;
