@@ -35,8 +35,8 @@ class Service{
             ORM::saveArray($this->getTable(), $object);
             return;
         }
-        if(!is_subclass_of ($object, 'ORM_Persistence_Base')){
-            throw new FwException("This is not persistence object!");
+        if(!is_subclass_of ($object, 'PersistBase')){
+            throw new Exception("This is not persistence object!");
         }
         ORM::saveData($this->getTable(), $object);
     }

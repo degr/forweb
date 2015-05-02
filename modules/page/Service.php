@@ -81,7 +81,7 @@ class Page_Service extends Service {
      */
     public function getPagePath(PersistPages $page){
         //home page hack
-        if($page->getParent() === 0) {
+        if($page->getParent() === '0') {
             return "";
         }
         return $this->getPagePathRecoursivly($page->getParent(), $page->getUrl(), "");

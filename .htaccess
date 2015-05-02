@@ -8,6 +8,6 @@ RewriteCond %{REQUEST_URI} !\.bmp$
 RewriteCond %{REQUEST_URI} !\.js$
 RewriteCond %{REQUEST_URI} !\.css$
 RewriteCond %{REQUEST_URI} !\.txt$
-RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$  index.php?q=$1 [L,QSA]

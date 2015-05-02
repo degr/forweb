@@ -16,11 +16,22 @@ class ORM_Query_Filter extends ORM_Query_AbstractItem{
     const TYPE_IN = "in";
     const TYPE_NOT_EQUAL = "not_equal";
 
+    const VALUE_TYPE_STRING = "string";
+    const VALUE_TYPE_INTEGER = "integer";
+    const VALUE_TYPE_BOOLEAN = "boolean";
     /**
-     * filter type
+     * filter type. Can be one of the ORM_Query_Filter constant with prefix 'TYPE_'
      * @var string
      */
     protected $type;
+
+    /**
+     * filter value type. Can be string, integer, boolean.
+     * @var string
+     */
+    protected $valueType;
+
+
 
     /**
      * Type field getter
@@ -93,27 +104,67 @@ class ORM_Query_Filter extends ORM_Query_AbstractItem{
                 $operator = "=";
         }
         $value = $this->getValue();
-        if($this->type === self::TYPE_IN && is_array($value)){
-            $params = array();
-            foreach($value as $key) {
-                $params[] = DB::escape($key);
+        if(is_array($value)) {
+            foreach($value as &$v) {
+                $v = $this->prepareValue($v);
             }
-            $param = "(".implode("', '", $params).")";
         } else {
-            $param = DB::escape($this->getValue());
-            if($this->type === self::TYPE_IN) {
-                $param = "'".$param."'";
-            }
+            $value = $this->prepareValue($value);
         }
-        $param = DB::escape($this->getValue());
-        if($this->getType() == self::TYPE_LIKE) {
-            $param = "%".$param."%";
+
+        if($this->type === self::TYPE_IN){
+            if(is_array($value)){
+                $param = "('".implode("', '", $value)."')";
+            } else {
+                $param = "'" . DB::escape($value) . "'";
+            }
+        } elseif($this->getType() == self::TYPE_LIKE) {
+            $param = "'%".$value."%'";
         } elseif($this->getType() == self::TYPE_LIKE_START_WITH) {
-            $param .= "%";
+            $param = "'".$value."%'";
         }elseif($this->getType() == self::TYPE_LIKE_END_WITH) {
-            $param = "%".$param;
+            $param = "'%".$value."'";
+        }else{
+            if(empty($this->valueType) || $this->valueType == self::VALUE_TYPE_STRING){
+                $param = "'".$value."'";
+            } else {
+                $param = $value;
+            }
         }
         return $table.$operator.$param;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValueType() {
+        return $this->valueType;
+    }
+
+    /**
+     * @param string $valueType
+     */
+    public function setValueType($valueType) {
+        $this->valueType = $valueType;
+    }
+
+    private function prepareValue($v)
+    {
+        $type = $this->getValueType();
+        if(empty($type)) {
+            $type = self::VALUE_TYPE_STRING;
+        }
+        if(empty($type) || $type == self::VALUE_TYPE_STRING) {
+            return DB::escape($v);
+        } elseif($type == self::VALUE_TYPE_INTEGER) {
+            return intval($v);
+        }elseif($type == self::VALUE_TYPE_BOOLEAN) {
+            return intval($v) == 1 ? 1 : 0;
+        }else{
+            throw new FwException("Undefined filter value type: ".$type);
+        }
+
+
     }
 
 }

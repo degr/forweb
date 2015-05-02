@@ -124,8 +124,8 @@ class Page_Admin_Includes{
             foreach ($ids as &$id) {
                 $id = DB::escape($id);
             }
-            $out[] = "Was deleted includes with ids: [".implode(", ", $ids)."]";
             unset($id);
+            $out[] = "Was deleted includes with ids: [".implode(", ", $ids)."]";
             DB::query("DELETE FROM includes WHERE id IN('".implode("','", $ids)."')");
         }
         $allIds = array();
