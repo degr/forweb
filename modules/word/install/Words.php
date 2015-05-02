@@ -2,8 +2,8 @@
 class Word_Install_Words {
 	public function install($languages, $modules) {
 	$insertQuery = "INSERT INTO word (language, module, name, value) VALUES ";
-	$languageId = $languages[''];
-	$moduleId = $modules[''];
+	$languageId = $languages['en'];
+	$moduleId = $modules['admin'];
 	$words = array(
 		'panel_new_page'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'panel_new_page', 'value'=>'New page'),
 		'word_reset_term'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'word_reset_term', 'value'=>''),
@@ -50,8 +50,8 @@ class Word_Install_Words {
 		'template_field_template'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'template_field_template', 'value'=>'Template file'),
 		'new_access_group'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'new_access_group', 'value'=>'New User Group'),
 		'new_access_action'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'new_access_action', 'value'=>'New access permission'),
-		'new_access_group_prompt'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'new_access_group_prompt', 'value'=>'Enter new user group name.<br/> Use \"_\" char as word separator'),
-		'new_access_action_prompt'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'new_access_action_prompt', 'value'=>'Enter new access action name.<br/> Use \"_\" char as word separator'),
+		'new_access_group_prompt'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'new_access_group_prompt', 'value'=>'Enter new user group name.<br/> Use \\\"_\\\" char as word separator'),
+		'new_access_action_prompt'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'new_access_action_prompt', 'value'=>'Enter new access action name.<br/> Use \\\"_\\\" char as word separator'),
 		'delete_include_confirm'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'delete_include_confirm', 'value'=>'Are you realy want to delete this include?<br/> Some site content can disappear.'),
 		'confirm_yes'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'confirm_yes', 'value'=>'I know what I do'),
 		'confirm_no'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'confirm_no', 'value'=>'No'),
@@ -85,8 +85,8 @@ class Word_Install_Words {
 		'file_uploaded'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'file_uploaded', 'value'=>'File uploaded to server.'),
 		'file_or_folder_exist'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'file_or_folder_exist', 'value'=>'File with this name already exist in current folder. Are you want to continue? (old file will be deleted)'),
 		'enter_new_file_name'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'enter_new_file_name', 'value'=>'Enter new file (directory) name.'),
-		'admin_page_active'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'admin_page_active', 'value'=>''),
-		'admin_page_in_menu'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'admin_page_in_menu', 'value'=>''),
+		'admin_page_active'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'admin_page_active', 'value'=>'Page active'),
+		'admin_page_in_menu'=>array('language'=>$languages['en'], 'module'=>$modules['admin'],'name'=>'admin_page_in_menu', 'value'=>'Page in menu'),
 	);
 	$check = DB::getColumn('SELECT name FROM word WHERE language = "'.$languageId.'" AND module = "'.$moduleId.'"');
 	foreach ($check as $name) {
@@ -95,7 +95,7 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['en'];
+	$languageId = $languages['ru'];
 	$moduleId = $modules['admin'];
 	$words = array(
 		'panel_new_page'=>array('language'=>$languages['ru'], 'module'=>$modules['admin'],'name'=>'panel_new_page', 'value'=>'Создать страницу'),
@@ -188,8 +188,8 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['ru'];
-	$moduleId = $modules['admin'];
+	$languageId = $languages['en'];
+	$moduleId = $modules['common'];
 	$words = array(
 		'submit'=>array('language'=>$languages['en'], 'module'=>$modules['common'],'name'=>'submit', 'value'=>'Submit'),
 		'include_type_html'=>array('language'=>$languages['en'], 'module'=>$modules['common'],'name'=>'include_type_html', 'value'=>'HTML markup'),
@@ -204,7 +204,7 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['en'];
+	$languageId = $languages['ru'];
 	$moduleId = $modules['common'];
 	$words = array(
 		'submit'=>array('language'=>$languages['ru'], 'module'=>$modules['common'],'name'=>'submit', 'value'=>'Отправить'),
@@ -220,8 +220,8 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['ru'];
-	$moduleId = $modules['common'];
+	$languageId = $languages['en'];
+	$moduleId = $modules['files'];
 	$words = array(
 		'dir_write_forbidden'=>array('language'=>$languages['en'], 'module'=>$modules['files'],'name'=>'dir_write_forbidden', 'value'=>'This folder protected from writing.'),
 		'file_save'=>array('language'=>$languages['en'], 'module'=>$modules['files'],'name'=>'file_save', 'value'=>'File saved'),
@@ -233,7 +233,7 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['en'];
+	$languageId = $languages['ru'];
 	$moduleId = $modules['files'];
 	$words = array(
 		'dir_write_forbidden'=>array('language'=>$languages['ru'], 'module'=>$modules['files'],'name'=>'dir_write_forbidden', 'value'=>'Директория защищена от записи.'),
@@ -246,13 +246,13 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['ru'];
-	$moduleId = $modules['files'];
+	$languageId = $languages['en'];
+	$moduleId = $modules['sys_includes'];
 	$words = array(
 		'15'=>array('language'=>$languages['en'], 'module'=>$modules['sys_includes'],'name'=>'15', 'value'=>'<h1>Congratulations, just now you install ForWeb framework</h1>
 <p>This PHP based framework have modules structure. It\\\'s scalable flexible, and simple in understanding and controlling by administrator. Also, this framework writed for single-page applications</p>
 <p>For quick strart user must understand how does it create pages, and understand what admin panel doing. As ususal, adin panel is fixes at left side of your screen.</p>
-<p>Data output system have unusual but simple structure and each developer, who will maintenace application must understand how it work. ForWeb framework documentation is available on <a href=\\\"http://forweb.org/\\\">http://forweb.org/</a>.</p>
+<p>Data output system have unusual but simple structure and each developer, who will maintenace application must understand how it work. ForWeb framework documentation is available on <a href=\\\\\"http://forweb.org/\\\\\">http://forweb.org/</a>.</p>
 <p>Administator panel provide functionality for page creating and editing, page templates creating and editing, access operations, such as allow/disallow access to user group, new user groups creating, provide access to some files, that stored on your hosting, upload images and some more. Also, ForWeb have multy-language support, and using admin panel you can edit translations.</p>'),
 	);
 	$check = DB::getColumn('SELECT name FROM word WHERE language = "'.$languageId.'" AND module = "'.$moduleId.'"');
@@ -262,7 +262,7 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['en'];
+	$languageId = $languages['ru'];
 	$moduleId = $modules['sys_includes'];
 	$words = array(
 		'15'=>array('language'=>$languages['ru'], 'module'=>$modules['sys_includes'],'name'=>'15', 'value'=>'<h1>Вы только что установили ForWeb фреймворк</h1>
@@ -278,8 +278,8 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['ru'];
-	$moduleId = $modules['sys_includes'];
+	$languageId = $languages['en'];
+	$moduleId = $modules['user'];
 	$words = array(
 		'logout'=>array('language'=>$languages['en'], 'module'=>$modules['user'],'name'=>'logout', 'value'=>'Logout'),
 		'field_email'=>array('language'=>$languages['en'], 'module'=>$modules['user'],'name'=>'field_email', 'value'=>'Email'),
@@ -292,7 +292,7 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['en'];
+	$languageId = $languages['ru'];
 	$moduleId = $modules['user'];
 	$words = array(
 		'logout'=>array('language'=>$languages['ru'], 'module'=>$modules['user'],'name'=>'logout', 'value'=>'Выход'),
@@ -306,8 +306,8 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['ru'];
-	$moduleId = $modules['user'];
+	$languageId = $languages['en'];
+	$moduleId = $modules['word'];
 	$words = array(
 		'module_header_module'=>array('language'=>$languages['en'], 'module'=>$modules['word'],'name'=>'module_header_module', 'value'=>'Module name'),
 		'language_header_locale'=>array('language'=>$languages['en'], 'module'=>$modules['word'],'name'=>'language_header_locale', 'value'=>'Language'),
@@ -326,7 +326,7 @@ class Word_Install_Words {
 	foreach($words as $word) {
 		DB::query($insertQuery."('".$word['language']."', '".$word['module']."', '".$word['name']."', '".DB::escape($word['value'])."')");
 	}
-	$languageId = $languages['en'];
+	$languageId = $languages['ru'];
 	$moduleId = $modules['word'];
 	$words = array(
 		'module_header_module'=>array('language'=>$languages['ru'], 'module'=>$modules['word'],'name'=>'module_header_module', 'value'=>'Название модуля'),
