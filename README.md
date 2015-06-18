@@ -19,9 +19,9 @@ Framework will create ORM table classes, create tables in database, and add data
 
 After it open www.localhost.loc/ at the right side you will see simple login form.
 default user email: admin@admin.admin
-defeaul user password: admin
+default user password: admin
 
-aflter authorization you will see admin panel at left side of you site. Click 'configuration' link,
+after authorization you will see admin panel at left side of you site. Click 'configuration' link,
 find there 'core' module, than find there 'url' field, populate it with you url - www.localhost.loc/ and save.
 After it, you can do all, what you want.
 
