@@ -16,7 +16,7 @@ if($_GET['init'] == 1 && Core::DEVELOPMENT){
     $coreInstall->run();
     exit;
 }
-
+$a = 'aaaaaa';
 
 $core = Core::getInstance();
 $core->process();
