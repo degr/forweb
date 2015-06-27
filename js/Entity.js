@@ -147,8 +147,8 @@ var Entity = {
                 }
             }
             for(var type in objects){
-                for(var i=0;i<objects[type].length;i++)
-                    Entity.setData(type, objects[type][i]);
+                for(var k=0;i<objects[type].length;i++)
+                    Entity.setData(type, objects[type][k]);
             }
         },
         getRelativeFields: function(target, field, type){
@@ -166,13 +166,13 @@ var Entity = {
         addMethods: function(type, el, data, out, k){
             var setter = "set"+ k.ucfirst();
             var getter = "get"+ k.ucfirst();
-            var els = Entity.utils.getRelativeFields(el, k, type)
+            var els = Entity.utils.getRelativeFields(el, k, type);
             out[getter] = function(){return out.data[k]};
             out[setter] = function(val){
                 out.data[k] = val;
                 for(var i = 0; i< els.length; i++)
                     els[i].innerHTML = val;
-            }
+            };
             if(!out.data)out.data={};
             if(data[k])
                 out.data[k] = data[k];

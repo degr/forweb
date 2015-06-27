@@ -19,11 +19,10 @@ class CMS implements IModule{
 				$function = $handler->getMethod();
 				$out = $obj->$function();
 				if (isset($out)) {
+					CMS::sendHeaders($handler->getResponse());
 					if ($handler->getResponse() === AjaxHandler::JSON) {
-						header('Content-Type: application/json; charset=utf-8');
 						echo json_encode($out);
 					} else {
-						header('Content-Type: text/html; charset=utf-8');
 						echo $out;
 					}
 				}
@@ -32,6 +31,17 @@ class CMS implements IModule{
 		}
 		echo "unknown ajax handler";
 		exit;
+	}
+
+	public static function sendHeaders($response) {
+		if($response === AjaxHandler::JSON) {
+			header('Content-Type: application/json; charset=utf-8');
+		} else {
+			header('Content-Type: text/html; charset=utf-8');
+		}
+		header("Pragma: no-cache");
+		header("Cache-control: private, must-revalidate");
+		header("Content-disposition: inline");
 	}
 
 	public static function processForm($moduleName, $handlerName)
@@ -142,5 +152,14 @@ class CMS implements IModule{
 	public function onSidebarSubmenu(UI $ui){
 		$provider = new CMS_Menu();
 		$provider->onSidebarSubmenu($ui);
+	}
+
+	/**
+	 * Get module event handlers
+	 * @return EventHandler[]
+	 */
+	public function getEventHandlers()
+	{
+		// TODO: Implement getEventHandlers() method.
 	}
 }

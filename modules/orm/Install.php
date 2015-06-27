@@ -13,6 +13,7 @@ class ORM_Install implements Module_IInstall{
             foreach($table->getFields() as $field) {
                 if(!in_array($field->getName(), $columns)) {
                     $defaultValue = $field->getDefaultValue();
+
                     $enumValues = $field->getEnumValues();
                     $query = "ALTER TABLE ".$table->getName()." ADD "
                         .$field->getName()." ".$field->getType()
@@ -20,7 +21,7 @@ class ORM_Install implements Module_IInstall{
                         .($field->getLength() !== 0 ? "(".$field->getLength().")" : "" )
                         .($field->getAutoIncrement()?" AUTO_INCREMENT ":"")
                         .($field->getCanBeNull() ? "" : " NOT NULL " )
-                        .(!empty($defaultValue ) || $defaultValue === 0 ? " DEFAULT '".DB::escape($field->getDefaultValue())."' " : "");
+                        .(!empty($defaultValue ) || $defaultValue === 0 ? " DEFAULT ".self::getDefaultValueForField($field)." " : "");
                     DB::query($query);
                     if($field->getUnique()) {
                         $query = "ALTER TABLE ".$table->getName()." ADD UNIQUE (".$field->getName().")";
@@ -40,7 +41,7 @@ class ORM_Install implements Module_IInstall{
                     .($field->getLength() !== 0 ? "(".$field->getLength().")" : "" )
                     .($field->getAutoIncrement()?" AUTO_INCREMENT ":"")
                     .($field->getCanBeNull() ? "" : " NOT NULL " )
-                    .(!empty($defaultValue ) || $defaultValue === 0 ? " DEFAULT '".DB::escape($field->getDefaultValue())."' " : "")
+                    .(!empty($defaultValue ) || $defaultValue === 0 ? " DEFAULT ".self::getDefaultValueForField($field)." " : "")
 
                     .($field->getUnique() ? ", UNIQUE (".$field->getName().")" : "")
                     .($field->getPrimary() ? ", PRIMARY KEY (".$field->getName().")" : "");
@@ -59,6 +60,16 @@ class ORM_Install implements Module_IInstall{
                 }
             }
         }
+    }
+
+    private static function getDefaultValueForField(ORM_Table_Field $field){
+        $intTypes = array('integer', 'boolean', 'bit');
+        if(!in_array($field->getType(), $intTypes)) {
+            $defaultValue = "'".DB::escape($field->getDefaultValue())."'";
+        } else {
+            $defaultValue = $field->getDefaultValue();
+        }
+        return $defaultValue;
     }
 
     public static function serializeTable(ORM_Table $table){
@@ -190,7 +201,7 @@ class ORM_Install implements Module_IInstall{
         $name = $bind->getLeftField();
         $text ="\t/**\n";
         $text .="\t * `".$name."` field getter\n";
-        $text .="\t * @return ".$bind->getLeftTable()->getPersistClassName().$typePrefix."\n";
+        $text .="\t * @return ".$bind->getRightTable()->getPersistClassName().$typePrefix."\n";
         $text .="\t */\n";
 
         $text .= "\tpublic function get" . ucfirst($bind->getLeftField()) . "(){\n";

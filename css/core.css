@@ -5,7 +5,9 @@ ul, li, p, div, span, fieldset, legend, ol, dt, dl, dd, a, html, body{
 *{
   box-sizing: border-box;
 }
-
+li{
+  list-style: none;
+}
 input:disabled, textarea:disabled, select:disabled{
   background-color: rgb(235, 235, 228);
 }

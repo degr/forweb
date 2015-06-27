@@ -5,6 +5,7 @@
  * @type {{prevent: Function, serialize: Function}}
  */
 var Core = {
+	url: null,
 	prevent: function(e){
        if (!e)
          if (window.event) e = window.event;
@@ -90,21 +91,21 @@ var Ajax = {
 		return '{'+ d.join(encodeURIComponent(',')) + '}';
 	},
 	getXmlHttp : function() {
-			var xmlhttp;
+		var xmlhttp;
+		try {
+			xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
 			try {
-				xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-			} catch (e) {
-				try {
-					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-				} catch (E) {
-					xmlhttp = false;
-				}
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (E) {
+				xmlhttp = false;
 			}
-			if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
-				xmlhttp = new XMLHttpRequest();
-			}
-			return xmlhttp;
 		}
+		if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+			xmlhttp = new XMLHttpRequest();
+		}
+		return xmlhttp;
+	},
 };
 var UI = {
 	build: function(object){

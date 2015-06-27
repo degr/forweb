@@ -15,7 +15,7 @@ class ORM_Register{
         $folder = ORM::getTablesFolder();
         $data = file_get_contents($folder.$tableName.".data");
         if(empty($data)){
-            throw new Exception("Can't found table with name: " .$tableName);
+            throw new FwException("Can't found table with name: " .$tableName);
         }
         $table = unserialize($data);
         $registeredTables[$tableName] = $table;

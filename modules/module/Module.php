@@ -10,14 +10,27 @@ interface IModule{
 	 * @return FormHandler[]
 	 */
 	public function getFormHandlers();
+
+	/**
+	 * Get module event handlers
+	 * @return EventHandler[]
+	 */
+	public function getEventHandlers();
 }
 
 abstract class Module implements IModule{
 	/**
-	 * @var array
+	 * @var AjaxHandler[]
 	 */
 	protected $ajaxHandlers;
+	/**
+	 * @var FormHandler[]
+	 */
 	protected $formHandlers;
+	/**
+	 * @var EventHandler[]
+	 */
+	protected $eventHandlers;
 
 	protected $service;
 	/**

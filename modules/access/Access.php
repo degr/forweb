@@ -169,4 +169,12 @@ class Access extends Module{
         return !empty($accessObject[$action][$group]);
     }
 
+    /**
+     * Get module event handlers
+     * @return EventHandler[]
+     */
+    public function getEventHandlers()
+    {
+        // TODO: Implement getEventHandlers() method.
+    }
 }

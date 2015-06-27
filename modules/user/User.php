@@ -6,7 +6,8 @@
  * Time: 16:00
  */
 class User extends Module{
-
+    const EVENT_AUTHORIZATION = "authorization_event";
+    const EVENT_LOGOUT = 'logout_event';
     /**
      * @var PersistUser
      */
@@ -80,6 +81,7 @@ class User extends Module{
         if($user != null) {
             User::$user = $user;
             User::setUserId($user->getId());
+            Core::triggerEvent(User::EVENT_AUTHORIZATION, array('id'=>$user->getId()));
         }
     }
 
@@ -115,9 +117,20 @@ class User extends Module{
      */
     public function logout(FormHandler $handler){
         if(User::getUser() != null) {
+            $userId = User::getUserId();
             User::setUserId(0);
             User::$user = null;
+            Core::triggerEvent(User::EVENT_LOGOUT, array('userId'=>$userId));
         }
         Core_Utils::redirectToHome();
+    }
+
+    /**
+     * Get module event handlers
+     * @return EventHandler[]
+     */
+    public function getEventHandlers()
+    {
+        // TODO: Implement getEventHandlers() method.
     }
 }

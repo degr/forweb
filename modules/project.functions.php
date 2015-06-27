@@ -28,14 +28,18 @@ function __autoload($class) {
     if (strpos($class, '_') !== false) {
         $path = strtolower($class);
         $parts = explode('_', $path);
-        array_pop($parts);
-        $name = substr($class, strrpos ($class, "_")+1, strlen($class));
-        if(count($parts) !== 0) {
-            $name = '/'.$name;
+        $lowered = array_pop($parts).'.php';
+        $folder = Core::MODULES_FOLDER.implode('/', $parts).'/';
+        $files = glob($folder.'*');
+        foreach($files as $file) {
+            if(strtolower($file) == $folder.$lowered) {
+                require_once $file;
+                return;
+            }
         }
-        $file = Core::MODULES_FOLDER.implode('/', $parts).$name.'.php';
+        $file = 'undefined class: '.$class;
     } else {
-        $file = Core::MODULES_FOLDER.lcfirst($class).'/'.$class.'.php';
+        $file = Core::MODULES_FOLDER.strtolower($class).'/'.$class.'.php';
         if(!is_file($file)){
             $file = Core::MODULES_FOLDER.$class.'.php';
         }

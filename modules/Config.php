@@ -57,4 +57,14 @@ class Config{
 			return array();
 		}
 	}
+
+	public static function getUrl()
+	{
+		$url = Config::get("url");
+		if(empty($url)) {
+			$params = parse_url($_SERVER['HTTP_REFERER']);
+			$url = $params['scheme']."://".$params['host']."/";
+		}
+		return $url;
+	}
 }

@@ -71,11 +71,13 @@ class Word extends Module{
         $languageId = $languageObject['id'];
 
         if(empty($cache[$languageId][$module]) && !$one) {
-            $query = "SELECT name, value FROM word WHERE language='".DB::escape($languageId)."'";
+            $query = "SELECT w.name, w.value FROM word w INNER JOIN word_modules m ON m.id = w.module WHERE w.language='"
+                .DB::escape($languageId)."' AND m.module= '".DB::escape($module)."'";
             $cache[$languageId][$module] = DB::getAssoc($query, 'name', 'value');
+
         } else if($one) {
-            $out = DB::getCell("SELECT value FROM word WHERE language='".DB::escape($languageId)."' AND name='"
-                .DB::escape($term)."'");
+            $out = DB::getCell("SELECT w.value FROM word w INNER JOIN word_modules m ON w.module = m.id WHERE w.language='"
+                .DB::escape($languageId)."' AND w.name='".DB::escape($term)."' AND m.module='".DB::escape($module)."'");
             return empty($out) ? '['.$module."::".$term.']' : $out;
         }
 
@@ -216,5 +218,14 @@ class Word extends Module{
         }
         $ui->setLayout("word/language.switch.tpl");
         $ui->addVariable('languages', Word::getLanguages());
+    }
+
+    /**
+     * Get module event handlers
+     * @return EventHandler[]
+     */
+    public function getEventHandlers()
+    {
+        // TODO: Implement getEventHandlers() method.
     }
 }

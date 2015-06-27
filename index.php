@@ -8,10 +8,10 @@ require_once "modules/project.functions.php";
 require_once "modules/module/Module.php";
 require_once "modules/core/Core.php";
 $manager = new DB_Manager("", "MySQL");
-$manager->setCredentials("localhost", "root", "", "forweb");
+$manager->setCredentials("localhost", "root", "", "roguelike");
 DB::init($manager);
 
-if($_GET['init'] == 1){
+if($_GET['init'] == 1 && Core::DEVELOPMENT){
     $coreInstall = new Core_Install();
     $coreInstall->run();
     exit;

@@ -100,7 +100,7 @@ class Core extends Module{
 		if(!empty(Core::$modules[$module])){
 			return true;
 		}
-		$file = "modules/".$module."/".$module.".php";
+		$file = "modules/".strtolower($module)."/".$module.".php";
 		return is_file($file);
 	}
 
@@ -200,6 +200,9 @@ class Core extends Module{
 				if(Core::DEVELOPMENT && isset($_GET['dbug_functions']) && Core::isModuleExist("Debug")){
 					$time = time();
 				}
+				if(!empty($data[$blocks[$include->getBlock()]][$include->getPosition()][$include->getPositionNumber()])) {
+					$include->setPositionNumber($include->getPositionNumber() +100);
+				}
 				$data[$blocks[$include->getBlock()]][$include->getPosition()][$include->getPositionNumber()] =
 					$this->processInclude($include);
 				if(Core::DEVELOPMENT && isset($_GET['dbug_functions']) && Core::isModuleExist("Debug")){
@@ -208,16 +211,22 @@ class Core extends Module{
 				}
 			}
 		}
+		//iterate over each block
 		foreach($data as $key => $block) {
 			if(empty($out[$key])) {
 				$out[$key] = "";
 			}
+			//iterate over positions: before, template, after
 			foreach($block as $positionedIncludes){
-				foreach($positionedIncludes as $inc) {
-					$out[$key] .= $inc;
+				//iterate over includes
+				$keys = (array_keys($positionedIncludes));
+				sort($keys);
+				foreach($keys as $incKey) {
+					$out[$key] .= $positionedIncludes[$incKey];
 				}
 			}
 		}
+		$out['scriptCollector'] = ScriptCollector::get();
 		return $out;
 	}
 
@@ -309,5 +318,39 @@ class Core extends Module{
 		$provider = new Core_Config_Config();
 		return $provider->deleteConfig();
 	}
+	public static function triggerEvent($eventName, $params){
+		$files = glob(self::MODULES_FOLDER.'*');
+		$forbidden = array('Module', 'Fwexception');
+		foreach($files as $file) {
+			if(!is_dir($file)) {
+				continue;
+			}
+			$className = ucfirst(basename($file));
+			if(in_array($className, $forbidden)){
+				continue;
+			}
+			$module = Core::getModule($className);
+			if(is_subclass_of($module, 'IModule') && method_exists($module, 'getEventHandlers')) {
+				$handlers = $module->getEventHandlers();
+				if(empty($handlers)){
+					continue;
+				}
+				foreach($handlers as $handler) {
+					if($handler->getEvent() === $eventName) {
+						$method = $handler->getMethod();
+						$module->$method($params);
+					}
+				}
+			}
+		}
+	}
 
+	/**
+	 * Get module event handlers
+	 * @return EventHandler[]
+	 */
+	public function getEventHandlers()
+	{
+		// TODO: Implement getEventHandlers() method.
+	}
 }

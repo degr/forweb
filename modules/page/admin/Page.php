@@ -224,7 +224,6 @@ class Page_Admin_Page{
             }
         }
         $i = 0;
-        debug($data);
         foreach($data as $value) {
             if(!in_array($i, $data)) {
                 return;
@@ -232,7 +231,6 @@ class Page_Admin_Page{
             $i++;
         }
 
-        var_dump($data);
         foreach($data as $key => $value) {
             DB::query("update pages set position = ".$value." where id = ".$key);
         }

@@ -89,4 +89,12 @@ class Files extends Module{
         return $provider->adminNewFile();
     }
 
+    /**
+     * Get module event handlers
+     * @return EventHandler[]
+     */
+    public function getEventHandlers()
+    {
+        // TODO: Implement getEventHandlers() method.
+    }
 }

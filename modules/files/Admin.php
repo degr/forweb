@@ -173,7 +173,6 @@ class Files_Admin{
 
     public function adminNewFile()
     {
-        debug($_POST);
         $path = $_POST['path'];
         $parts = explode('/',$path);
         $root = $this->filterRoot(array_shift($parts));

@@ -146,7 +146,7 @@ class DB implements DB_IDB{
      * @return mixed
      */
     public static function getLastInsertedId(){
-        return DB::$instance->insert_id;
+        return DB::$instance->getLastId();
     }
 
     /**

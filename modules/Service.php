@@ -35,7 +35,7 @@ class Service{
             ORM::saveArray($this->getTable(), $object);
             return;
         }
-        if(!is_subclass_of ($object, 'PersistBase')){
+        if(!is_subclass_of ($object, 'ORM_Persistence_Base')){
             throw new Exception("This is not persistence object!");
         }
         ORM::saveData($this->getTable(), $object);
@@ -80,7 +80,7 @@ class Service{
         $filter = new ORM_Query_Filter($this->table->getName(), $this->table->getPrimaryKey(), ORM_Query_Filter::TYPE_IN);
         $filter->setValue($keys);
         $filter->setActive(true);
-        return ORM::load($this->table->getName(), true, $filter, $sorters, null);
+        return ORM::load($this->table->getName(), false, $filter, $sorters, null);
     }
 
 

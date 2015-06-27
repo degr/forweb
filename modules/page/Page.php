@@ -277,4 +277,13 @@ class Page extends Module{
 		$provider = new Page_Admin_Page();
 		return $provider->changePagePositions();
 	}
+
+	/**
+	 * Get module event handlers
+	 * @return EventHandler[]
+	 */
+	public function getEventHandlers()
+	{
+		// TODO: Implement getEventHandlers() method.
+	}
 }

@@ -41,7 +41,7 @@ class DB_Engine_MySQL extends DB_Engine{
 
     public function getLastId()
     {
-        return $this->getCell("SELECT last_inserted_id()");
+        return $this->getCell("SELECT LAST_INSERT_ID()");
     }
 
     public function getColumns($table) {

@@ -45,7 +45,9 @@ class ORM_Utils{
                 if (empty($orderedObject[$bind->getRightTable()->getName()])) {
                     continue;
                 }
-                $lKeyMethod = 'get' . ucfirst($bind->getLeftField());
+                $postfix = $bind->getLeftField() === $table->getField($bind->getLeftKey())->getName() ? ORM_Utils::BIND_PREFIX : "";
+
+                $lKeyMethod = 'get' . ucfirst($bind->getLeftKey()).$postfix;
                 $lKeySetter = 'set' . ucfirst($bind->getLeftField());
 
                 $rKeyMethod = 'get' . ucfirst($bind->getRightKey());
@@ -82,7 +84,6 @@ class ORM_Utils{
         } else {
             return $orderedObject[$mainTable->getName()];
         }
-
     }
 
     protected static function fromArrayToObject(ORM_Table $table, $row){
@@ -147,7 +148,14 @@ class ORM_Utils{
         $pairsToUpdate = array();
 
         foreach($table->getFields() as $field){
-            $method = "get".ucfirst($field->getName());
+            $prefix = '';
+            foreach ($table->getBinds() as $bind) {
+                if($bind->getLeftKey() == $field->getName() && $bind->getLeftField() == $field->getName()) {
+                    $prefix = ORM_Utils::BIND_PREFIX;
+                }
+            }
+            $method = "get".ucfirst($field->getName()).$prefix;
+
             $currentData = $object->$method();
             if(empty($currentData) && $field->getAutoIncrement()){
                 continue;
@@ -170,7 +178,16 @@ class ORM_Utils{
         ORM_Utils::fixId($table, $object);
     }
 
+    /**
+     * @param $field ORM_Table_Field
+     * @param $value
+     * @return int|string
+     */
     public static function getValueForField($field, $value) {
+        $dv = $field->getDefaultValue();
+        if(!isset($value) && isset($dv)) {
+            $value = $dv;
+        }
         switch($field->getType()) {
             case 'bit':
             case 'boolean':
