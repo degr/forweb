@@ -122,6 +122,11 @@ class Core extends Module{
 	public function process(){
 		$dispatcher = new Page_Dispatcher($_SERVER['REQUEST_URI']);
 		$dispatcher->handleRequest();
+		if($dispatcher->getParam(0) == 'api') {
+			/** @var $api Api */
+			$api = Core::getModule("Api");
+			return $api->handleRequest($dispatcher);
+		}
 		$this->pageModule = Core::getModule("Page");
 
 		if($_REQUEST['ajax'] == 1){

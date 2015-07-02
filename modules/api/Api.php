@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: rsmirnou
+ * Date: 7/2/2015
+ * Time: 10:06 AM
+ */
+
+/**
+ * this class handle this requests: http://site.loc/api/user/getByName?name=John
+ *
+ * There is two types of behavior - custom
+ * Class Api
+ */
+class Api
+{
+    const OPEN_API = false;
+    const DEFAULT_LIMIT = 15;
+    const DEFAULT_PK_NAME = "id";
+
+
+    const METHOD_UPDATE = "update";
+    const METHOD_INSERT = "add";
+    const METHOD_DELETE = "delete";
+    const METHOD_SELECT = "show";
+
+
+
+    public function handleRequest(Page_Dispatcher $dispatcher)
+    {
+        $table = $dispatcher->getParam(1);
+        /** @var $provider Api_IPrivoder */
+        if(is_file("modules/api/provider/".ucfirst($table).".php")) {
+            $class = "Api_Provider_".ucfirst($table);
+            $provider = new $class();
+        } else {
+            $provider = new Api_Provider($table);
+        }
+        $method = $dispatcher->getParam(2);
+        if(empty($method)) {
+            return null;
+        }
+        return $provider->$method();
+    }
+}
