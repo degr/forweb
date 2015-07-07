@@ -125,7 +125,8 @@ class Core extends Module{
 		if($dispatcher->getParam(0) == 'api') {
 			/** @var $api Api */
 			$api = Core::getModule("Api");
-			return $api->handleRequest($dispatcher);
+			$api->handleRequest($dispatcher);
+			return;
 		}
 		$this->pageModule = Core::getModule("Page");
 

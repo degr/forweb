@@ -30,6 +30,10 @@ class Api
     public function handleRequest(Page_Dispatcher $dispatcher)
     {
         $table = $dispatcher->getParam(1);
+        if(empty($table)) {
+            throw new FwException("Undefined table in request path. Please specify table as second request param.");
+        }
+
         /** @var $provider Api_IPrivoder */
         if(is_file("modules/api/provider/".ucfirst($table).".php")) {
             $class = "Api_Provider_".ucfirst($table);
@@ -39,8 +43,9 @@ class Api
         }
         $method = $dispatcher->getParam(2);
         if(empty($method)) {
-            return null;
+            throw new FwException("Undefined method in request path. Please method name as third request param.");
         }
-        return $provider->$method();
+
+        echo $provider->$method();
     }
 }

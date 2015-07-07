@@ -6,7 +6,7 @@
  * Date: 7/2/2015
  * Time: 10:06 AM
  */
-interface Api_IPrivoder
+interface Api_IProvider
 {
     /**
      * @return array
