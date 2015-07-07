@@ -43,7 +43,7 @@ Element.prototype.removeClass = function(className){
 function newElement(tag, attr, elements){
     var e=document.createElement(tag);
     for(var i in attr){e.setAttribute(i, attr[i]);};
-    if(elements)for(var i=0;i<elements.length;i++)e.appendChild(elements[i]);
+    if(elements)if(typeof elements == 'string')e.innerHTML = elements; else for(var i=0;i<elements.length;i++)e.appendChild(elements[i]);
     return e;
 }
 

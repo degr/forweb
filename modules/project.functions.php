@@ -54,7 +54,36 @@ function __autoload($class) {
             return;
         }
     }
+    $c = explode('/', $file);
+    array_shift($c);
+    checkFolder('modules', implode('/', $c), $file);
     require_once($file);
+}
+
+function checkFolder($base, $file, $im) {
+    $parts = explode('/', $file);
+    if(count($parts) < 2) {
+        return;
+    }
+    $current = array_shift($parts);
+    $folders = glob($base.'/*');
+    $ok = false;
+    foreach($folders as $folder) {
+        if(!is_dir($folder)) {
+            continue;
+        }
+        if($folder == $base.'/'.$current) {
+            $ok = true;
+            break;
+        }
+    }
+    if($ok) {
+        if(count($parts) > 1) {
+            checkFolder($base.'/'.$current, implode('/', $parts), $im);
+        }
+    } else {
+        echo 'not ok'.$base.'/'.$file.'::'.$im.'<br>';
+    }
 }
 
 /**
