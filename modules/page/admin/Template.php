@@ -283,7 +283,9 @@ class Page_Admin_Template{
                 $onCreate = true;
                 $out[] = "Was created new include.";
             }
-            $data['page'] = 0;
+            $data['pageId'] = 0;
+            $data['templateId'] = $templateId;
+            $data['block'] = $blockId;
             /* @var $includeObject PersistIncludes */
             $includeObject = ORM::buildObject($table, $data);
             ORM::saveData($table, $includeObject[0]);

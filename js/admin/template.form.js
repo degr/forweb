@@ -24,15 +24,14 @@ var TemplateForm = {
         form.appendChild(newElement('div', {'class':'serverResponse'}));
         var incHolder = newElement('div', {'class':'include_holder'});
         if(block.includes) {
-            for (var i = 0; i < block.includes.length; i++) {
+            for (var j = 0; j < block.includes.length; j++) {
                 var fields = {};
-                for(var ff in block.includes[i]){
-                    fields[ff] = {value:block.includes[i][ff]};
+                for(var ff in block.includes[j]){
+                    fields[ff] = {value:block.includes[j][ff]};
                     if(ff == 'method') {
-                        fields[ff].options = block.includes[i].methods_list;
+                        fields[ff].options = block.includes[j].methods_list;
                     }
                 }
-
                 var dto = {fields:fields};
                 incHolder.appendChild(PageContent.getTemplate(true, dto, false, false));
             }
@@ -209,7 +208,7 @@ var TemplateForm = {
             type: "post",
             response: 'json',
             data: data
-        }
+        };
         Ajax.request(params);
     },
     newInclude: function(el){
@@ -219,7 +218,7 @@ var TemplateForm = {
         var length = b.getAll('.include_row').length;
         inc.get('input[name="template"]').value = document.body.get('#form_templates input[name="id"]').value;
         inc.get('input[name="block"]').value = form.getAttribute('data-id');
-        inc.get('input[name="positionNumber"]').value = length;
+        inc.get('input[name="positionNumber"]').value = length+1;
         b.appendChild(inc);
     },
     updateBlock: function(form){
@@ -233,7 +232,7 @@ var TemplateForm = {
             type: "post",
             response: 'json',
             data: data
-        }
+        };
         Ajax.request(params);
     },
     submitSuccess: function(a,r){
@@ -242,7 +241,7 @@ var TemplateForm = {
             if(b[i].value == a.block){
                 var f = b[i].parentNode;
                 f.get('.serverResponse').innerHTML = a.text;
-                setTimeout(function(){f.get('.serverResponse').innerHTML="";}, 5000)
+                setTimeout(function(){f.get('.serverResponse').innerHTML="";}, 5000);
                 var ids = f.getAll('.include_row input[name="id"]');
                 for(var j = 0; j < ids.length; j++) {
                     ids[j].value = a.ids[j];

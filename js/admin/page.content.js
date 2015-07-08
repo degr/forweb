@@ -184,7 +184,7 @@ var PageContent = {
                 default:
                     var ta = PageContent.getStaticContentTextarea(p.get('.staticContent').get('input'));
                     ta.show();
-                    p.up('form').appendChild(ta)
+                    p.up('form').appendChild(ta);
                     p.get('.dynamicContent').hide();
             }
         } else {
@@ -224,7 +224,7 @@ var PageContent = {
                 comment:{value:''}
             }
         };
-        var b= e.parentNode.get('.after').appendChild(PageContent.getTemplate(true, values, true, true));
+        e.parentNode.get('.after').appendChild(PageContent.getTemplate(true, values, true, true));
     },
     getStaticContentTextarea: function (input) {
         if(PageContent.staticContentTextarea == null) {
@@ -272,7 +272,7 @@ var PageContent = {
             if(b[i].value == a.block){
                 var f = b[i].parentNode;
                 f.get('.serverResponse').innerHTML = a.text;
-                setTimeout(function(){f.get('.serverResponse').innerHTML="";}, 5000)
+                setTimeout(function(){f.get('.serverResponse').innerHTML="";}, 5000);
                 var ids = f.getAll('.before .include_row input[name="id"], .after .include_row input[name="id"]');
                 for(var j = 0; j < ids.length; j++) {
                     ids[j].value = a.ids[j];

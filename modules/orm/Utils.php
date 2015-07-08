@@ -196,7 +196,7 @@ class ORM_Utils{
                 } elseif(empty($value)){
                     return 0;
                 } else {
-                    intval($value) === 0 ? 0 : 1;
+                    return intval($value) === 0 ? 0 : 1;
                 }
             case 'integer':
             case 'tinyint':
@@ -392,7 +392,13 @@ class ORM_Utils{
                 $data[$name] = null;
             }
             if ($field->validateValue($data[$name], $errors)) {
-                $setter = "set" . ucfirst($name);
+                $prefix = '';
+                foreach ($table->getBinds() as $bind) {
+                    if($bind->getLeftKey() == $field->getName() && $bind->getLeftField() == $field->getName()) {
+                        $prefix = ORM_Utils::BIND_PREFIX;
+                    }
+                }
+                $setter = "set".ucfirst($field->getName()).$prefix;
                 $object->$setter($data[$name]);
             }
         }
