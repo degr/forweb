@@ -11,7 +11,7 @@ var AccessForm = {
     requestAccessForm: function(){
         var params = {
             success: AccessForm.showAccessForm,
-            url: Admin.url + "access/getAccessForm?ajax=1",
+            url: Admin.url + "ajax/access/getAccessForm",
             type: "post",
             response: 'json',
             data: {'action':'getForm'}
@@ -67,7 +67,7 @@ var AccessForm = {
         var action = td.parentNode.get('td[data-name="action"] input').value;
         var params = {
             success: function(){td.removePreloader()},
-            url: Admin.url + "access/switchAccess?ajax=1",
+            url: Admin.url + "ajax/access/switchAccess",
             type: "post",
             response: 'text',
             data: {'group' : el.name, id:td.parentNode.getAttribute('data-field-id'), 'action':action}
@@ -79,7 +79,7 @@ var AccessForm = {
         td.drawPreloader('line');
         var params = {
             success: function(){td.removePreloader()},
-            url: Admin.url + "access/editActionName?ajax=1",
+            url: Admin.url + "ajax/access/editActionName",
             type: "post",
             response: 'text',
             data: {id:td.parentNode.getAttribute('data-field-id'), 'action':el.value}
@@ -94,7 +94,7 @@ var AccessForm = {
         var id = p.getAttribute('data-field-id');
         var params = {
             success: function(){p.remove()},
-            url: Admin.url + "access/deleteAction?ajax=1",
+            url: Admin.url + "ajax/access/deleteAction",
             type: "post",
             response: 'text',
             data: {id:id}
@@ -113,7 +113,7 @@ var AccessForm = {
                 for(var i = 0;i<cells.length;i++)cells[i].remove();
                 p.remove();
             },
-            url: Admin.url + "access/deleteAccessGroup?ajax=1",
+            url: Admin.url + "ajax/access/deleteAccessGroup",
             type: "post",
             response: 'text',
             data: {group: p.innerText}
@@ -130,7 +130,7 @@ var AccessForm = {
         if(!check)return;
         var params = {
             success: AccessForm.requestAccessForm,
-            url: Admin.url + "access/createAccessGroup?ajax=1",
+            url: Admin.url + "ajax/access/createAccessGroup",
             type: "post",
             response: 'text',
             data: {group: name}
@@ -141,7 +141,7 @@ var AccessForm = {
         if(!check)return;
         var params = {
             success: AccessForm.requestAccessForm,
-            url: Admin.url + "access/createAccessAction?ajax=1",
+            url: Admin.url + "ajax/access/createAccessAction",
             type: "post",
             response: 'text',
             data: {action: name}

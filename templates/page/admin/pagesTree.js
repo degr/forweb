@@ -10,7 +10,7 @@ var PagesTree = {
         }
         Admin.nowDisplayed = 'pagesTree';
         var params = {
-            url: Admin.url + "page/showPagesTree?ajax=1",
+            url: Admin.url + "ajax/page/showPagesTree",
             type: "get",
             success: PagesTree.renderPagesTree,
             response: 'json',
@@ -68,7 +68,7 @@ var PagesTree = {
                 data.items['id_' + links[i].getAttribute('data-id')] = i;
             }
             var params = {
-                url: Admin.url + "page/changePagePositions?ajax=1",
+                url: Admin.url + "ajax/page/changePagePositions",
                 type: "post",
                 response: 'json',
                 data: data

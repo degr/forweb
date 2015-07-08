@@ -18,24 +18,11 @@ class Files extends Module{
                 'updateTextFile' => new AjaxHandler('updateTextFile', AjaxHandler::TEXT),
                 'showFileContent' => new AjaxHandler('showFileContent', AjaxHandler::TEXT),
                 'adminDeleteFile' => new AjaxHandler('adminDeleteFile', AjaxHandler::TEXT),
-                'adminNewFile' => new AjaxHandler('adminNewFile', AjaxHandler::TEXT)
+                'adminNewFile' => new AjaxHandler('adminNewFile', AjaxHandler::TEXT),
+                'adminUploadFile' => new AjaxHandler('adminUploadFile', AjaxHandler::JSON)//@TODO fix this. In past it was FormHandler
             );
         }
         return $this->ajaxHandlers;
-    }
-
-    /**
-     * Get module form handlers
-     * @return FormHandler[]
-     */
-    public function getFormHandlers()
-    {
-        if($this->formHandlers == null) {
-            $this->formHandlers = array(
-                'adminUploadFile' => new FormHandler('adminUploadFile'),
-            );
-        }
-        return $this->formHandlers;
     }
 
     /**
@@ -73,10 +60,10 @@ class Files extends Module{
         return $provider->updateTextFile();
     }
 
-    public function adminUploadFile(FormHandler $handler){
+    public function adminUploadFile(){
         Access::denied('can_modify_files');
         $provider = new Files_Admin();
-        $provider->adminUploadFile($handler);
+        $provider->adminUploadFile($handler);//todo fix from from handler to ajax handler
     }
     public function adminDeleteFile(){
         Access::denied('can_modify_files');

@@ -68,7 +68,7 @@ var Forms  = {
     },
     fun: {
         classes: {
-            wrapper: "input-wrapper",
+            wrapper: "input-wrapper clearfix",
             title: "input-title",
             body: "input-body"
         },

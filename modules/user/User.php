@@ -40,22 +40,15 @@ class User extends Module{
 
     public function getAjaxHandlers()
     {
-        // TODO: Implement getAjaxHandlers() method.
-    }
-    /**
-     * Get module form handlers
-     * @return FormHandler[]
-     */
-    public function getFormHandlers()
-    {
-        if($this->formHandlers == null) {
-            $this->formHandlers = array(
-                'authorization' => new FormHandler('authorization'),
-                'logout' => new FormHandler('logout')
+        if($this->ajaxHandlers == null) {
+            $this->ajaxHandlers = array(
+                'authorization' => new AjaxHandler('onAjaxAuthorization', AjaxHandler::JSON),
+                'logout' => new AjaxHandler('onAjaxLogout', AjaxHandler::JSON)
             );
         }
-        return $this->formHandlers;
+        return $this->ajaxHandlers;
     }
+
 
     /**
      * Get current user
@@ -73,16 +66,17 @@ class User extends Module{
     /**
      * User authorization form controller
      *
-     * @param FormHandler $handler
      */
-    public function authorization(FormHandler $handler){
+    public function onAjaxAuthorization(){
         $provider = new User_Actions();
-        $user = $provider->authorization($handler);
-        if($user != null) {
-            User::$user = $user;
-            User::setUserId($user->getId());
-            Core::triggerEvent(User::EVENT_AUTHORIZATION, array('id'=>$user->getId()));
+        $dto = $provider->authorization($_POST['email'], $_POST['password']);
+        if($dto['success']) {
+            User::$user = $dto['user'];
+            User::setUserId(User::$user->getId());
+            Core::triggerEvent(User::EVENT_AUTHORIZATION, array('id'=>User::$user->getId()));
+            $dto['user'] = User::$user->toJson();
         }
+        return $dto;
     }
 
 
@@ -93,8 +87,12 @@ class User extends Module{
      */
     public function getAuthorizationForm(UI $ui){
         if(User::getUser() == null) {
+            $auth = null;
+            if(isset($_POST['email']) && isset($_POST['password'])) {
+                $auth = $this->onAjaxAuthorization();
+            }
             $provider = new User_Gui_Forms();
-            $provider->getAuthorizationForm($ui);
+            $provider->getAuthorizationForm($ui, $auth['errors']);
         }
     }
 
@@ -113,9 +111,8 @@ class User extends Module{
     /**
      * User authorization form UI controller.
      * Prepare data for form rendering
-     * @param FormHandler $handler
      */
-    public function logout(FormHandler $handler){
+    public function onAjaxLogout(){
         if(User::getUser() != null) {
             $userId = User::getUserId();
             User::setUserId(0);

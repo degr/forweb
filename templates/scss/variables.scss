@@ -1,0 +1,20 @@
+$grid-columns:               12 !default;
+
+$screen-sm:                  480px !default;
+$screen-md:                  768px !default;
+$screen-lg:                  992px !default;
+
+$media-sm:                   '(min-width: ' + $screen-sm + ')';
+$media-md:                   '(min-width: ' + $screen-md + ')';
+$media-lg:                   '(min-width: ' + $screen-lg + ')';
+
+$grid-gutter-width:          20px !default;
+
+$screen-sm-min:              $screen-sm !default;
+$screen-md-min:              $screen-md !default;
+$screen-lg-min:              $screen-lg !default;
+
+$container-sm:               ($screen-sm - $grid-gutter-width) !default;
+$container-md:               ($screen-md - $grid-gutter-width) !default;
+$container-lg:               ($screen-lg - $grid-gutter-width) !default;
+$container-lg-max-width:     1200px !default;

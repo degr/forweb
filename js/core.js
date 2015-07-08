@@ -105,7 +105,7 @@ var Ajax = {
 			xmlhttp = new XMLHttpRequest();
 		}
 		return xmlhttp;
-	},
+	}
 };
 var UI = {
 	build: function(object){
@@ -113,7 +113,7 @@ var UI = {
 			case 'form':
 				return UI.builder.asForm(object);
 			case 'table':
-				return UI.builder.asTable(object);;
+				return UI.builder.asTable(object);
 			case 'list':
 				return null;
 			default:

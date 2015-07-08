@@ -15,7 +15,7 @@ var FilesForm = {
     showForm: function(type, path){
         Admin.nowDisplayed = '';
         var params = {
-            url: Admin.url + "files/getAjaxUserMedia?ajax=1",
+            url: Admin.url + "ajax/files/getAjaxUserMedia",
             type: "post",
             success: FilesForm.createForm,
             response: 'text',
@@ -62,7 +62,7 @@ var FilesForm = {
             w.get('.path').value = l.pathname;
         } else {
             var params = {
-                url: Admin.url + "files/showFileContent?ajax=1",
+                url: Admin.url + "ajax/files/showFileContent",
                 type: "post",
                 response: 'text',
                 success: FilesForm.displayTextFileContent,
@@ -86,7 +86,7 @@ var FilesForm = {
         var content = Admin.getWindow().getContentHolder().get('#admin_file_content').value;
         var path = Admin.getWindow().getContentHolder().get('#admin_file_content').getAttribute('data-path');
         var params = {
-            url: Admin.url + "files/updateTextFile?ajax=1",
+            url: Admin.url + "ajax/files/updateTextFile",
             type: "post",
             response: 'text',
             success: FilesForm.submitFormSuccess,
@@ -148,7 +148,7 @@ var FilesForm = {
         var clb = function (a) {
             if(!a)return;
             var params = {
-                url: Admin.url + "files/adminDeleteFile?ajax=1",
+                url: Admin.url + "ajax/files/adminDeleteFile",
                 type: "post",
                 response: 'text',
                 success: function(r){
@@ -176,7 +176,7 @@ var FilesForm = {
             var path = Admin.getWindow().getContentHolder().get('ul.file-manager').getAttribute('data-path');
             var type = folder ? 'folder' : 'file';
             var params = {
-                url: Admin.url + "files/adminNewFile?ajax=1",
+                url: Admin.url + "ajax/files/adminNewFile",
                 type: "post",
                 response: 'text',
                 success: function (r) {

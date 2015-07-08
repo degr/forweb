@@ -114,7 +114,7 @@ function includeFiles($folder){
  * @param bool $no_line - internal variable
  */
 function debug($message, $no_table=false, $no_line=false){
-    global $debug;
+    $debug = Core::DEVELOPMENT;
     static $count;
     if(empty($count)){
         $count = 1;
@@ -186,7 +186,7 @@ function debug($message, $no_table=false, $no_line=false){
                 }
                 if(in_array('toArray', $methods)){
                     echo '<tr><td class="key">'.$value."</td><td>";
-                    debug($message->toArray());
+                    debug($message->toJson());
                     echo "</td></tr>";
                 }
             // all ok

@@ -7,5 +7,5 @@
  */
 interface ORM_Persistence_IBase{
     public function getPrimaryKey();
-    public function toArray();
+    public function toJson();
 }

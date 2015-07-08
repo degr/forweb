@@ -70,7 +70,7 @@ class UI{
 			if(is_array($row)) {
 				$object = $row;
 			} else {
-				$object = $row->toArray();
+				$object = $row->toJson();
 			}
 			$thisData = array();
 			foreach($object as $key => $value) {
@@ -85,18 +85,6 @@ class UI{
 		return $out;
 	}
 
-
-	/**
-	 * this weird function save form errors on post, and
-	 * @see FormHandler::getErrors
-	 * @param $moduleName
-	 * @param $handlerName
-	 * @param $errors array
-	 */
-	public static function setFormErrors($moduleName, $handlerName, $errors)
-	{
-		$_SESSION[Core::FORM_ERRORS][$moduleName][$handlerName] = $errors;
-	}
 
 	public function addVariable($key, $value){
 		if($key == UI::CONFIG_NAME){
@@ -119,7 +107,7 @@ class UI{
 	}
 
 	/**
-	 * Get CMS template engine.
+	 * Get Cms template engine.
 	 * For now it's Smarty.
 	 *
 	 * @return Smarty
@@ -145,7 +133,7 @@ class UI{
 	}
 	
 	protected static function initTemplateEngine(){
-		require_once 'templateEngine/libs/Smarty.class.php';
+		require_once 'modules/ui/templateEngine/Smarty.class.php';
 		define('SMARTY_SPL_AUTOLOAD',1);
 		spl_autoload_register('__autoload');
 

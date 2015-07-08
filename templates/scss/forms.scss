@@ -1,0 +1,39 @@
+@import "variables";
+.input-wrapper{
+  label, input[type="checkbox"], input[type="radio"]{
+    cursor: pointer;
+  }
+}
+.input-title, .input-body{
+  &:only-child{
+    width: 100%;
+  }
+}
+.input-body{
+  input, textarea, select{
+    max-width: 100%;
+    display: block;
+  }
+}
+@media #{$media-sm} {
+  .input-body, .input-title{
+    float: left;
+    width: 50%;
+  }
+}
+@media #{$media-md} {
+  .input-body{
+    width: 60%;
+  }
+  .input-title{
+    width: 40%;
+  }
+}
+@media #{$media-lg} {
+  .input-body{
+    width: 65%;
+  }
+  .input-title{
+    width: 35%;
+  }
+}
