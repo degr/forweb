@@ -40,11 +40,6 @@ class Page extends Module{
 		return $this->ajaxHandlers;
 	}
 
-
-	public function getFormHandlers()
-	{
-		// TODO: Implement getFormHandlers() method.
-	}
 	/**
 	 * @var Page_Service
 	 */
@@ -122,7 +117,7 @@ class Page extends Module{
 
 		/* @var $value PersistPages */
 		foreach($pagesArray as $key => $value) {
-			$out['pages'][$key] = $value->toArray();
+			$out['pages'][$key] = $value->toJson();
 		}
 		return $out;
 	}

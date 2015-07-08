@@ -88,74 +88,27 @@ class Page_Admin_Page{
             if(!empty($_POST['deletePage'])){
                 /* @var $parent PersistPages */
                 $parent = $page->getParentPage();
-                if($parent == null){
-                    $deleteText = Word::get('admin', 'home_page_delete');
-                } else {
-                    $deleteFilter = new ORM_Query_CustomFilter("pages.parent = '".$page->getId()."'", true);
-
-                    $childs = $pageService->loadAll($deleteFilter);
-                    if(empty($childs[$pageService->getTable()->getName()])){
-                        if(ORM::delete($table, $page)) {
-                            $page = null;
-                            $deleteText = "Page was deleted.";
-                            $parentLink = $pageService->getPagePath($parent);
-                        }else{
-                            $deleteText = Word::get('admin', 'unknown_error');
-                        }
-                    } else {
-                        $deleteText = Word::get('admin', 'page_contain_children');
-                    }
+                $deletePageKey = $this->onDeletePage($page, $parent, $table);
+                if($deletePageKey == 'page_was_deleted') {
+                    $parentLink = $pageService->getPagePath($parent);
+                    $deleteText = Word::get('admin', $deletePageKey);
                 }
             } else {
                 $url = $page->getUrl();
-
                 if($url != '') {
-                    $filters = array(
-                        new ORM_Query_CustomFilter(" pages.parent='".$page->getParent()."' AND pages.url='".$page->getUrl()."'", true)
-                    );
-
-                    $id = $page->getId();
-                    if(!empty($id)){
-                        $filters[] = new ORM_Query_CustomFilter(" pages.id != '".$id."'", true);
-                        if($id == 1){
-                            $page->setUrl('home');
-                            $page->setParent(0);
-                        }
-                    }
-
-                    $check = $pageService->loadOneWithFilters($filters);
-                    $position = $page->getPosition();
-                    if(empty($position)) {
-                        $page->setPosition(0);
-                    }
-                    if($check === null) {
-                        ORM::saveData($table, $page);
-                        if(empty($id)){
-                            $saveText = Word::get('admin', 'page_created');
-                            $savedStatus = true;
-                        } else {
-                            $saveText = Word::get('admin', 'page_modified');
-                            $savedStatus = false;
-                        }
-                        $this->updatePagePositions($page);
-                    } else {
-                        $saveText = Word::get('admin','page_url_not_unique');
-                        $savedStatus = false;
-                    }
+                    $onPageUpdate = $this->onUpdatePage($page, $table);
+                    $saveText = $onPageUpdate['text'];
+                    $savedStatus = $onPageUpdate['status'];
                 }else {
                     $saveText = Word::get('admin', 'page_url_empty');
                     $savedStatus = false;
                 }
             }
-
-
         }elseif(isset($_POST['href'])){
-
             $dispatcher = new Page_Dispatcher($_POST['href']);
             $dispatcher->handleRequest();
             $params = $dispatcher->getParams();
             $page = $pageService->findPage($params);
-
         }else{
             $page = null;
         }
@@ -234,5 +187,94 @@ class Page_Admin_Page{
         foreach($data as $key => $value) {
             DB::query("update pages set position = ".$value." where id = ".$key);
         }
+    }
+
+    /**
+     * @param $page PersistPages
+     * @param $parent PersistPages
+     * @param $table ORM_Table
+     * @return string
+     */
+    private function onDeletePage($page, $parent, $table)
+    {
+        /** @var $pageService Page_Service */
+        $pageService = Core::getModule('Page')->getService();
+
+        if($parent == null){
+            $out = 'home_page_delete';
+        } else {
+            $deleteFilter = new ORM_Query_CustomFilter("pages.parent = '".$page->getId()."'", true);
+
+            $childs = $pageService->loadAll($deleteFilter);
+            if(empty($childs[$pageService->getTable()->getName()])){
+                if(ORM::delete($table, $page)) {
+                    $page = null;
+                    $out = "page_was_deleted";
+                }else{
+                    $out = 'unknown_error';
+                }
+            } else {
+                $out = 'page_contain_children';
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * @param $page PersistPages
+     * @param $table ORM_Table
+     * @return array
+     * @throws FwException
+     */
+    private function onUpdatePage($page, $table)
+    {
+        /** @var $pageService Page_Service */
+        $pageService = Core::getModule('Page')->getService();
+
+        $filters = array(
+            new ORM_Query_CustomFilter(" pages.parent='".$page->getParent()."' AND pages.url='".$page->getUrl()."'", true)
+        );
+
+        $id = $page->getId();
+        if(!empty($id)){
+            $filters[] = new ORM_Query_CustomFilter(" pages.id != '".$id."'", true);
+            if($id == 1){
+                $page->setUrl('home');
+                $page->setParent(0);
+            }
+        }
+
+        $check = $pageService->loadOneWithFilters($filters);
+        $position = $page->getPosition();
+        if(empty($position)) {
+            $page->setPosition(0);
+        }
+        $out = array(
+            'text' => null,
+            'status' => null
+        );
+        if($check === null) {
+            $path = $pageService->getPagePath($page);
+            $path = Files_System::removeFirstAndLastSlashes($path);
+            $firstFolder = array_shift(explode('/', $path));
+            if(!in_array($firstFolder, Core::$FORBIDDEN_URLS) && !is_dir($path)) {
+                ORM::saveData($table, $page);
+                if (empty($id)) {
+                    $out['text'] = Word::get('admin', 'page_created');
+                    $out['status'] = true;
+                } else {
+                    $out['text'] = Word::get('admin', 'page_modified');
+                    $out['status'] = false;
+                }
+                $this->updatePagePositions($page);
+            } else {
+                $out['text'] = Word::get('admin','page_url_forbidden');
+                $out['status'] = false;
+            }
+        } else {
+            $out['text'] = Word::get('admin','page_url_not_unique');
+            $out['status'] = false;
+        }
+        return $out;
     }
 }

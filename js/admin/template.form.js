@@ -46,7 +46,7 @@ var TemplateForm = {
         var data = Core.serialize(document.body.get('#form_templates'));
         params = {
             success: TemplateForm.mainFormSuccess,
-            url: Admin.url + "page/editTemplate?ajax=1",
+            url: Admin.url + "ajax/page/editTemplate",
             type: "POST",
             response: 'text',
             data: data
@@ -65,7 +65,7 @@ var TemplateForm = {
         var data = {id: id};
         params = {
             success: function(e){TemplateForm.mainFormSuccess(e.text);if(e.success)s.get('option[value="'+id+'"]').remove();},
-            url: Admin.url + "page/deleteTemplate?ajax=1",
+            url: Admin.url + "ajax/page/deleteTemplate",
             type: "POST",
             response: 'json',
             data: data
@@ -81,7 +81,7 @@ var TemplateForm = {
 
         params = {
             success: TemplateForm.createNewTemplateForm,
-            url: Admin.url + "page/createTemplate?ajax=1",
+            url: Admin.url + "ajax/page/createTemplate",
             type: "post",
             response: 'json',
             data: {'action':'getForm'}
@@ -102,7 +102,7 @@ var TemplateForm = {
         Core.prevent(e);
         params = {
             success: TemplateForm.onCreateNewTemplateForm,
-            url: Admin.url + "page/createTemplate?ajax=1",
+            url: Admin.url + "ajax/page/createTemplate",
             type: "post",
             response: 'json',
             data: {'action':'save', form:Core.serialize(document.body.get('#form_templates'))}
@@ -127,7 +127,7 @@ var TemplateForm = {
         Admin.nowDisplayed = 'deleteTemplateForm';
         var params = {
             success: TemplateForm.showDeleteTemplateForm,
-            url: Admin.url + "page/deleteTemplateForm?ajax=1",
+            url: Admin.url + "ajax/page/deleteTemplateForm",
             type: "post",
             response: 'json',
             data: {'action':'getForm'}
@@ -153,7 +153,7 @@ var TemplateForm = {
         var template = document.body.get('#form_templates input[name="id"]').value;
         var params = {
             success: TemplateForm.addCreatedBlock,
-            url: Admin.url + "page/createBlock?ajax=1",
+            url: Admin.url + "ajax/page/createBlock",
             type: "post",
             response: 'json',
             data: {'name':t, templateId:template}
@@ -177,7 +177,7 @@ var TemplateForm = {
         var template = document.body.get('#form_templates input[name="id"]').value;
         var params = {
             success: function(){TemplateForm.removeBlock(id);},
-            url: Admin.url + "page/deleteBlock?ajax=1",
+            url: Admin.url + "ajax/page/deleteBlock",
             type: "post",
             response: 'text',
             data: {'id':id,templateId:template}
@@ -204,7 +204,7 @@ var TemplateForm = {
             }
         }
         var params = {
-            url: Admin.url + "page/saveBlocksPosition?ajax=1",
+            url: Admin.url + "ajax/page/saveBlocksPosition",
             type: "post",
             response: 'json',
             data: data
@@ -228,7 +228,7 @@ var TemplateForm = {
         var data = Core.serialize(form, '.include_row');
         var params = {
             success: TemplateForm.submitSuccess,
-            url: Admin.url + "page/updateBlock?ajax=1&block="+blockId+"&template="+templateId,
+            url: Admin.url + "ajax/page/updateBlock?block="+blockId+"&template="+templateId,
             type: "post",
             response: 'json',
             data: data

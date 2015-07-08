@@ -5,11 +5,6 @@ interface IModule{
 	 * @return AjaxHandler[]
 	 */
 	public function getAjaxHandlers();
-	/**
-	 * Get module form handlers
-	 * @return FormHandler[]
-	 */
-	public function getFormHandlers();
 
 	/**
 	 * Get module event handlers
@@ -23,10 +18,6 @@ abstract class Module implements IModule{
 	 * @var AjaxHandler[]
 	 */
 	protected $ajaxHandlers;
-	/**
-	 * @var FormHandler[]
-	 */
-	protected $formHandlers;
 	/**
 	 * @var EventHandler[]
 	 */
@@ -48,22 +39,6 @@ abstract class Module implements IModule{
 		}
 	}
 
-	/**
-	 * Get form handler from
-	 * @param $handlerName
-	 * @return FormHandler
-	 */
-	public function getFormHandler($handlerName)
-	{
-		if($this->formHandlers == null) {
-			$this->getFormHandlers();
-		}
-		if(empty($this->formHandlers[$handlerName])){
-			return null;
-		}else {
-			return $this->formHandlers[$handlerName];
-		}
-	}
 
 	public function setHandler($name, AjaxHandler $handler){
 		if(empty($this->ajaxHandlers[$name])) {

@@ -144,4 +144,9 @@ class Files_System{
         mkdir($path, 0777, true);
     }
 
+
+    public static function build1000Path($id){
+        $count = floor($id/1000)*1000;
+        return $count."_".($count+999);
+    }
 }

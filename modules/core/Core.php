@@ -1,14 +1,16 @@
 <?
 class Core extends Module{
 
-	const FORM_ERRORS = 'form_errors';
 	const INIT_REQUEST = "init";
 	const RESOURCES_FOLDER = "resources/";
 	const MODULES_FOLDER = "modules/";
-	const FORM_HANDLER_NAME = "form";
 	const DEVELOPMENT = true;
 	const MULTIPLE_LANGUAGES = true;
 	const SYS_INCLUDES = 'sys_includes';
+
+	public static $FORBIDDEN_URLS = array(
+		'api', 'ajax'
+	);
 
 	public function getAjaxHandlers()
 	{
@@ -20,10 +22,6 @@ class Core extends Module{
 		return $this->ajaxHandlers;
 	}
 
-	public function getFormHandlers()
-	{
-		// TODO: Implement getFormHandlers() method.
-	}
 	/**
 	 * get core instance
 	 * @return Core
@@ -122,18 +120,18 @@ class Core extends Module{
 	public function process(){
 		$dispatcher = new Page_Dispatcher($_SERVER['REQUEST_URI']);
 		$dispatcher->handleRequest();
-		$this->pageModule = Core::getModule("Page");
-
-		if($_REQUEST['ajax'] == 1){
-			CMS::ajaxHandler($dispatcher->getParam(0), $dispatcher->getParam(1));
-			//unreachable 'return' statement. Exist only as end function marker.
-			// Script will exit in CMS::ajaxHandler;
+		if($dispatcher->getParam(0) == 'api') {
+			/** @var $api Api */
+			$api = Core::getModule("Api");
+			$api->handleRequest($dispatcher);
 			return;
 		}
-		if($dispatcher->getParam(0) === Core::FORM_HANDLER_NAME) {
-			CMS::processForm($dispatcher->getParam(1), $dispatcher->getParam(2));
+		$this->pageModule = Core::getModule("Page");
+
+		if($dispatcher->getParam(0) == 'ajax'){
+			Cms::ajaxHandler($dispatcher->getParam(1), $dispatcher->getParam(2));
 			//unreachable 'return' statement. Exist only as end function marker.
-			// Script will exit in CMS::ajaxHandler;
+			// Script will exit in Cms::ajaxHandler;
 			return;
 		}
 
@@ -145,15 +143,14 @@ class Core extends Module{
 		$template = $pageService->getTemplate();
 		$blocks = $this->getBlocks($template->getId());
 		$pageData = $this->processBlocks($blocks);
-		if(!empty($_SESSION[Core::FORM_ERRORS])) {
-			unset($_SESSION[Core::FORM_ERRORS]);
-		}
 
 		$this->sendResponse($pageData, $template);
 
 		if(isset($_GET['force_admin_panel'])) {
 			$ui = new UI();
-			Core::getModule("CMS")->getAdminPanel($ui);
+			/** @var $cms Cms */
+			$cms =Core::getModule("Cms");
+			$cms->getAdminPanel($ui);
 			echo $ui->process();
 		}
 	}

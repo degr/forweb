@@ -22,14 +22,6 @@ class Access extends Module{
         //@TODO generate access file in modules root (UserAccess)
     }
 
-    /**
-     * Get module form handlers
-     * @return FormHandler[]
-     */
-    public function getFormHandlers()
-    {
-        // TODO: Implement getFormHandlers() method.
-    }
 
     public function getAccess(){
         if($this->access == null) {

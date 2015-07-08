@@ -1,6 +1,6 @@
 <?
 abstract class ORM_Persistence_Base implements ORM_Persistence_IBase{
-	public function toArray($recursive = false){
+	public function toJson($recursive = false){
 		$vars = get_object_vars($this);
 		foreach($vars as $key => $value){
 			$type = gettype($value);
@@ -8,7 +8,7 @@ abstract class ORM_Persistence_Base implements ORM_Persistence_IBase{
 				case 'array':
 					if($recursive) {
 						foreach($value as $item){
-							$vars[$key] = $item->toArray();
+							$vars[$key] = $item->toJson();
 						}
 					}else{
 						unset($vars[$key]);
@@ -16,7 +16,7 @@ abstract class ORM_Persistence_Base implements ORM_Persistence_IBase{
 				break;
 				case 'object':
 					if($recursive) {
-						$vars[$key] = $value->toArray();
+						$vars[$key] = $value->toJson();
 					} else {
 						unset($vars[$key]);
 					}

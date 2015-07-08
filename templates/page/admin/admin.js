@@ -32,7 +32,7 @@ var Admin = {
     },
     getModulesList: function(){
         var params = {
-            url:  Admin.url + "page/getModulesList?ajax=1",
+            url:  Admin.url + "ajax/page/getModulesList",
             type: "get",
             success: function(r){Admin.modulesList = r},
             response: 'json'
@@ -170,7 +170,7 @@ var Admin = {
         }
         Admin.nowDisplayed = 'newPage';
         var params = {
-            url: Admin.url + "page/editPage?ajax=1",
+            url: Admin.url + "ajax/page/editPage",
             type: "post",
             success: Admin.showPageForm,
             response: 'json'
@@ -184,7 +184,7 @@ var Admin = {
         }
         Admin.nowDisplayed = 'pageContent';
         var params = {
-            url:  Admin.url + "page/pageContent?ajax=1",
+            url:  Admin.url + "ajax/page/pageContent",
             type: "POST",
             success: Admin.showPageContentForm,
             response: 'json',
@@ -199,7 +199,7 @@ var Admin = {
         }
         Admin.nowDisplayed = 'editPage';
         var params = {
-            url:  Admin.url + "page/editPage?ajax=1",
+            url:  Admin.url + "ajax/page/editPage",
             type: "POST",
             success: Admin.showPageForm,
             response: 'json',
@@ -238,7 +238,7 @@ var Admin = {
         var data = Core.serialize(document.body.get('#form_pages'));
         data.ajax_key = 'pageedit';
         return {
-            url: Admin.url + "page/editPage?ajax=1",
+            url: Admin.url + "ajax/page/editPage",
             type: "POST",
             success: Admin.showPageForm,
             response: 'json',
@@ -304,7 +304,7 @@ var Admin = {
         }
         Admin.nowDisplayed = 'editTemplateForm';
         var params = {
-            url: Admin.url + "page/editTemplateForm?ajax=1",
+            url: Admin.url + "ajax/page/editTemplateForm",
             type: "post",
             success: Admin.editTemplateForm,
             response: 'json',
@@ -333,7 +333,7 @@ var Admin = {
     setMethodsTo: function(select, moduleName){
         if(!moduleName)return;
         var params = {
-            url: Admin.url + "page/getMethodsList?ajax=1",
+            url: Admin.url + "ajax/page/getMethodsList",
             type: "post",
             success: function(r){
                 select.innerHTML = '';

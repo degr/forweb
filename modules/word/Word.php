@@ -33,15 +33,6 @@ class Word extends Module{
         return $this->ajaxHandlers;
     }
 
-    /**
-     * Get module form handlers
-     * @return FormHandler[]
-     */
-    public function getFormHandlers()
-    {
-        // TODO: Implement getFormHandlers() method.
-    }
-
     protected static $language;
 
     protected static $languages;

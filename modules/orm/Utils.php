@@ -18,7 +18,6 @@ class ORM_Utils{
         $result = DB::getTable($query);
         return ORM_Utils::resultToArray($mainTable, $result, $one);
     }
-
     /**
      * Transform assoc array into objects array
      * @param ORM_Table $mainTable
@@ -28,7 +27,6 @@ class ORM_Utils{
      * @throws Exception
      */
     protected static function resultToArray(ORM_Table $mainTable, $result, $one){
-
         $tables = array($mainTable);
         foreach($mainTable->getBinds() as $bind) {
             if(!$bind->getLazyLoad()) {
@@ -36,8 +34,6 @@ class ORM_Utils{
             }
         }
         $orderedObject = ORM_Utils::buildOrderedObject($mainTable, $result, $tables);
-
-
         /* @var $table ORM_Table */
         foreach($tables as $table) {
             /* @var $bind ORM_Table_Bind */
@@ -46,13 +42,12 @@ class ORM_Utils{
                     continue;
                 }
                 $postfix = $bind->getLeftField() === $table->getField($bind->getLeftKey())->getName() ? ORM_Utils::BIND_PREFIX : "";
-
                 $lKeyMethod = 'get' . ucfirst($bind->getLeftKey()).$postfix;
                 $lKeySetter = 'set' . ucfirst($bind->getLeftField());
-
                 $rKeyMethod = 'get' . ucfirst($bind->getRightKey());
                 foreach ($orderedObject[$table->getName()] as $entity) {
                     $setValue = null;
+                    /** @var $binded ORM_Persistence_Base*/
                     foreach ($orderedObject[$bind->getRightTable()->getName()] as $binded) {
                         if($table->getField($bind->getLeftKey())->getLazyLoad()){
                             continue;
@@ -85,11 +80,9 @@ class ORM_Utils{
             return $orderedObject[$mainTable->getName()];
         }
     }
-
     protected static function fromArrayToObject(ORM_Table $table, $row){
         $class = $table->getPersistClassName();
         $out = new $class();
-
         $binds = $table->getBinds();
         foreach ($table->getFields() as $field) {
             $prefix = "";
@@ -104,7 +97,6 @@ class ORM_Utils{
         }
         return $out;
     }
-
     /**
      * Save one multy leveled data array. Structure element - PersistBase class object
      * @param ORM_Table $mainTable
@@ -128,7 +120,6 @@ class ORM_Utils{
                         }
                     }
                 }
-
                 if($workTable === null){
                     throw new Exception("Unknown data type ".$class);
                 }
@@ -136,7 +127,6 @@ class ORM_Utils{
             }
         }
     }
-
     /**
      * Save or update PersistBase object
      * @param ORM_Table $table
@@ -146,7 +136,6 @@ class ORM_Utils{
         $valuesToInsert = array();
         $keysToInsert = array();
         $pairsToUpdate = array();
-
         foreach($table->getFields() as $field){
             $prefix = '';
             foreach ($table->getBinds() as $bind) {
@@ -155,7 +144,6 @@ class ORM_Utils{
                 }
             }
             $method = "get".ucfirst($field->getName()).$prefix;
-
             $currentData = $object->$method();
             if(empty($currentData) && $field->getAutoIncrement()){
                 continue;
@@ -163,11 +151,9 @@ class ORM_Utils{
             $value = ORM_Utils::getValueForField($field, $currentData);
             $valuesToInsert[] = $value;
             $keysToInsert[] = $field->getName();
-
             if(!$field->getPrimary()){
                 $pairsToUpdate[] = $field->getName()."=".$value;
             }
-
         }
         $query = "INSERT INTO ".$table->getName()
             ."(".implode(",", $keysToInsert).") VALUES "
@@ -177,7 +163,6 @@ class ORM_Utils{
         DB::query($query);
         ORM_Utils::fixId($table, $object);
     }
-
     /**
      * @param $field ORM_Table_Field
      * @param $value
@@ -196,8 +181,9 @@ class ORM_Utils{
                 } elseif(empty($value)){
                     return 0;
                 } else {
-                    return intval($value) === 0 ? 0 : 1;
+                    $value = intval($value) === 0 ? 0 : 1;
                 }
+            // no break
             case 'integer':
             case 'tinyint':
                 return intval($value);
@@ -205,15 +191,16 @@ class ORM_Utils{
                 if(is_numeric($value)) {
                     $value = date(ORM_Utils::DATE_FORMAT, $value);
                 }
+            // no break
             case 'datetime':
                 if(is_numeric($value)) {
                     $value = date(ORM_Utils::DATETIME_FORMAT, $value);
                 }
+            // no break
             default:
                 return "'".DB::escape($value)."'";
         }
     }
-
     /**
      * Set id to inserted object, if necessary
      * @param ORM_Table $table
@@ -230,7 +217,6 @@ class ORM_Utils{
             $object->$setter($pk);
         }
     }
-
     /**
      * Delete object from data base
      * @param ORM_Table $table
@@ -243,9 +229,7 @@ class ORM_Utils{
         $getter = "get".ucfirst($name);
         $pkValue = $object->$getter();
         if(!empty($pkValue)) {
-
             $allBinds = array();
-
             foreach ($table->getBinds() as $bind) {
                 if ($bind->getType() == ORM_Table::ONE_TO_ONE
                 ) {
@@ -286,7 +270,6 @@ class ORM_Utils{
             return false;
         }
     }
-
     /**
      * Get primary key field from ORM_Table object
      * @param ORM_Table $table
@@ -300,7 +283,6 @@ class ORM_Utils{
         }
         return null;
     }
-
     /**
      * Build ordered object before data transformation into Persist objects
      * @param ORM_Table $mainTable
@@ -314,14 +296,8 @@ class ORM_Utils{
         $out[$mainTable->getName()] = array();
         foreach($result as $row){
             foreach($tables as $table) {
-                $index = $row[$table->getName()."_".$table->getPrimaryKey()];
-
-                /*@TODO wtf?
-                if(!empty($out[$table->getName()][$index])){
-                    continue;
-                }
-                */
-                $obj = ORM_Utils::fromArrayToObject($table, $row, $index);
+                /** @var $obj ORM_Persistence_Base */
+                $obj = ORM_Utils::fromArrayToObject($table, $row);
                 if($obj == null) {
                     continue;
                 }
@@ -330,7 +306,6 @@ class ORM_Utils{
         }
         return $out;
     }
-
     /**
      * @param $allBinds ORM_Table_Bind[]
      * @param $table ORM_Table
@@ -341,6 +316,7 @@ class ORM_Utils{
             if($localBind->getType() != ORM_Table::ONE_TO_ONE) {
                 continue;
             }
+            $check = false;
             foreach($allBinds as $storedBind) {
                 if($storedBind->getLeftTable()->getName() == $localBind->getLeftTable()->getName()
                     &&
@@ -373,7 +349,6 @@ class ORM_Utils{
             }
         }
     }
-
     /**
      * Build object from json data
      * @param $table ORM_Table
@@ -385,24 +360,23 @@ class ORM_Utils{
         $objectClass = $table->getPersistClassName();
         $object = new $objectClass;
         $errors = array();
-
         foreach($table->getFields() as $field) {
             $name = $field->getName();
             if (!isset($data[$name])) {
                 $data[$name] = null;
             }
-            if ($field->validateValue($data[$name], $errors)) {
-                $prefix = '';
-                foreach ($table->getBinds() as $bind) {
-                    if($bind->getLeftKey() == $field->getName() && $bind->getLeftField() == $field->getName()) {
-                        $prefix = ORM_Utils::BIND_PREFIX;
-                    }
+            $postfix = '';
+            foreach($table->getBinds() as $bind) {
+                if($bind->getLeftField() === $field->getName()){
+                    $postfix = $bind->getLeftField() === $field->getName() ? ORM_Utils::BIND_PREFIX : "";
+                    break;
                 }
-                $setter = "set".ucfirst($field->getName()).$prefix;
+            }
+            if ($field->validateValue($data[$name], $errors)) {
+                $setter = "set" . ucfirst($name).$postfix;
                 $object->$setter($data[$name]);
             }
         }
         return array($object, $errors);
     }
-
 }

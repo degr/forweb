@@ -82,7 +82,11 @@ class Page_Install implements Module_IInstall{
      */
     public function getDependencies()
     {
-        return null;
+        return array(
+            new Module_Dependency('Files'),
+            new Module_Dependency('DB'),
+            new Module_Dependency('ORM')
+        );
     }
 
     private function addBaseDataToDatabase()
@@ -112,14 +116,12 @@ class Page_Install implements Module_IInstall{
             DB::query($query);
         }
 
-        $query = "select id from includes where id IN (1,2,3,4)";
+        $query = "select id from includes";
         $includesIds = DB::getColumn($query);
         if(empty($includesIds)) {
-            $query = "insert into includes (id, page, template, type, block, positionNumber, position, content, module, method, comment) VALUES "
-                ."(1, 0, 1, 'executable', 1, 1, 'template', '', 'CMS', 'getAdminPanel', 'Administrator panel. Do not delete.'),"
-                ."(2, 0, 1, 'html', 1, 2, 'template', '<h1>this is content header (template include)</h1>', '', '', 'Static text example 1'),"
-                ."(3, 0, 1, 'html', 2, 1, 'template', '<br/>this is sidebar (page include', '', '', 'Static text example 2'),"
-                ."(4, 0, 1, 'html', 3, 1, 'template', '<h1>This is site header (template include)</h1>', '', '', 'Static text example 3')";
+            $query = "insert into includes (page, template, type, block, positionNumber, position, content, module, method, comment) VALUES "
+                ."(0, 1, 'executable', 1, 1, 'template', '', 'Cms', 'getAdminPanel', 'Administrator panel. Do not delete.'),"
+                ."(0, 1, 'executable', 1, 1, 'template', '', 'User', 'getAuthorizationForm', 'Authorization form.')";
             DB::query($query);
         }
 

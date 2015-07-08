@@ -11,7 +11,7 @@ var ConfigForm = {
         }
         Admin.nowDisplayed = 'configForm';
         var params = {
-            url: Admin.url + "core/getAjaxConfig?ajax=1",
+            url: Admin.url + "ajax/core/getAjaxConfig",
             type: "post",
             success: ConfigForm.createForm,
             response: 'json'
@@ -67,7 +67,7 @@ var ConfigForm = {
         var clb = function(a) {
             if(!a)return;
             var params = {
-                url: Admin.url + "core/deleteConfig?ajax=1",
+                url: Admin.url + "ajax/core/deleteConfig",
                 type: "post",
                 response: 'text',
                 data: {module: m, name: key}
@@ -89,7 +89,7 @@ var ConfigForm = {
     submitForm: function(){
         var data = Core.serialize(document.body.get('#config_form'));
         var params = {
-            url: Admin.url + "core/saveConfig?ajax=1",
+            url: Admin.url + "ajax/core/saveConfig",
             type: "post",
             response: 'text',
             success: ConfigForm.submitFormSuccess,

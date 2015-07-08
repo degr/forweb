@@ -304,18 +304,9 @@ class ORM_Install implements Module_IInstall{
     }
 
     protected static function createFolder($folder){
-        $parts = explode("/", $folder);
-        $path = "";
-        foreach($parts as $part){
-            if($path === "") {
-                $path .= $part;
-            } else {
-                $path .= "/".$part;
-            }
-            if(!is_dir($path)){
-                echo "creating folder $path <br/>";
-                mkdir($path, 0777);
-            }
+        if(!is_dir($folder)){
+            echo "creating folder $folder <br/>";
+            mkdir($folder, 0777, true);
         }
     }
 

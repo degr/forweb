@@ -43,6 +43,12 @@ var Core = {
 			}
 		}
 		return out;
+	},
+	loadScript: function(url, callback){
+		var script = document.createElement('script');
+		script.onload = callback;
+		script.src = url;
+		document.getElementsByTagName('head')[0].appendChild(script);
 	}
 };
 
@@ -105,7 +111,7 @@ var Ajax = {
 			xmlhttp = new XMLHttpRequest();
 		}
 		return xmlhttp;
-	},
+	}
 };
 var UI = {
 	build: function(object){
@@ -113,7 +119,7 @@ var UI = {
 			case 'form':
 				return UI.builder.asForm(object);
 			case 'table':
-				return UI.builder.asTable(object);;
+				return UI.builder.asTable(object);
 			case 'list':
 				return null;
 			default:

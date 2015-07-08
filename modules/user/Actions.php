@@ -6,15 +6,19 @@
  * Time: 20:03
  */
 class User_Actions{
-    public function authorization(FormHandler $handler){
-        if(empty($_POST['email'])) {
-            $handler->addError('email', UI_Validation::REQUIRED);
+    public function authorization($email, $password){
+        $out = array(
+            'success' => null,
+            'errors' => array(),
+            'user' => null
+        );
+        if(empty($email)) {
+            $out['errors'][] = array('name'=>'email', 'code' => UI_Validation::REQUIRED);
         }
-        if(empty($_POST['password'])) {
-            $handler->addError('password', UI_Validation::REQUIRED);
+        if(empty($password)) {
+            $out['errors'][] = array('name'=>'password', 'code' => UI_Validation::REQUIRED);
         }
-        $email = $_POST['email'];
-        $password = $_POST['password'];
+
         $userController = Core::getModule("User");
 
         $emailFilter = new ORM_Query_Filter('user', 'email', ORM_Query_Filter::TYPE_EQUAL);
@@ -23,19 +27,18 @@ class User_Actions{
         $passwordFilter->setValue($password);
         $usersList = $userController->getService()->loadAll(array($emailFilter, $passwordFilter), null, null);
 
-        $out = null;
         /* @var $user PersistUser */
         foreach($usersList as $user) {
             if($user->getPassword() === $password) {
-                $out = $user;
+                $out['user'] = $user;
+                $out['success'] = true;
                 break;
             }
         }
-        if($out == null) {
-            $handler->addError('email', UI_Validation::CUSTOM);
-            return null;
-        } else {
-            return $out;
+        if($out['user'] == null) {
+            $out['errors'][] = array('name'=>'email', 'code' => UI_Validation::CUSTOM);
+            $out['success'] = false;
         }
+        return $out;
     }
 }

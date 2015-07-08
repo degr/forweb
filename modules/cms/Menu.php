@@ -51,7 +51,7 @@ class CMS_Menu{
         /* @var $page PersistPages */
         foreach($pages as &$page) {
             $pageUrl = $service->getPagePath($page);
-            $json = $page->toArray();
+            $json = $page->toJson();
             $json['active'] = $service->getCurrentPage()->getId() == $page->getId() ? "active" : "";
             if($addInfo) {
                 $json['info'] = Word::get("info", "page_info_" . $page->getId());

@@ -1,0 +1,34 @@
+.dialog-window {
+    clear: both;
+    width: 300px;
+    margin-left: -150px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    background-color: white;
+    border: 1px groove #c2c2c2;
+    padding: 3px 4px 4px;
+    z-index: 110;
+}
+.dialog-window.under{
+    z-index: 90;
+}
+.hidden{
+    display: none;
+}
+.dialog-window-overlay{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    -moz-opacity: .3;
+    -khtml-opacity: .3;
+    opacity: .3;
+    filter: alpha(opacity=.3);
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+.dialog-window-overlay.under{
+    z-index: 80
+}

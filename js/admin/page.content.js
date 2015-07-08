@@ -173,7 +173,7 @@ var PageContent = {
                         return;
                     }
                     var params = {
-                        url:  Admin.url + "page/getIncludeTextForm?ajax=1",
+                        url:  Admin.url + "ajax/page/getIncludeTextForm",
                         type: "POST",
                         success: PageContent.buildTermForm,
                         response: 'json',
@@ -258,7 +258,7 @@ var PageContent = {
         var pageId = form.get('input[name="page_id"]').value;
         var blockId = form.get('input[name="block_id"]').value;
         var params =  {
-            url: Admin.url + "page/processPageContent?ajax=1&page="+pageId+"&block="+blockId,
+            url: Admin.url + "ajax/page/processPageContent?page="+pageId+"&block="+blockId,
             type: "POST",
             success: PageContent.submitSuccess,
             response: 'json',
@@ -292,7 +292,7 @@ var PageContent = {
                 }
             };
             var params = {
-                url: Admin.url + "page/deletePageInclude?ajax=1&include=" + id,
+                url: Admin.url + "ajax/page/deletePageInclude?include=" + id,
                 type: "POST",
                 success: success,
                 response: 'text'

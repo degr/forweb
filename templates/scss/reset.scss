@@ -1,0 +1,13 @@
+ul, li, p, div, span, fieldset, legend, ol, dt, dl, dd, a, html, body, input, textarea, select{
+  margin: 0;
+  padding: 0;
+}
+*{
+  box-sizing: border-box;
+}
+li{
+  list-style: none;
+}
+input:disabled, textarea:disabled, select:disabled{
+  background-color: rgb(235, 235, 228);
+}

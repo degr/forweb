@@ -67,6 +67,7 @@ class Page_Admin_Template{
             .$blockCondition2." ORDER BY positionNumber";
 
         $includes = DB::getTable($query);
+        /** @var $pageModule Page */
         $pageModule = Core::getModule("Page");
         $methods = array();
         foreach($includes as $include) {

@@ -10,7 +10,7 @@ var Word = {
         }
         Admin.nowDisplayed = 'languagesForm';
         var params = {
-            url:  Admin.url + "word/onUiLanguagesOverview?ajax=1",
+            url:  Admin.url + "ajax/word/onUiLanguagesOverview",
             type: "POST",
             success: Word.createLanguagesForm,
             response: 'json'
@@ -24,7 +24,7 @@ var Word = {
         }
         Admin.nowDisplayed = 'wordModulesForm';
         var params = {
-            url:  Admin.url + "word/onUiModulesOverview?ajax=1",
+            url:  Admin.url + "ajax/word/onUiModulesOverview",
             type: "POST",
             success: Word.createModulesForm,
             response: 'json'
@@ -59,7 +59,7 @@ var Word = {
     },
     switchDefault: function(item){
         var params = {
-            url:  Admin.url + "word/onAjaxSetDefaultLanguage?ajax=1",
+            url:  Admin.url + "ajax/word/onAjaxSetDefaultLanguage",
             type: "POST",
             success: Word.createModulesOverviewForm,
             response: 'json',
@@ -83,7 +83,7 @@ var Word = {
         el.parentNode.drawPreloader('line');
         el.parentNode.setStyle({'position':'relative'});
         var params = {
-            url:  Admin.url + "word/"+func+"?ajax=1",
+            url:  Admin.url + "ajax/word/"+func,
             type: "POST",
             success: function(r){
                 el.parentNode.removePreloader();
@@ -98,7 +98,7 @@ var Word = {
         var clb = function(r){
             if(!r)return;
             var params = {
-                url:  Admin.url + "word/"+func+"?ajax=1",
+                url:  Admin.url + "ajax/word/"+func,
                 type: "POST",
                 success: function(){el.parentNode.parentNode.remove()},
                 response: 'text',
@@ -142,7 +142,7 @@ var Word = {
         if(!page)page = 0;
         if(!id)return;
         var params = {
-            url:  Admin.url + "word/showModuleTerms?ajax=1",
+            url:  Admin.url + "ajax/word/showModuleTerms",
             type: "POST",
             success: Word.displayModuleTerms,
             response: 'json',
@@ -229,7 +229,7 @@ var Word = {
             id= link.up('tr').getAttribute('data-field-id');
         }
         var params = {
-            url:  Admin.url + "word/getTermForm?ajax=1",
+            url:  Admin.url + "ajax/word/getTermForm",
             type: "POST",
             success: Word.buildTermForm,
             response: 'json',
@@ -258,7 +258,7 @@ var Word = {
     submitTerm: function(form){
         var data = Core.serialize(form);
         var params = {
-            url:  Admin.url + "word/saveTerm?ajax=1",
+            url:  Admin.url + "ajax/word/saveTerm",
             type: "POST",
             success: Word.onSaveTerm,
             response: 'json',
