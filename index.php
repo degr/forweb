@@ -6,9 +6,14 @@ $debug = true;
 
 
 require_once "modules/project.functions.php";
-
 require_once "modules/module/Module.php";
 require_once "modules/core/Core.php";
+
+$sassDir = "sass";
+
+require "modules/scss/scss.inc.php";
+scss_server::serveFrom($sassDir);
+
 $manager = new DB_Manager("", "MySQL");
 $manager->setCredentials("localhost", "root", "admin", "forweb");
 DB::init($manager);
