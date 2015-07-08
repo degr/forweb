@@ -1,5 +1,5 @@
 <?
-class CMS implements IModule{
+class Cms implements IModule{
 	protected static $ajaxHandlers;
 	
 	public static function ajaxHandler($moduleName, $handlerName){
@@ -44,41 +44,6 @@ class CMS implements IModule{
 		header("Content-disposition: inline");
 	}
 
-	public static function processForm($moduleName, $handlerName)
-	{
-		$moduleName = ucfirst($moduleName);
-		if(Core::isModuleExist($moduleName)) {
-			/* @var $obj IModule */
-			$obj = Core::getModule($moduleName);
-			$handlers = $obj->getFormHandlers();
-			if(!empty($handlers[$handlerName])) {
-				$handler = $handlers[$handlerName];
-			} else {
-				$handler = null;
-			}
-			/* @var $handler FormHandler */
-			if($handler != null) {
-				$function = $handler->getMethod();
-				$obj->$function($handler);
-				$url = $handler->getUrl();
-				if(empty($url)) {
-					$url = $_SERVER['HTTP_REFERER'];
-					if(empty($url)) {
-						$url = Config::get("url");
-					}
-				}
-				$errors = $handler->getErrors();
-				if(!empty($errors)) {
-					UI::setFormErrors($moduleName, $handlerName, $errors);
-				}
-				header('location: '.$url);
-				exit;
-			}
-		}
-		echo "unknown form handler";
-		exit;
-	}
-
 	/**
 	 * Get admin panel's javascript files
 	 * @param UI $ui
@@ -108,14 +73,6 @@ class CMS implements IModule{
 		// TODO: Implement getAjaxHandlers() method.
 	}
 
-	/**
-	 * Get module form handlers
-	 * @return FormHandler[]
-	 */
-	public function getFormHandlers()
-	{
-		// TODO: Implement getFormHandlers() method.
-	}
 
 	/**
 	 * Get module ajax handler with selected name
@@ -127,15 +84,6 @@ class CMS implements IModule{
 		// TODO: Implement getAjaxHandler() method.
 	}
 
-	/**
-	 * Get module form handlers with selected name
-	 * @param string $name
-	 * @return FormHandler
-	 */
-	public function getFormHandler($name)
-	{
-		// TODO: Implement getFormHandler() method.
-	}
 	/**
 	 * Generate site header menu
 	 * @param UI $ui
