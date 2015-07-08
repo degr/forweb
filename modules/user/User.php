@@ -92,7 +92,7 @@ class User extends Module{
                 $auth = $this->onAjaxAuthorization();
             }
             $provider = new User_Gui_Forms();
-            $provider->getAuthorizationForm($ui, $auth['errors']);
+            $provider->getAuthorizationForm($ui, !empty($auth['errors']) ? $auth['errors'] : array());
         }
     }
 

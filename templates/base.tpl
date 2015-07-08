@@ -2,16 +2,19 @@
 <html>
 <head>
 	<script src="{$c.url}js/core.js"></script>
-	<script src="{$c.url}js/proto/Element.js"></script>
-	<script src="{$c.url}js/proto/String.js"></script>
-	<script src="{$c.url}js/Entity.js"></script>
-	<script src="{$c.url}js/Forms.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-
-	{$block.scriptCollector}
 	<script>
 		Core.url = '{$c.url}';
 	</script>
+	<script src="{$c.url}js/proto/Element.js"></script>
+	<script src="{$c.url}js/proto/String.js"></script>
+
+	<script src="{$c.url}js/Entity.js"></script>
+	<script src="{$c.url}js/Forms.js"></script>
+
+	<script src="{$c.url}js/Autocode.js"></script>
+	<!--script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script-->
+
+		{$block.scriptCollector}
 	<link rel="stylesheet" type="text/css" href="{$c.url}css/compilled.css">
 </head>
 <body class="container">

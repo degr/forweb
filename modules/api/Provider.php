@@ -77,7 +77,7 @@ class Api_Provider implements  Api_IProvider{
     public function getAssoc()
     {
         $key = $_REQUEST['key'];
-        $value = $_REQUEST['key'];
+        $value = $_REQUEST['value'];
 
         if(!$this->isAllowedField($key) || !$this->isAllowedField($value)) {
             throw new FwException('This fields is forbidden, or not exist.');

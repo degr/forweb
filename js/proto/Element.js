@@ -90,7 +90,7 @@ Element.prototype.animate = function(style,v,time) {
             }
         }, 30);
     }
-}
+};
 
 Element.prototype.drawPreloader = function(clazz){
     if(typeof clazz !== "string")clazz='';
@@ -112,7 +112,7 @@ Element.prototype.moveUp = function(){
     var t=null;
     for(var i=0;i<l;i++){if(n[i]===this)break;t=n[i];}
     if(t!=null){p.insertBefore(this,t);return true;}else return false;
-}
+};
 Element.prototype.moveDown = function(){
     var p=this.parentNode;
     var n= p.childNodes;
@@ -120,7 +120,7 @@ Element.prototype.moveDown = function(){
     var t=null;
     for(var i=0;i<l;i++){if(n[i]!==this)continue;if(i+1<l)t=n[i+1];break;}
     if(t!=null){p.insertBefore(t,this);return true;}else return false;
-}
+};
 Element.prototype.up = function(s){
     if(!s)return this.parentNode;
     var p = this.parentNode;
@@ -135,4 +135,92 @@ Element.prototype.up = function(s){
         return p.up(s);
     }
     return null;
-}
+};
+
+Element.prototype.guid = 0;
+
+Element.prototype.fixEvent = function(event) {
+    event = event || window.event;
+    if (event.isFixed )return event;
+    event.isFixed = true ;
+    event.preventDefault = event.preventDefault || function(){this.returnValue = false};
+    event.stopPropagation = event.stopPropagaton || function(){this.cancelBubble = true};
+    event.stop = function(){
+        event.preventDefault();
+        event.stopPropagation();
+    };
+    if (!event.target)
+        event.target = event.srcElement;
+
+    if (!event.relatedTarget && event.fromElement)
+        event.relatedTarget = event.fromElement == event.target ? event.toElement : event.fromElement;
+
+
+    if ( event.pageX == null && event.clientX != null ) {
+        var html = document.documentElement, body = document.body;
+        event.pageX = event.clientX + (html && html.scrollLeft || body && body.scrollLeft || 0) - (html.clientLeft || 0);
+        event.pageY = event.clientY + (html && html.scrollTop || body && body.scrollTop || 0) - (html.clientTop || 0);
+    }
+    if ( !event.which && event.button ) {
+        event.which = (event.button & 1 ? 1 : ( event.button & 2 ? 3 : ( event.button & 4 ? 2 : 0 ) ));
+    }
+    return event
+};
+
+Element.prototype.commonHandle = function(event) {
+    event = this.fixEvent(event);
+    var handlers = this.events[event.type];
+    for ( var g in handlers ) {
+        var handler = handlers[g];
+
+        var ret = handler.call(this, event);
+        if ( ret === false ) {
+            event.preventDefault();
+            event.stopPropagation()
+        }
+    }
+};
+
+Element.prototype.addEvent = function(type, handler) {
+    if(!type)throw new Error('Can\'t add event, because event type is undefined or null');
+    if(!handler)throw new Error('Can\'t add event, because event handler is undefined or null');
+
+    if (!handler.guid) {
+        handler.guid = ++this.guid
+    }
+
+    if (!this.events) {
+        this.events = {};
+        this.handle = function(event) {
+            if (typeof Event !== 'undefined') {
+                return this.commonHandle.call(this, event)
+            }
+        }
+    }
+
+    if (!this.events[type]) {
+        this.events[type] = {};
+
+        if (this.addEventListener)
+            this.addEventListener(type, this.handle, false);
+        else if (this.attachEvent)
+            this.attachEvent('on' + type, this.handle)
+    }
+
+    this.events[type][handler.guid] = handler
+};
+
+Element.prototype.removeEvent = function(type, handler) {
+    var handlers = this.events && this.events[type];
+
+    if (!handlers) return;
+
+    delete this.events[type][handler.guid];
+
+    if (this.removeEventListener) {
+        this.removeEventListener(type, handler, false);
+    } else if (this.detachEvent) {
+        this.detachEvent('on' + type, handler);
+    }
+};
+

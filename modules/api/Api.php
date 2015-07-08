@@ -15,7 +15,7 @@
  */
 class Api
 {
-    const OPEN_API = false;
+    const OPEN_API = true;
     const DEFAULT_LIMIT = 15;
     const DEFAULT_PK_NAME = "id";
 
@@ -45,7 +45,7 @@ class Api
         if(empty($method)) {
             throw new FwException("Undefined method in request path. Please method name as third request param.");
         }
-
-        echo $provider->$method();
+        Cms::sendHeaders(AjaxHandler::JSON);
+        echo json_encode($provider->$method());
     }
 }
