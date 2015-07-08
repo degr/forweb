@@ -156,8 +156,8 @@ class UI{
 		$smarty->caching = true;
 		$smarty->cache_lifetime = 120;
 		$smarty->setTemplateDir('./'.UI::TEMPLATES_DIR)
-			->setCompileDir('./Cache/smarty/templates_c')
-			->setCacheDir('./Cache/smarty/cache')
+			->setCompileDir('./cache/smarty/templates_c')
+			->setCacheDir('./cache/smarty/cache')
 			->setConfigDir('./templateEngine/config');
 		$smarty->caching = false;
 

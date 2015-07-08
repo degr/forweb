@@ -5,24 +5,14 @@
 	<script src="{$c.url}js/proto/Element.js"></script>
 	<script src="{$c.url}js/proto/String.js"></script>
 	<script src="{$c.url}js/Entity.js"></script>
-	<script src="{$c.url}js/entity/Address.js"></script>
-	<script src="{$c.url}js/entity/User.js"></script>
 	<script src="{$c.url}js/Forms.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
 	{$block.scriptCollector}
 	<script>
 		Core.url = '{$c.url}';
-		Ajax.request({
-			url: Core.url + "person/checkForActivePerson?ajax=1",
-			success: Person.onActivatePerson,
-			type: 'post',
-			response: 'json'
-		});
-
 	</script>
-	<link rel="stylesheet" type="text/css" href="{$c.url}css/core.css">
-	<link rel="stylesheet" type="text/css" href="{$c.url}css/project.css">
+	<link rel="stylesheet" type="text/css" href="{$c.url}css/compilled.css">
 </head>
 <body class="container">
 <div class="wrapper row">

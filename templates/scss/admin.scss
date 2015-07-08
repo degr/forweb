@@ -1,0 +1,59 @@
+.admin_panel{
+  background-color: white;
+}
+.admin_panel li{
+  list-style: none;
+  padding: 5px;
+
+}
+
+.edit_template .block{
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid black;
+}
+.preloader{
+  position: absolute;
+  top: 0;
+  left:0 ;
+  width: 100%;
+  height: 100%;
+  background: url(../img/system/preloader/common.gif) center no-repeat;
+}
+.preloader.line{
+  background-image: url(../img/system/preloader/line.gif);
+}
+.preloader.small{
+  background-image: url(../img/system/preloader/small.gif);
+}
+.edit_template .block-content, .edit_template .block-center{
+  margin: 20px auto;
+}
+.edit_template .block-content{
+  width: 200px;
+}
+.edit_template .block-center{
+  width: 470px;
+}
+.edit_template .block-west, .edit_template .block-east{
+  width: 100px;
+}
+.edit_template .block label{
+  width: 100%;
+  height: 100%;
+  background-color: pink;
+  display: block;
+}
+.edit_template .block input[type="checkbox"]:checked + label{
+  background-color: lightgreen;
+}
+.edit_template input[type="checkbox"]{
+  display: none;
+}
+
+.edit_template .block-left, .edit_template .block-right{
+  width: 75px;
+}
+.tree.placeholder{
+  width: 10px;
+}

@@ -12,7 +12,7 @@
      const TIME_KEEP = 'keep';
 
      public function save($object, $module, $key, $time = 0){
-         $folder = 'Cache/'.$module;
+         $folder = 'cache/'.$module;
          if(!is_dir($folder)) {
              mkdir($folder, 0777, true);
          }
@@ -27,7 +27,7 @@
      }
 
      public function load($module, $key){
-         $file = 'Cache/'.$module.'/'.md5($key);
+         $file = 'cache/'.$module.'/'.md5($key);
          if(is_file($file)) {
              $inTime = true;
              if(is_file($file.self::DATA_PREFFIX)) {
