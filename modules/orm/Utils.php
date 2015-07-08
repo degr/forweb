@@ -391,8 +391,15 @@ class ORM_Utils{
             if (!isset($data[$name])) {
                 $data[$name] = null;
             }
+            $postfix = '';
+            foreach($table->getBinds() as $bind) {
+                if($bind->getLeftField() === $field->getName()){
+                    $postfix = $bind->getLeftField() === $field->getName() ? ORM_Utils::BIND_PREFIX : "";
+                    break;
+                }
+            }
             if ($field->validateValue($data[$name], $errors)) {
-                $setter = "set" . ucfirst($name);
+                $setter = "set" . ucfirst($name).$postfix;
                 $object->$setter($data[$name]);
             }
         }
