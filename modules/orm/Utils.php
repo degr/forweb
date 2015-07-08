@@ -53,6 +53,7 @@ class ORM_Utils{
                 $rKeyMethod = 'get' . ucfirst($bind->getRightKey());
                 foreach ($orderedObject[$table->getName()] as $entity) {
                     $setValue = null;
+                    /** @var $binded ORM_Persistence_Base*/
                     foreach ($orderedObject[$bind->getRightTable()->getName()] as $binded) {
                         if($table->getField($bind->getLeftKey())->getLazyLoad()){
                             continue;
@@ -196,8 +197,9 @@ class ORM_Utils{
                 } elseif(empty($value)){
                     return 0;
                 } else {
-                    intval($value) === 0 ? 0 : 1;
+                    $value = intval($value) === 0 ? 0 : 1;
                 }
+                // no break
             case 'integer':
             case 'tinyint':
                 return intval($value);
@@ -205,10 +207,12 @@ class ORM_Utils{
                 if(is_numeric($value)) {
                     $value = date(ORM_Utils::DATE_FORMAT, $value);
                 }
+                // no break
             case 'datetime':
                 if(is_numeric($value)) {
                     $value = date(ORM_Utils::DATETIME_FORMAT, $value);
                 }
+                // no break
             default:
                 return "'".DB::escape($value)."'";
         }
@@ -314,14 +318,8 @@ class ORM_Utils{
         $out[$mainTable->getName()] = array();
         foreach($result as $row){
             foreach($tables as $table) {
-                $index = $row[$table->getName()."_".$table->getPrimaryKey()];
-
-                /*@TODO wtf?
-                if(!empty($out[$table->getName()][$index])){
-                    continue;
-                }
-                */
-                $obj = ORM_Utils::fromArrayToObject($table, $row, $index);
+                /** @var $obj ORM_Persistence_Base */
+                $obj = ORM_Utils::fromArrayToObject($table, $row);
                 if($obj == null) {
                     continue;
                 }
@@ -341,6 +339,7 @@ class ORM_Utils{
             if($localBind->getType() != ORM_Table::ONE_TO_ONE) {
                 continue;
             }
+            $check = false;
             foreach($allBinds as $storedBind) {
                 if($storedBind->getLeftTable()->getName() == $localBind->getLeftTable()->getName()
                     &&
