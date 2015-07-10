@@ -52,6 +52,13 @@ class Cms implements IModule{
                 'admin_translations',
                 addslashes(json_encode(Word::get('admin')))
             );
+            ScriptCollector::collect('admin/access.form.js');
+            ScriptCollector::collect('admin/config.js');
+            ScriptCollector::collect('admin/files.js');
+            ScriptCollector::collect('admin/page.content.js');
+            ScriptCollector::collect('admin/template.form.js');
+            ScriptCollector::collect('admin/word.js');
+
             $ui->addVariable("isMultipleLanguages", Core::MULTIPLE_LANGUAGES);
             $ui->addVariable('adminIncludeOptions', addslashes(json_encode(Page::getIncludeTypesList())));
             $ui->addVariable('url', Config::get("url"));

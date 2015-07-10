@@ -143,7 +143,6 @@ class Core extends Module{
 		$template = $pageService->getTemplate();
 		$blocks = $this->getBlocks($template->getId());
 		$pageData = $this->processBlocks($blocks);
-
 		$this->sendResponse($pageData, $template);
 
 		if(isset($_GET['force_admin_panel'])) {

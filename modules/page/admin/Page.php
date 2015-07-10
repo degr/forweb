@@ -73,17 +73,13 @@ class Page_Admin_Page{
         /* @var $pageService Page_Service*/
         $pageService = Core::getModule("Page_Service");
         if(!empty($_POST['ajax_key']) && $_POST['ajax_key'] === 'pageedit'){
-            if(!empty($_POST['id'])){
-                $page = $pageService->load($_POST['id']);
-            } else {
-                $page = new PersistPages();
-            }
             $table = $pageService->getTable();
-            foreach($_POST as $key =>$value){
-                $method = "set".ucfirst($key);
-                if(method_exists($page, $method)){
-                    $page->$method($value);
-                }
+            $dto = ORM::buildObject($table, $_POST);
+            /** @var $page PersistPages */
+            if(empty($dto[1])) {
+                $page = $dto[0];
+            } else {
+                $page = null;
             }
             if(!empty($_POST['deletePage'])){
                 /* @var $parent PersistPages */
@@ -93,7 +89,7 @@ class Page_Admin_Page{
                     $parentLink = $pageService->getPagePath($parent);
                     $deleteText = Word::get('admin', $deletePageKey);
                 }
-            } else {
+            } elseif($page != null){
                 $url = $page->getUrl();
                 if($url != '') {
                     $onPageUpdate = $this->onUpdatePage($page, $table);
