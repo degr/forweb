@@ -28,22 +28,15 @@ function __autoload($class) {
     if (strpos($class, '_') !== false) {
         $path = strtolower($class);
         $parts = explode('_', $path);
-        $lowered = array_pop($parts).'.php';
-        $folder = Core::MODULES_FOLDER.implode('/', $parts).'/';
-        $files = glob($folder.'*');
-        foreach($files as $file) {
-            if(strtolower($file) == $folder.$lowered) {
-                require_once $file;
-                return;
-            }
-        }
-        $file = 'undefined class: '.$class;
+        $lowered = array_pop($parts);
+        $file = Core::MODULES_FOLDER.implode('/', $parts).'/'.substr($class, strlen($class) - strlen($lowered)).'.php';
     } else {
         $file = Core::MODULES_FOLDER.strtolower($class).'/'.$class.'.php';
         if(!is_file($file)){
             $file = Core::MODULES_FOLDER.$class.'.php';
         }
     }
+
     if(!is_file($file)){
         if(is_file(ORM::getPersistExtendedObjectsFolder().$class.".php")){
             require_once ORM::getPersistExtendedObjectsFolder().$class.".php";
@@ -54,37 +47,10 @@ function __autoload($class) {
             return;
         }
     }
-    $c = explode('/', $file);
-    array_shift($c);
-    checkFolder('modules', implode('/', $c), $file);
+
     require_once($file);
 }
 
-function checkFolder($base, $file, $im) {
-    $parts = explode('/', $file);
-    if(count($parts) < 2) {
-        return;
-    }
-    $current = array_shift($parts);
-    $folders = glob($base.'/*');
-    $ok = false;
-    foreach($folders as $folder) {
-        if(!is_dir($folder)) {
-            continue;
-        }
-        if($folder == $base.'/'.$current) {
-            $ok = true;
-            break;
-        }
-    }
-    if($ok) {
-        if(count($parts) > 1) {
-            checkFolder($base.'/'.$current, implode('/', $parts), $im);
-        }
-    } else {
-        echo 'not ok'.$base.'/'.$file.'::'.$im.'<br>';
-    }
-}
 
 /**
  * Include all files from folder and all files from subfolders.
