@@ -5,7 +5,8 @@ var Autocode = {
     loadedComponents: [],
     components: {},
     start: function(){
-        this.processAutocomplete();
+        Autocode.processAutocomplete();
+        console.log('invoked');
     },
     /**
      * make autocomplete inputs
@@ -78,4 +79,4 @@ var Autocode = {
         }
     }
 };
-Autocode.start();
+window.addEvent('load', Autocode.start);

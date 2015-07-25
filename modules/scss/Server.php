@@ -158,6 +158,9 @@ class Scss_Server {
             if (true || $this->needsCompile($input, $output)) {
                 try {
                     $css = $this->compile($input, $output);
+                    if(!is_dir('css')){
+                        mkdir('css', 0777);
+                    }
                     file_put_contents('css/compilled.css', $css);
                     return;
                 } catch (Exception $e) {

@@ -20,6 +20,8 @@ class Cms implements IModule{
                 if (isset($out)) {
                     CMS::sendHeaders($handler->getResponse());
                     if ($handler->getResponse() === AjaxHandler::JSON) {
+                        /*$out['time'] = Core::$time;
+                        Core::logTime($moduleName.'::'.$handlerName);*/
                         echo json_encode($out);
                     } else {
                         echo $out;

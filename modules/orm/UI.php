@@ -44,11 +44,9 @@ class ORM_UI
             $fields = $table->getFields();
         }
 
-        /** @var $cache Cache */
-        $cache = Core::getModule('Cache');
         $language = Word::getLanguage();
         $cacheKey = json_encode($fields).$language['locale'];
-        $out = $cache->load('ORM_UI', $cacheKey);
+        $out = Cache::load('ORM_UI', $cacheKey);
         if(empty($out)) {
             $out = array();
         } else {
@@ -81,7 +79,7 @@ class ORM_UI
             $out[] = $item;
         }
 
-        $cache->save($out, 'ORM_UI', $cacheKey);
+        Cache::save($out, 'ORM_UI', $cacheKey);
 
         return $out;
     }
