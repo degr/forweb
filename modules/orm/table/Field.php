@@ -71,12 +71,14 @@ class ORM_Table_Field{
 		return $this->index;
 	}
 
+
 	public function setEnumValues($values){
 		if(!is_array($values)) {
 			var_dump($values);
 			throw new Exception('enum values must be array instance');
 		}
 		$this->enumValues = $values;
+		return $this;
 	}
 	
 	public function getEnumValues(){

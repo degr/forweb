@@ -11,6 +11,21 @@ class Core extends Module{
 	public static $FORBIDDEN_URLS = array(
 		'api', 'ajax'
 	);
+	//@todo delete
+	/*public static $time;
+	public static $ts;
+	public static function logTime($value){
+		$time = &Core::$time;
+		$current = microtime(true);
+		if(empty($time)) {
+			$time = array();
+		}
+		if(empty(Core::$ts)) {
+			Core::$ts = TIME;
+		}
+		$time[] = $value .': '. ($current - Core::$ts);
+		Core::$ts = $current;
+	}*/
 
 	public function getAjaxHandlers()
 	{
@@ -143,7 +158,6 @@ class Core extends Module{
 		$template = $pageService->getTemplate();
 		$blocks = $this->getBlocks($template->getId());
 		$pageData = $this->processBlocks($blocks);
-
 		$this->sendResponse($pageData, $template);
 
 		if(isset($_GET['force_admin_panel'])) {

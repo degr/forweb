@@ -1,20 +1,20 @@
 <?php
 //$time = time();
 session_start();
-
+define('TIME', microtime(true));
 /*main requirements*/
 require_once "modules/project.functions.php";
 require_once "modules/module/Module.php";
 require_once "modules/core/Core.php";
 
 /* css style building */
-if(/*false &&*/ (Core::DEVELOPMENT || !is_file('css/compilled.css'))) {
+if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
     $scss = new Scss_Server('templates/scss', 'cache/scss');
     $scss->serve();
 }
 /* db initializing */
 $manager = new DB_Manager("", "MySQL");
-$manager->setCredentials("localhost", "root", "admin", "forweb");
+$manager->setCredentials("localhost", "root", "", "roguelike");
 DB::init($manager);
 
 /* project deploy */

@@ -47,7 +47,7 @@ function __autoload($class) {
             return;
         }
     }
-
+    //Core::logTime($file);
     require_once($file);
 }
 

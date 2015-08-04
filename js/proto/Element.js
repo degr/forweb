@@ -166,6 +166,8 @@ Element.prototype.fixEvent = function(event) {
     }
     return event
 };
+HTMLDocument.prototype.fixEvent = Element.prototype.fixEvent;
+window.fixEvent = Element.prototype.fixEvent;
 
 Element.prototype.commonHandle = function(event) {
     event = this.fixEvent(event);
@@ -180,6 +182,8 @@ Element.prototype.commonHandle = function(event) {
         }
     }
 };
+HTMLDocument.prototype.commonHandle = Element.prototype.commonHandle;
+window.commonHandle = Element.prototype.commonHandle;
 
 Element.prototype.addEvent = function(type, handler) {
     if(!type)throw new Error('Can\'t add event, because event type is undefined or null');
@@ -192,7 +196,7 @@ Element.prototype.addEvent = function(type, handler) {
     if (!this.events) {
         this.events = {};
         this.handle = function(event) {
-            if (typeof Event !== 'undefined') {
+            if (typeof event !== 'undefined') {
                 return this.commonHandle.call(this, event)
             }
         }
@@ -209,6 +213,8 @@ Element.prototype.addEvent = function(type, handler) {
 
     this.events[type][handler.guid] = handler
 };
+HTMLDocument.prototype.addEvent = Element.prototype.addEvent;
+window.addEvent = Element.prototype.addEvent;
 
 Element.prototype.removeEvent = function(type, handler) {
     var handlers = this.events && this.events[type];
@@ -223,4 +229,5 @@ Element.prototype.removeEvent = function(type, handler) {
         this.detachEvent('on' + type, handler);
     }
 };
-
+HTMLDocument.prototype.removeEvent = Element.prototype.removeEvent;
+window.removeEvent = Element.prototype.removeEvent;

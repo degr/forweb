@@ -183,7 +183,6 @@ class Word_Install_Words {
 	);
 	$check = DB::getColumn('SELECT name FROM word WHERE language = "'.$languageId.'" AND module = "'.$moduleId.'"');
 	foreach ($check as $name) {
-        echo $name."<br>";
 		unset($words[$name]);
 	}
 	foreach($words as $word) {
