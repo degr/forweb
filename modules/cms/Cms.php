@@ -99,4 +99,13 @@ class Cms implements IModule{
     {
         // TODO: Implement getEventHandlers() method.
     }
+
+
+    public function onSitemapDisplay(UI $ui){
+        $provider = new Cms_Sitemap();
+        $ui->addVariable('links', $provider->getLinks());
+        $ui->setLayout(Cms_Sitemap::LAYOUT);
+        echo $ui->getLayout();
+        exit;
+    }
 }
