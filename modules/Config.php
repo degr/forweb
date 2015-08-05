@@ -1,7 +1,7 @@
 <?
 class Config{
 	protected static $config;
-
+	protected static $url;
 	/**
 	 * Get value for selected key from config
 	 * @param $key string
@@ -60,11 +60,13 @@ class Config{
 
 	public static function getUrl()
 	{
-		$url = Config::get("url");
-		if(empty($url)) {
-			$params = parse_url($_SERVER['HTTP_REFERER']);
-			$url = $params['scheme']."://".$params['host']."/";
+		if(Config::$url == null) {
+			Config::$url = Config::get("url");
+			if (empty($url)) {
+				$params = parse_url($_SERVER['HTTP_REFERER']);
+				Config::$url = $params['scheme'] . "://" . $params['host'] . "/";
+			}
 		}
-		return $url;
+		return Config::$url;
 	}
 }

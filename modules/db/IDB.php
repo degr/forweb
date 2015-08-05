@@ -8,6 +8,11 @@
 interface  DB_IDB{
 
     /**
+     * Get database encoding
+     * @return string
+     */
+    public static function getEncoding();
+    /**
      * Execute query
      * Main DB function
      * @param string $query

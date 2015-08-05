@@ -16,9 +16,9 @@
                 </li>
             {/foreach}
         </ul>
-        <form method="post" action="{$c.url}form/search/fromHeader" class="navbar-form navbar-right" role="search">
+        <form method="post" action="{$c.url}search" class="navbar-form navbar-right" role="search" onsubmit = "Search.onAjaxSearch(this);return false;">
             <div class="form-group">
-                <input type="text" class="form-control" name="value" placeholder="{word module="common" term="search"}">
+                <input type="text" class="form-control searchbar" name="value" placeholder="{word module="common" term="search"}">
             </div>
             <button type="submit" class="btn btn-default">Submit</button>
         </form>

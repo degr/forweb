@@ -14,8 +14,9 @@ if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
 }
 /* db initializing */
 $manager = new DB_Manager("", "MySQL");
-$manager->setCredentials("localhost", "root", "", "roguelike");
+$manager->setCredentials("localhost", "root", "admin", "forweb");
 DB::init($manager);
+DB::setEncoding("utf8");
 
 /* project deploy */
 if($_GET['deploy'] == 1 && Core::DEVELOPMENT){

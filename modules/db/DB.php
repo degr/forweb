@@ -6,6 +6,15 @@
  */
 class DB implements DB_IDB{
 
+    private static $encoding;
+    /**
+     * Get database encoding
+     * @return string
+     */
+    public static function getEncoding()
+    {
+        return DB::$encoding;
+    }
     /**
      * @var DB_IEngine $instance
      */
@@ -25,7 +34,9 @@ class DB implements DB_IDB{
 
     public static function setEncoding($encoding){
         DB::$instance->setEncoding($encoding);
+        DB::$encoding = $encoding;
     }
+
 
     /**
      * @param string $table
