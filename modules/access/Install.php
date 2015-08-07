@@ -18,8 +18,7 @@ class Access_Install implements Module_IInstall {
         $table = new ORM_Table("access");
 
         $id = new ORM_Table_Field("id", "integer");
-        $id->setAutoIncrement();
-        $id->setPrimary();
+        $id->setAutoIncrement(true)->setPrimary(true);
         $table->addField($id);
 
         $action = new ORM_Table_Field("action", "varchar");

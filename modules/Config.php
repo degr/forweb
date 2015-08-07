@@ -2,6 +2,8 @@
 class Config{
 	protected static $config;
 	protected static $url;
+	protected static $localUrl;
+
 	/**
 	 * Get value for selected key from config
 	 * @param $key string
@@ -50,8 +52,11 @@ class Config{
 	public static function getGeneralConfig(){
 		if(Config::$config == null){
 			Config::getConfig();
+			Config::$config['Core']['url'] = Config::getUrl();
+			Config::$config['Core']['localUrl'] = Config::getLocalUrl();
 		}
 		if(!empty(Config::$config['Core'])) {
+
 			return Config::$config['Core'];
 		} else {
 			return array();
@@ -61,12 +66,25 @@ class Config{
 	public static function getUrl()
 	{
 		if(Config::$url == null) {
-			Config::$url = Config::get("url");
+			$url = Config::get("url");
 			if (empty($url)) {
 				$params = parse_url($_SERVER['HTTP_REFERER']);
-				Config::$url = $params['scheme'] . "://" . $params['host'] . "/";
+				$url = $params['scheme'] . "://" . $params['host'] . "/";
 			}
+			Config::$url = $url;
 		}
 		return Config::$url;
+	}
+
+	public static function getLocalUrl(){
+		if(Config::$localUrl === null) {
+			if(Core::LANGUAGE_IN_URL) {
+				$language = Word::getLanguage();
+				Config::$localUrl = Config::getUrl() . ($language !== null ? $language['locale'] . '/' : '');
+			} else {
+				Config::$localUrl = Config::getUrl();
+			}
+		}
+		return Config::$localUrl;
 	}
 }

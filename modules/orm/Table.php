@@ -5,12 +5,17 @@ class ORM_Table{
 	 * @var ORM_Table_Field[]
 	 */
 	protected $fields;
+	/**
+	 * @var string
+	 */
 	protected $name;
-	protected $shortName;
 	/**
 	 * @var ORM_Table_Bind[]
 	 */
 	protected $binds;
+	/**
+	 * @var string
+	 */
 	protected $persistClassName;
 	
 	protected $primaryKey;

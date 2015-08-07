@@ -13,10 +13,10 @@ class User_Actions{
             'user' => null
         );
         if(empty($email)) {
-            $out['errors'][] = array('name'=>'email', 'code' => UI_Validation::REQUIRED);
+            $out['errors'][] = array('name'=>'email', 'code' => Validation_Code::REQUIRED);
         }
         if(empty($password)) {
-            $out['errors'][] = array('name'=>'password', 'code' => UI_Validation::REQUIRED);
+            $out['errors'][] = array('name'=>'password', 'code' => Validation_Code::REQUIRED);
         }
 
         $userController = Core::getModule("User");
@@ -36,7 +36,7 @@ class User_Actions{
             }
         }
         if($out['user'] == null) {
-            $out['errors'][] = array('name'=>'email', 'code' => UI_Validation::CUSTOM);
+            $out['errors'][] = array('name'=>'email', 'code' => Validation_Code::CUSTOM);
             $out['success'] = false;
         }
         return $out;

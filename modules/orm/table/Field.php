@@ -93,24 +93,24 @@ class ORM_Table_Field{
 		return $this->canBeNull;
 	}
 	
-	public function setAutoIncrement(){
-		$this->autoIncrement = true;
+	public function setAutoIncrement($autoIncrement){
+		$this->autoIncrement = $autoIncrement;
 		return $this;
 	}
 	public function getAutoIncrement(){
 		return $this->autoIncrement;
 	}
 	
-	public function setUnique(){
-		$this->unique = true;
+	public function setUnique($unique){
+		$this->unique = $unique;
 		return $this;
 	}
 	public function getUnique(){
 		return $this->unique;
 	}
 	
-	public function setPrimary(){
-		$this->primary = true;
+	public function setPrimary($primary){
+		$this->primary = $primary;
 		return $this;
 	}
 	public function getPrimary(){
@@ -151,11 +151,5 @@ class ORM_Table_Field{
 	 */
 	public function getLazyLoad(){
 		return $this->lazyLoad;
-	}
-
-	public function validateValue($value, &$errors)
-	{
-		//@TODO validate
-		return true;
 	}
 }

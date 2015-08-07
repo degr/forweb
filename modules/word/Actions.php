@@ -13,6 +13,11 @@ class Word_Actions{
         if(empty($id)) {
             return 0;
         }
+        $query = "select id from languages where id = ".$id;
+        $id = DB::getCell($query);
+        if(empty($id)) {
+            return 0;
+        }
         $query = "UPDATE languages SET is_default = 0";
         DB::query($query);
         $query = "UPDATE languages SET is_default = 1 WHERE id = ".$id;
@@ -151,15 +156,13 @@ class Word_Actions{
             return array(
                 'errors' => 0,
                 'text' => Word::get('word', 'new_term_created', true),
-                'id' => DB::getCell('SELECT id FROM word WHERE name="'.$name.'" AND module='.$module)
+                'id' => DB::getCell("SELECT id FROM word WHERE name='".$name."' AND module=".$module)
             );
         } else {
             $name = DB::getCell("SELECT name FROM word WHERE id='".$id."'");
 
             $ids = DB::getAssoc("SELECT language, id FROM word WHERE name = '".$name."'", 'language', 'id');
-            /* @var $wordModule Word */
-            $wordModule = Core::getModule("Word");
-            $languages = $wordModule->getLanguages();
+            $languages = Word::getLanguages();
             $checkForNewLanguage = true;
             foreach($languages as $key => $language) {
                 if(empty($ids[$key])) {

@@ -10,21 +10,15 @@ class Page_Admin_Includes{
 
     public function getContent()
     {
-        $dispatcher = new Page_Dispatcher($_POST['href']);
-        $dispatcher->handleRequest();
-        $params = $dispatcher->getParams();
         /* @var $pageService Page_Service */
         $pageService = Core::getModule("Page_Service");
+        $params = $pageService->parseUrlForParams($_POST['href']);
         $page = $pageService->findPage($params);
         $template = $page->getTemplate();
         $core = Core::getInstance();
         $blocks = $core->getBlocks($template->getId());
         $includes = $core->getPageIncludes($page);
-
-
-        $out = $this->getIncludesRepresentation($blocks, $includes, $page);
-
-        return $out;
+        return $this->getIncludesRepresentation($blocks, $includes, $page);
     }
 
     /**
@@ -175,5 +169,4 @@ class Page_Admin_Includes{
         $form['form']['fields']['name']['attributes']['type'] = 'hidden';
         return $form;
     }
-
 }

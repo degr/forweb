@@ -9,11 +9,9 @@ class Page_Admin_Template{
 
     public function getContent()
     {
-        $dispatcher = new Page_Dispatcher($_POST['href']);
-        $dispatcher->handleRequest();
-        $params = $dispatcher->getParams();
         /* @var $pageService Page_Service */
-        $pageService = Core::getModule("Page_Service");
+        $pageService = Core::getModule("Page")->getService();
+        $params = $pageService->parseUrlForParams($_POST['href']);
         $page = $pageService->findPage($params);
         $template = $page->getTemplate();
 

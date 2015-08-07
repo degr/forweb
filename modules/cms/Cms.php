@@ -63,7 +63,7 @@ class Cms implements IModule{
 
             $ui->addVariable("isMultipleLanguages", Core::MULTIPLE_LANGUAGES);
             $ui->addVariable('adminIncludeOptions', addslashes(json_encode(Page::getIncludeTypesList())));
-            $ui->addVariable('url', Config::get("url"));
+            $ui->addVariable('url', Config::getUrl());
             $ui->setLayout('page/admin/main.tpl');
         }
     }
@@ -110,11 +110,13 @@ class Cms implements IModule{
     }
 
 
-    public function onSitemapDisplay(UI $ui){
+    public static function onSitemapDisplay(){
+        $ui = new UI();
         $provider = new Cms_Sitemap();
         $ui->addVariable('links', $provider->getLinks());
         $ui->setLayout(Cms_Sitemap::LAYOUT);
-        echo $ui->getLayout();
+        header('Content-Type: application/xml; charset=utf-8');
+        echo $ui->process();
         exit;
     }
 }

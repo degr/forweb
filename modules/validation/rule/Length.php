@@ -21,8 +21,14 @@
      public function validate($data)
      {
          if(is_array($data)) {
-             $count = count($data);
-             return ($this->min == -1 || $count >= $this->min) && ($this->max == -1 || $count <= $this->max);
+             $length = count($data);
+         } else if(is_integer($data)) {
+             $length = $data;
+         } else if(is_string($data)) {
+             $length = mb_strlen($data);
+         } else {
+             $length = -1;
          }
+         return ($this->min == -1 || $length >= $this->min) && ($this->max == -1 || $length <= $this->max);
      }
  }

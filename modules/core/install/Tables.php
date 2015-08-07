@@ -10,7 +10,7 @@ class Core_Install_Tables{
     public function getPagesTable(){
         $table = new ORM_Table('pages');
         $id = new ORM_Table_Field("id", "integer");
-        $id->setAutoIncrement()->setPrimary()->setLength(11);
+        $id->setAutoIncrement(true)->setPrimary(true)->setLength(11);
         $table->addField($id);
 
         $name = new ORM_Table_Field("name", "varchar");
@@ -49,7 +49,7 @@ class Core_Install_Tables{
     public function getTemplatesTable(){
         $table = new ORM_Table("templates");
         $id = new ORM_Table_Field("id", "integer");
-        $id->setAutoIncrement()->setPrimary()->setLength(11);
+        $id->setAutoIncrement(true)->setPrimary(true)->setLength(11);
         $table->addField($id);
 
         $name = new ORM_Table_Field("name", "varchar");
@@ -71,7 +71,7 @@ class Core_Install_Tables{
     public function getIncludesTable(){
         $table = new ORM_Table("includes");
         $id = new ORM_Table_Field("id", "integer");
-        $id->setAutoIncrement()->setPrimary()->setLength(11);
+        $id->setAutoIncrement(true)->setPrimary(true)->setLength(11);
         $table->addField($id);
 
         $page = new ORM_Table_Field("page", "integer");
@@ -121,7 +121,7 @@ class Core_Install_Tables{
     public function getBlocksTable(){
         $table = new ORM_Table("blocks");
         $id = new ORM_Table_Field("id", "integer");
-        $id->setAutoIncrement()->setPrimary()->setLength(11);
+        $id->setAutoIncrement(true)->setPrimary(true)->setLength(11);
         $table->addField($id);
 
         $name = new ORM_Table_Field("name", "varchar");

@@ -27,9 +27,9 @@ class Api
 
 
 
-    public function handleRequest(Page_Dispatcher $dispatcher)
+    public function handleRequest()
     {
-        $table = $dispatcher->getParam(1);
+        $table = Core::getPathParam(1);
         if(empty($table)) {
             throw new FwException("Undefined table in request path. Please specify table as second request param.");
         }
@@ -41,7 +41,7 @@ class Api
         } else {
             $provider = new Api_Provider($table);
         }
-        $method = $dispatcher->getParam(2);
+        $method = Core::getPathParam(2);
         if(empty($method)) {
             throw new FwException("Undefined method in request path. Please method name as third request param.");
         }

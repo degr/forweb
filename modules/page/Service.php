@@ -120,4 +120,13 @@ class Page_Service extends Service {
     }
 
 
+    public function parseUrlForParams($url){
+        $dispatcher = new Page_Dispatcher($url);
+        $dispatcher->handleRequest();
+        $params = $dispatcher->getParams();
+        if(Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL && count($params) > 0) {
+            array_shift($params);
+        }
+        return $params;
+    }
 }

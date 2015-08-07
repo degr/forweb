@@ -134,7 +134,7 @@ class Page extends Module{
 
 		$dir = glob("modules/*");
 		$out = array();
-		$exclude = array('Core', 'Debug', 'Db', 'Files', 'Module', 'Orm', 'Ui', 'FwException');
+		$exclude = array('Core', 'Debug', 'Db', 'Files', 'Module', 'Orm', 'Ui', 'FwException', 'Validation');
 		foreach($dir as $name) {
 			if(is_dir($name)) {
 				$v = ucfirst(basename($name));
@@ -270,7 +270,7 @@ class Page extends Module{
 	public function changePagePositions(){
 		Access::denied("can_edit_pages");
 		$provider = new Page_Admin_Page();
-		return $provider->changePagePositions();
+		$provider->changePagePositions();
 	}
 
 	/**

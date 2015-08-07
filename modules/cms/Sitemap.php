@@ -15,12 +15,50 @@ class Cms_Sitemap
     {
         /** @var $pageService Page_Service */
         $pageService = Core::getModule("Page")->getService();
-        $pages = $pageService->loadAll();
+        $filter = new ORM_Query_Filter('pages', 'active', ORM_Query_Filter::TYPE_EQUAL);
+        $filter->setActive(true);
+        $filter->setValue(1);
+        $pages = $pageService->loadAll($filter);
         $url = $includeUrl ? Config::getUrl() : '';
         $out = array();
+        $languages = Word::getLanguages();
         /** @var $page PersistPages */
         foreach($pages as $page) {
-            $out[$page->getId()] = $url.$pageService->getPagePath($page);
+            if(Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL) {
+                foreach($languages as $language) {
+                    $item = $this->buildPageItem($url .$language['locale'] .'/'. $pageService->getPagePath($page), $page);
+                    $item['alternate'] = $this->buildAlternate($page, $languages, $language, $url);
+                    $out[] = $item;
+                }
+            } else {
+                $out[] = $this->buildPageItem($url . $pageService->getPagePath($page), $page);
+            }
+        }
+        return $out;
+    }
+
+    private function buildPageItem($url, $page) {
+        return array(
+            'url' => $url,
+            'lastmod' => null,
+            'changefreq' => null,
+            'priority' => null
+        );
+    }
+
+    private function buildAlternate($page, $languages, $language, $url)
+    {
+        $out = array();
+        /** @var $pageService Page_Service */
+        $pageService = Core::getModule("Page")->getService();
+        foreach($languages as $alternateLanguage) {
+            if($alternateLanguage['id'] === $language['id']) {
+                continue;
+            }
+            $out[] = array(
+                'language' => $alternateLanguage['locale'],
+                'url' => $url .$alternateLanguage['locale'].'/'. $pageService->getPagePath($page), $page
+            );
         }
         return $out;
     }

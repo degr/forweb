@@ -17,8 +17,7 @@ class User_Install implements Module_IInstall{
         $userTable = new ORM_Table('user');
 
         $id = new ORM_Table_Field('id', 'integer');
-        $id->setAutoIncrement();
-        $id->setPrimary();
+        $id->setAutoIncrement(true)->setPrimary(true);
         $userTable->addField($id);
 
         $name = new ORM_Table_Field('name', 'varchar');

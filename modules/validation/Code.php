@@ -1,11 +1,11 @@
 <?php
 /**
  * Created by IntelliJ IDEA.
- * User: Ror
- * Date: 24.03.2015
- * Time: 13:26
+ * User: rsmirnou
+ * Date: 8/6/2015
+ * Time: 3:20 PM
  */
-class UI_Validation{
+class Validation_Code{
     const REQUIRED = 1;
     const INTEGER = 2;
     const EMAIL = 3;

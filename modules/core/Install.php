@@ -192,7 +192,7 @@ class Core_Install implements Module_IInstall{
     {
         $table = new ORM_Table("config", 'config');
         $id = new ORM_Table_Field("id", "integer");
-        $id->setAutoIncrement()->setPrimary()->setLength(11);
+        $id->setAutoIncrement(true)->setPrimary(true)->setLength(11);
         $table->addField($id);
 
         $module = new ORM_Table_Field("module", "varchar");

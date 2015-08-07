@@ -6,26 +6,12 @@ class Core extends Module{
 	const MODULES_FOLDER = "modules/";
 	const DEVELOPMENT = true;
 	const MULTIPLE_LANGUAGES = true;
+	const LANGUAGE_IN_URL = true;
 	const SYS_INCLUDES = 'sys_includes';
 
 	public static $FORBIDDEN_URLS = array(
 		'api', 'ajax'
 	);
-	//@todo delete
-	/*public static $time;
-	public static $ts;
-	public static function logTime($value){
-		$time = &Core::$time;
-		$current = microtime(true);
-		if(empty($time)) {
-			$time = array();
-		}
-		if(empty(Core::$ts)) {
-			Core::$ts = TIME;
-		}
-		$time[] = $value .': '. ($current - Core::$ts);
-		Core::$ts = $current;
-	}*/
 
 	public function getAjaxHandlers()
 	{
@@ -64,8 +50,9 @@ class Core extends Module{
 	protected static $pathParams;
 
 	public static function getPathParam($num){
-		if(isset(self::$pathParams[$num])) {
-			return self::$pathParams[$num];
+		$realNum = $num + (Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL ? 1 : 0);
+		if(isset(self::$pathParams[$realNum])) {
+			return self::$pathParams[$realNum];
 		}
 		return "";
 	}
@@ -135,22 +122,35 @@ class Core extends Module{
 	public function process(){
 		$dispatcher = new Page_Dispatcher($_SERVER['REQUEST_URI']);
 		$dispatcher->handleRequest();
-		if($dispatcher->getParam(0) == 'api') {
+		self::$pathParams = $dispatcher->getParams();
+		$keyShift = Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL ? -1 : 0;
+		$key = Core::getPathParam($keyShift);
+		if($key == 'api') {
 			/** @var $api Api */
 			$api = Core::getModule("Api");
-			$api->handleRequest($dispatcher);
+			$api->handleRequest();
 			return;
 		}
-		$this->pageModule = Core::getModule("Page");
-
-		if($dispatcher->getParam(0) == 'ajax'){
-			Cms::ajaxHandler($dispatcher->getParam(1), $dispatcher->getParam(2));
+		if($key == 'ajax'){
+			Cms::ajaxHandler(Core::getPathParam(1 + $keyShift), Core::getPathParam(2 + $keyShift));
 			//unreachable 'return' statement. Exist only as end function marker.
 			// Script will exit in Cms::ajaxHandler;
 			return;
 		}
+		if($key === 'sitemap.xml') {
+			Cms::onSitemapDisplay();
+		}
+		if(Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL) {
+			Word::onLanguageUrl();
+		}
+		$this->onPageContent();
+	}
 
-		self::$pathParams = $dispatcher->getParams();
+	/**
+	 * @param $dispatcher Page_Dispatcher
+	 */
+	public function onPageContent(){
+		$this->pageModule = Core::getModule("Page");
 		/* @var $pageService Page_Service */
 		$pageService = $this->pageModule->getService();
 		$page = $pageService->findPage(self::$pathParams);
@@ -168,7 +168,7 @@ class Core extends Module{
 			echo $ui->process();
 		}
 	}
-	
+
 	public function sendResponse($pageData, PersistTemplates $template){
 		$ui = new UI();
 		$ui->addVariable("block", $pageData);
@@ -208,18 +208,11 @@ class Core extends Module{
 						"after" => array()
 					);
 				}
-				if(Core::DEVELOPMENT && isset($_GET['dbug_functions']) && Core::isModuleExist("Debug")){
-					$time = time();
-				}
 				if(!empty($data[$blocks[$include->getBlock()]][$include->getPosition()][$include->getPositionNumber()])) {
 					$include->setPositionNumber($include->getPositionNumber() +100);
 				}
 				$data[$blocks[$include->getBlock()]][$include->getPosition()][$include->getPositionNumber()] =
 					$this->processInclude($include);
-				if(Core::DEVELOPMENT && isset($_GET['dbug_functions']) && Core::isModuleExist("Debug")){
-					$data[$blocks[$include->getBlock()]][$include->getPosition()][$include->getPositionNumber()]
-						= Debug::getSIncludeExecutionTime($include, $time);
-				}
 			}
 		}
 		//iterate over each block
@@ -258,8 +251,8 @@ class Core extends Module{
 				break;
 			case "image":
 				$out = '<div class="image-holder image-holder-'.$include->getId().'">'
-				.'<img src="'.$include->getContent().'" alt="content_image" title="content_image" />'
-				.'</div>';
+					.'<img src="'.$include->getContent().'" alt="content_image" title="content_image" />'
+					.'</div>';
 				break;
 			case "executable":
 				$module = $include->getModule();
@@ -297,14 +290,14 @@ class Core extends Module{
 
 	public function getAdminScript(){
 		$adminScript = Core::getResource("admin.js");
-		$url = Config::get('url');
+		$url = Config::getUrl();
 		return str_replace('###url###', $url, $adminScript);
 	}
-	
+
 	public static function getResource($name){
 		return file_get_contents(Core::RESOURCES_FOLDER.$name);
 	}
-	
+
 	public static function showModules(){
 		foreach(Core::$modules as $key => $module){
 			echo $key ." <br/>";

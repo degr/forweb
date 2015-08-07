@@ -117,13 +117,13 @@ class Word extends Module{
     }
 
 
-    public function getLanguages(){
+    public static function getLanguages(){
         if(Word::$languages == null) {
-                Word::$languages = DB::getTable(
-                    "SELECT * FROM languages",
-                    'id'
-                );
-            }
+            Word::$languages = DB::getTable(
+                "SELECT * FROM languages",
+                'id'
+            );
+        }
         return Word::$languages;
     }
 
@@ -210,7 +210,40 @@ class Word extends Module{
         $ui->setLayout("word/language.switch.tpl");
         $ui->addVariable('languages', Word::getLanguages());
     }
-
+    /**
+     * fix url and make redirect if it necessary.
+     * This function must be called only if Core::MULTIPLE_LANGUAGES == true && Core::LANGUAGE_IN_URL == true
+     * @param $dispatcher Page_Dispatcher
+     * @throws FwException
+     */
+    public static function onLanguageUrl(){
+        $loc = Core::getPathParam(-1);
+        /** @var $me Word*/
+        $me = Core::getModule("Word");
+        $language = null;
+        $currentLanguage = $me->getLanguage();
+        $onRedirectToDefault = $loc === '';
+        if(!$onRedirectToDefault) {
+            $language = $me->getLanguage($loc);
+            $onRedirectToDefault = $language === null;
+            if(!$onRedirectToDefault) {
+                if($currentLanguage['id'] != $language['id']){
+                    $_SESSION[Word::SESSION_LANGUAGE] = $language['id'];
+                    Word::$language = $language;
+                    $url = preg_replace("/".$currentLanguage['locale']."\/$/", '', Config::getLocalUrl());
+                    $path = preg_replace("/^\/|".$loc."|\//", '', $_SERVER['REQUEST_URI']);
+                    Core_Utils::redirect($url.$path);
+                }
+            }
+        }
+        if($onRedirectToDefault){
+            if($currentLanguage === null) {
+                throw new FwException("Can't process request. Language not found, but multylanguage site configured.");
+            }
+            $url = preg_replace("/\/$/", '', Config::getLocalUrl());
+            Core_Utils::redirect($url.$_SERVER['REQUEST_URI']);
+        }
+    }
     /**
      * Get module event handlers
      * @return EventHandler[]
