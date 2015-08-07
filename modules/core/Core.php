@@ -10,7 +10,7 @@ class Core extends Module{
 	const SYS_INCLUDES = 'sys_includes';
 
 	public static $FORBIDDEN_URLS = array(
-		'api', 'ajax'
+		'api', 'ajax', 'sitemap.xml'
 	);
 
 	public function getAjaxHandlers()
