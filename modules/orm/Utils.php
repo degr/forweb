@@ -372,10 +372,8 @@ class ORM_Utils{
                     break;
                 }
             }
-            if ($field->validateValue($data[$name], $errors)) {
-                $setter = "set" . ucfirst($name).$postfix;
-                $object->$setter($data[$name]);
-            }
+            $setter = "set" . ucfirst($name).$postfix;
+            $object->$setter($data[$name]);
         }
         return array($object, $errors);
     }

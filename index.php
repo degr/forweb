@@ -14,7 +14,7 @@ if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
 }
 /* db initializing */
 $manager = new DB_Manager("", "MySQL");
-$manager->setCredentials("localhost", "root", "admin", "forweb");
+$manager->setCredentials("localhost", "root", "", "forweb");
 DB::init($manager);
 DB::setEncoding("utf8");
 

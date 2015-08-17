@@ -100,7 +100,7 @@ class Core extends Module{
 		if(!empty(Core::$modules[$module])){
 			return true;
 		}
-		$file = "modules/".strtolower($module)."/".$module.".php";
+		$file = Core::MODULES_FOLDER."/".strtolower($module)."/".$module.".php";
 		return is_file($file);
 	}
 
@@ -256,14 +256,18 @@ class Core extends Module{
 				break;
 			case "executable":
 				$module = $include->getModule();
-				$function = $include->getMethod();
-				if(empty($module) || empty($function)) {
-					$out = "";
+				$method = $include->getMethod();
+				if(empty($module) || empty($method) || !Core::isModuleExist($module)) {
+					$out = Core::DEVELOPMENT ? '[undefined module: '.$module.']' : '';
 				} else {
 					$object = Core::getModule($module);
-					$ui = new UI();
-					$object->$function($ui);
-					$out = $ui->process();
+					if(method_exists($object, $method) ) {
+						$ui = new UI();
+						$object->$method($ui);
+						$out = $ui->process();
+					} else {
+						$out = Core::DEVELOPMENT ? '[undefined mehod: '.$module.'::'.$method.']' : '';
+					}
 				}
 				break;
 			default:
@@ -296,12 +300,6 @@ class Core extends Module{
 
 	public static function getResource($name){
 		return file_get_contents(Core::RESOURCES_FOLDER.$name);
-	}
-
-	public static function showModules(){
-		foreach(Core::$modules as $key => $module){
-			echo $key ." <br/>";
-		}
 	}
 
 	public function getAjaxConfig(){
