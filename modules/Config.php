@@ -68,8 +68,8 @@ class Config{
 		if(Config::$url == null) {
 			$url = Config::get("url");
 			if (empty($url)) {
-				$params = parse_url($_SERVER['HTTP_REFERER']);
-				$url = $params['scheme'] . "://" . $params['host'] . "/";
+				$isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+				$url = ($isHttps ? 'https://' : 'http://').$_SERVER['HTTP_HOST']."/";
 			}
 			Config::$url = $url;
 		}
