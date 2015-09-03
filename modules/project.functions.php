@@ -24,7 +24,7 @@
  * </pre>
  * @param string $class
  */
-function __autoload($class) {
+function forweb_autoload($class) {
     if (strpos($class, '_') !== false) {
         $path = strtolower($class);
         $parts = explode('_', $path);
@@ -46,9 +46,9 @@ function __autoload($class) {
             require_once ORM::getPersistObjectsFolder().$class.".php";
             return;
         }
+    } else {
+        require_once($file);
     }
-    //Core::logTime($file);
-    require_once($file);
 }
 
 

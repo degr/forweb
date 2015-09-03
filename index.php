@@ -4,8 +4,10 @@ session_start();
 define('TIME', microtime(true));
 /*main requirements*/
 require_once "modules/project.functions.php";
+spl_autoload_register('forweb_autoload');
 require_once "modules/module/Module.php";
 require_once "modules/core/Core.php";
+
 
 /* css style building */
 if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
@@ -14,7 +16,7 @@ if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
 }
 /* db initializing */
 $manager = new DB_Manager("", "MySQL");
-$manager->setCredentials("localhost", "root", "", "forweb");
+$manager->setCredentials("localhost", "root", "admin", "forweb");
 DB::init($manager);
 DB::setEncoding("utf8");
 

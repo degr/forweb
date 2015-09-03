@@ -135,7 +135,6 @@ class UI{
 	protected static function initTemplateEngine(){
 		require_once 'modules/ui/templateEngine/Smarty.class.php';
 		define('SMARTY_SPL_AUTOLOAD',1);
-		spl_autoload_register('__autoload');
 
 		$smarty = new Smarty();
 
