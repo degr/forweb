@@ -139,14 +139,11 @@ class UI{
 		$smarty = new Smarty();
 
 		//$smarty->force_compile = true;
-		$smarty->debugging = true;
-		$smarty->caching = true;
-		$smarty->cache_lifetime = 120;
+		$smarty->debugging = Core::DEVELOPMENT;
 		$smarty->setTemplateDir('./'.UI::TEMPLATES_DIR)
 			->setCompileDir('./cache/smarty/templates_c')
 			->setCacheDir('./cache/smarty/cache')
 			->setConfigDir('./templateEngine/config');
-		$smarty->caching = false;
 
 		UI::$templateEngine = $smarty;
 	}
