@@ -39,7 +39,7 @@ class Api
             $class = "Api_Provider_".ucfirst($table);
             $provider = new $class();
         } else {
-            $provider = new Api_Provider($table);
+            $provider = new ApiProviderImpl($table);
         }
         $method = Core::getPathParam(2);
         if(empty($method)) {

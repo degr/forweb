@@ -4,7 +4,7 @@
  * Class DB
  * base class, that implement main database interactions methods
  */
-class DB implements DB_IDB{
+class DB{
 
     private static $encoding;
     /**
@@ -16,7 +16,7 @@ class DB implements DB_IDB{
         return DB::$encoding;
     }
     /**
-     * @var DB_IEngine $instance
+     * @var DbEngine $instance
      */
     protected static $instance;
     /**
@@ -27,7 +27,7 @@ class DB implements DB_IDB{
 
     private static $errorMessage = '<h3 class = "red">Data base connection error!</h3>';
 
-    public static function init(DB_Manager $manager) {
+    public static function init(DbManager $manager) {
         DB::$instance = $manager->getInstance();
         DB::$queriesCount = 0;
     }
@@ -161,7 +161,7 @@ class DB implements DB_IDB{
     }
 
     /**
-     * @return DB_IEngine
+     * @return DbEngine
      */
     public static function getInstance(){
         return DB::$instance;

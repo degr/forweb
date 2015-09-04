@@ -56,7 +56,7 @@ abstract class Module implements IModule{
 			$class = get_class($this);
 			$path = Core::MODULES_FOLDER.strtolower($class).'/'.$class.'.php';
 			if(file_exists($path)) {
-				$service = $class."_Service";
+				$service = $class."Service";
 				$this->service = new $service();
 			}
 		}

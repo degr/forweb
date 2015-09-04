@@ -68,7 +68,7 @@ class User extends Module{
      *
      */
     public function onAjaxAuthorization(){
-        $provider = new User_Actions();
+        $provider = new UserActions();
         $dto = $provider->authorization($_POST['email'], $_POST['password']);
         if($dto['success']) {
             User::$user = $dto['user'];
@@ -91,7 +91,7 @@ class User extends Module{
             if(isset($_POST['email']) && isset($_POST['password'])) {
                 $auth = $this->onAjaxAuthorization();
             }
-            $provider = new User_Gui_Forms();
+            $provider = new UserGuiForms();
             $provider->getAuthorizationForm($ui, !empty($auth['errors']) ? $auth['errors'] : array());
         }
     }
@@ -103,7 +103,7 @@ class User extends Module{
      */
     public function getLogOutForm(UI $ui){
         if(User::getUser() != null) {
-            $provider = new User_Gui_Forms();
+            $provider = new UserGuiForms();
             $provider->getLogOutForm($ui);
         }
     }
@@ -119,7 +119,7 @@ class User extends Module{
             User::$user = null;
             Core::triggerEvent(User::EVENT_LOGOUT, array('userId'=>$userId));
         }
-        Core_Utils::redirectToHome();
+        CoreUtils::redirectToHome();
     }
 
     /**

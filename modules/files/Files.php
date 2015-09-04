@@ -46,33 +46,33 @@ class Files extends Module{
 
     public function getAjaxUserMedia(){
         Access::denied("can_modify_files");
-        $provider = new Files_Admin();
+        $provider = new FilesAdmin();
         return $provider->getAjaxUserMedia();
     }
     public function showFileContent(){
         Access::denied("can_modify_files");
-        $provider = new Files_Admin();
+        $provider = new FilesAdmin();
         return $provider->showFileContent();
     }
     public function updateTextFile(){
         Access::denied("can_modify_files");
-        $provider = new Files_Admin();
+        $provider = new FilesAdmin();
         return $provider->updateTextFile();
     }
 
     public function adminUploadFile(){
         Access::denied('can_modify_files');
-        $provider = new Files_Admin();
+        $provider = new FilesAdmin();
         $provider->adminUploadFile($handler);//todo fix from from handler to ajax handler
     }
     public function adminDeleteFile(){
         Access::denied('can_modify_files');
-        $provider = new Files_Admin();
+        $provider = new FilesAdmin();
         return $provider->adminDeleteFile();
     }
     public function adminNewFile(){
         Access::denied('can_modify_files');
-        $provider = new Files_Admin();
+        $provider = new FilesAdmin();
         return $provider->adminNewFile();
     }
 

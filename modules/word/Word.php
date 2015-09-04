@@ -133,59 +133,59 @@ class Word extends Module{
      * @return array
      */
     public function onUiLanguagesOverview(){
-        $provider = new Word_UI();
+        $provider = new WordUi();
         return $provider->onUiLanguagesOverview();
     }
 
     public function onAjaxSetDefaultLanguage(){
         Access::denied('can_edit_languages');
-        $provider = new Word_Actions();
+        $provider = new WordActions();
         return $provider->onAjaxSetDefaultLanguage();
     }
     public function onAjaxUpdateLanguage(){
         Access::denied('can_edit_languages');
-        $provider = new Word_Actions();
+        $provider = new WordActions();
         return $provider->onAjaxUpdateLanguage();
     }
     public function onAjaxDeleteLanguage(){
         Access::denied('can_edit_languages');
-        $provider = new Word_Actions();
+        $provider = new WordActions();
         return $provider->deleteLanguage();
     }
 
     public function onAjaxDeleteModule(){
         Access::denied('can_edit_terms');
-        $provider = new Word_Actions();
+        $provider = new WordActions();
         return $provider->deleteModule();
     }
     public function onUiModulesOverview(){
         Access::denied('can_edit_terms');
-        $provider = new Word_UI();
+        $provider = new WordUi();
         return $provider->onUiModulesOverview();
     }
     public function onAjaxUpdateModule(){
         Access::denied('can_edit_terms');
-        $provider = new Word_Actions();
+        $provider = new WordActions();
         return $provider->onAjaxUpdateModule();
     }
     public function onAjaxShowModuleTerms(){
         Access::denied('can_edit_terms');
-        $provider = new Word_UI();
+        $provider = new WordUi();
         return $provider->onAjaxShowModuleTerms();
     }
     public function onAjaxGetTermForm(){
         Access::denied('can_edit_terms');
-        $provider = new Word_UI();
+        $provider = new WordUi();
         return $provider->onAjaxGetTermForm($_POST['id'], $_POST['module']);
     }
     public function onAjaxSaveTerm(){
         Access::denied('can_edit_terms');
-        $provider = new Word_Actions();
+        $provider = new WordActions();
         return $provider->onAjaxSaveTerm();
     }
     public function onAjaxDeleteTerm(){
         Access::denied('can_edit_terms');
-        $provider = new Word_Actions();
+        $provider = new WordActions();
         $id = intval($_POST['id']);
         return $provider->onAjaxDeleteTerm($id);
     }
@@ -204,7 +204,7 @@ class Word extends Module{
                     }
                     $url.=$item;
                 }
-                Core_Utils::redirect($url);
+                CoreUtils::redirect($url);
             }
         }
         $ui->setLayout("word/language.switch.tpl");
@@ -213,7 +213,7 @@ class Word extends Module{
     /**
      * fix url and make redirect if it necessary.
      * This function must be called only if Core::MULTIPLE_LANGUAGES == true && Core::LANGUAGE_IN_URL == true
-     * @param $dispatcher Page_Dispatcher
+     * @param $dispatcher PageDispatcher
      * @throws FwException
      */
     public static function onLanguageUrl(){
@@ -232,7 +232,7 @@ class Word extends Module{
                     Word::$language = $language;
                     $url = preg_replace("/".$currentLanguage['locale']."\/$/", '', Config::getLocalUrl());
                     $path = preg_replace("/^\/|".$loc."|\//", '', $_SERVER['REQUEST_URI']);
-                    Core_Utils::redirect($url.$path);
+                    CoreUtils::redirect($url.$path);
                 }
             }
         }
@@ -241,7 +241,7 @@ class Word extends Module{
                 throw new FwException("Can't process request. Language not found, but multylanguage site configured.");
             }
             $url = preg_replace("/\/$/", '', Config::getLocalUrl());
-            Core_Utils::redirect($url.$_SERVER['REQUEST_URI']);
+            CoreUtils::redirect($url.$_SERVER['REQUEST_URI']);
         }
     }
     /**

@@ -8,7 +8,7 @@
 class Service{
     /**
      * Service main table
-     * @var ORM_Table
+     * @var OrmTable
      */
     protected $table;
 
@@ -24,10 +24,10 @@ class Service{
 
     /**
      * Save or update current object in database
-     * @param $object ORM_Persistence_Base
+     * @param $object OrmPersistenceBase
      * @throws Exception is this->table still undefined
      */
-    public function save(ORM_Persistence_Base $object){
+    public function save(OrmPersistenceBaseImpl $object){
         if($this->table == null){
             throw new Exception("There is no persistance model!");
         }
@@ -35,7 +35,7 @@ class Service{
             ORM::saveArray($this->getTable(), $object);
             return;
         }
-        if(!is_subclass_of ($object, 'ORM_Persistence_Base')){
+        if(!is_subclass_of ($object, 'OrmPersistenceBaseImpl')){
             throw new Exception("This is not persistence object!");
         }
         ORM::saveData($this->getTable(), $object);
@@ -43,16 +43,16 @@ class Service{
 
     /**
      *
-     * @return ORM_Persistence_Base class object without joins
+     * @return OrmPersistenceBase class object without joins
      * @param $key integer object id value
-     * @return ORM_Persistence_Base
+     * @return OrmPersistenceBase
      * @throws Exception if result set contain more than one row
      */
     public function load($key) {
-        $filter = new ORM_Query_Filter(
+        $filter = new OrmQueryFilter(
             $this->table->getName(),
             $this->table->getPrimaryKey(),
-            ORM_Query_Filter::TYPE_EQUAL
+            OrmQueryFilter::TYPE_EQUAL
         );
         $filter->setActive(true);
         $filter->setValue($key);
@@ -62,8 +62,8 @@ class Service{
     /**
      * Load data from database using condition
      *
-     * @param ORM_Query_Filter|ORM_Query_Filter[] $filters
-     * @return ORM_Persistence_Base
+     * @param OrmQueryFilter|OrmQueryFilter[] $filters
+     * @return OrmPersistenceBase
      */
     public function loadOneWithFilters($filters) {
         return ORM::load($this->table->getName(), true, $filters, null, null);
@@ -74,10 +74,10 @@ class Service{
      *
      * @param array $keys [1,3,5,6,7]
      * @param ORM_Query_Sorter|ORM_Query_Sorter[]|null
-     * @return ORM_Persistence_Base[]
+     * @return OrmPersistenceBase[]
      */
     public function loadUsingKeys(array $keys, $sorters = null) {
-        $filter = new ORM_Query_Filter($this->table->getName(), $this->table->getPrimaryKey(), ORM_Query_Filter::TYPE_IN);
+        $filter = new OrmQueryFilter($this->table->getName(), $this->table->getPrimaryKey(), OrmQueryFilter::TYPE_IN);
         $filter->setValue($keys);
         $filter->setActive(true);
         return ORM::load($this->table->getName(), false, $filter, $sorters, null);
@@ -88,10 +88,10 @@ class Service{
      * **
      * Load all data with/without setted condition
      *
-     * @param ORM_Query_Filter|ORM_Query_Filter[]|null $filters
-     * @param ORM_Query_Sorter|ORM_Query_Sorter[]|null $sorters
-     * @param ORM_Query_Paginator|null $pager
-     * @return ORM_Persistence_Base[]
+     * @param OrmQueryFilter|OrmQueryFilter[]|null $filters
+     * @param OrmQuerySorter|OrmQuerySorter[]|null $sorters
+     * @param OrmQueryPaginator|null $pager
+     * @return OrmPersistenceBase[]
      */
     public function loadAll($filters = null, $sorters = null, $pager = null) {
         return ORM::load($this->table->getName(), false, $filters, $sorters, $pager);
@@ -100,7 +100,7 @@ class Service{
     /**
      * Delete current object from database.
      * Object must contain primary key field != null
-     * @param $object ORM_Persistence_Base
+     * @param $object OrmPersistenceBase
      * @return bool
      */
     public function delete($object){
@@ -109,34 +109,10 @@ class Service{
 
     /**
      * Get this module main table
-     * @return ORM_Table
+     * @return OrmTable
      */
     public function getTable(){
         return $this->table;
-    }
-
-    /**
-     * show current table
-     */
-    public function showPersistObject(){
-        if($this->table === null){
-            debug(null);
-        }
-        $model = array();
-        $model['table name'] = $this->table->getName();
-        $model['table fields'] = $this->table->getFieldsToArray();
-
-        foreach($this->table->getBinds() as $bind){
-            $binded = array();
-            $table = $bind->getRightTable();
-            $binded['binded on'] = $this->table->getName()
-                .".".$bind->getLeftKey()." -> "
-                .$table->getName().".".$bind->getRightKey();
-            $binded['binded type'] = $bind->getType();
-            $binded['table fields'] = $table->getFieldsToArray();
-            $model['binded tables'][] = $binded;
-        }
-        debug($model);
     }
 
     public function deleteById($id)

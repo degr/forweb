@@ -93,12 +93,12 @@ class Access extends Module{
     }
 
     public function getAccessForm(){
-        $provider = new Access_Admin_Form();
+        $provider = new AccessAdminForm();
         return $provider->getForm();
     }
 
     public function switchAccess(){
-        $provider = new Access_Admin_Form();
+        $provider = new AccessAdminForm();
         return $provider->switchAccess();
     }
 
@@ -116,25 +116,25 @@ class Access extends Module{
     }
 
     public function editActionName(){
-        $provider = new Access_Admin_Form();
+        $provider = new AccessAdminForm();
         return $provider->editActionName();
     }
     public function deleteAction(){
-        $provider = new Access_Admin_Form();
+        $provider = new AccessAdminForm();
         return $provider->deleteAction();
     }
     public function deleteAccessGroup(){
-        $provider = new Access_Admin_Group();
+        $provider = new AccessAdminGroup();
         return $provider->deleteAccessGroup();
     }
 
     public function createAccessAction(){
-        $provider = new Access_Admin_Form();
+        $provider = new AccessAdminForm();
         return $provider->createAccessAction();
     }
 
     public function createAccessGroup(){
-        $provider = new Access_Admin_Group();
+        $provider = new AccessAdminGroup();
         return $provider->createAccessGroup();
     }
 
