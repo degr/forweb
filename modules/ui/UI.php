@@ -52,7 +52,7 @@ class UI{
 
 	/**
 	 * Get overview table json representation
-	 * @param $data array|ORM_Persistence_Base[]
+	 * @param $data array|OrmPersistenceBase[]
 	 * @param $headers array
 	 * @param $hiddenFields array
 	 * @return array
@@ -151,16 +151,16 @@ class UI{
 	/**
 	 * Process persistance table and return array with fields description
 	 * for this table
-	 * @param ORM_Table $table object to parse
-	 * @param $data array|ORM_Persistence_Base (data of current row)
+	 * @param OrmTable $table object to parse
+	 * @param $data array|OrmPersistenceBase (data of current row)
 	 * @param $layout - string, see LAYOUT_* constants for more info
 	 * @return array
 	 */
-	public static function getFormForTable(ORM_Table $table, $data, $layout){
+	public static function getFormForTable(OrmTable $table, $data, $layout){
 		$out = array();
-		/* @var $field ORM_Table_Field*/
+		/* @var $field OrmTableField*/
 		foreach($table->getFields() as $field){
-			$formfield = new UI_Formfield();
+			$formfield = new UiFormfield();
 			$formfield->useField($field, $table->getName());
 			if(is_array($data) && isset($data[$field->getName()])){
 				$formfield->setValue($data[$field->getName()]);
@@ -194,7 +194,7 @@ class UI{
 	 * @return array
 	 */
 	public static function getSubmitButton(){
-		$out = new UI_Formfield();
+		$out = new UiFormfield();
 		$out->setValue(Word::get('common','submit'));
 		$out->setTag(UI::TAG_INPUT);
 		$out->setAttribute('type', 'submit');
@@ -202,11 +202,11 @@ class UI{
 		return $out->toJSON();
 	}
 
-	public static function usePersistObject($object, ORM_Table $table, $layout){
+	public static function usePersistObject($object, OrmTable $table, $layout){
 		$out = array();
 		foreach($table->getFields() as $name => $field){
 			$getter = "get".ucfirst($name);
-			$formfield = new UI_Formfield();
+			$formfield = new UiFormfield();
 			$formfield->useField($field, $table->getName());
 			$formfield->setValue($object->$getter());
 			$formfield->setLayout($layout);

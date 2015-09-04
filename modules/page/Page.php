@@ -41,15 +41,15 @@ class Page extends Module{
 	}
 
 	/**
-	 * @var Page_Service
+	 * @var PageService
 	 */
 	protected $pageService;
 	protected $template;
 	protected $blockProvider;
 	
 	public function __construct(){
-		/* @var $pageService Page_Service */
-		$this->pageService = Core::getModule("Page_Service");
+		/* @var $pageService PageService */
+		$this->pageService = new PageService();
 		$this->pageService->getTable()->getName();
 	}
 	
@@ -158,7 +158,7 @@ class Page extends Module{
 			"can_edit_pages",
 			"can_edit_templates"
 		));
-		$provider = new Page_MethodList();
+		$provider = new PageMethodList();
 		return $provider->getContent($moduleName);
 	}
 

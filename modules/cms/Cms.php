@@ -89,7 +89,7 @@ class Cms implements IModule{
      * @param UI $ui
      */
     public function onHeaderMenu(UI $ui){
-        $provider = new CMS_Menu();
+        $provider = new CmsMenu();
         $provider->onHeaderMenu($ui);
     }
     /**
@@ -97,7 +97,7 @@ class Cms implements IModule{
      * @param UI $ui
      */
     public function onSidebarSubmenu(UI $ui){
-        $provider = new CMS_Menu();
+        $provider = new CmsMenu();
         $provider->onSidebarSubmenu($ui);
     }
     /**
@@ -112,9 +112,9 @@ class Cms implements IModule{
 
     public static function onSitemapDisplay(){
         $ui = new UI();
-        $provider = new Cms_Sitemap();
+        $provider = new CmsSitemap();
         $ui->addVariable('links', $provider->getLinks());
-        $ui->setLayout(Cms_Sitemap::LAYOUT);
+        $ui->setLayout(CmsSitemap::LAYOUT);
         header('Content-Type: application/xml; charset=utf-8');
         echo $ui->process();
         exit;

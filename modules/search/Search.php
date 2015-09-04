@@ -31,15 +31,15 @@ class Search extends Module{
     }
 
     public function onSearch(UI $ui){
-        /** @var $dispatcher Page_Dispatcher */
+        /** @var $dispatcher PageDispatcher */
         if(empty($_REQUEST['search'])) {
             if(Core::getPathParam(0) !== "") {
-                Core_Utils::redirectToHome();
+                CoreUtils::redirectToHome();
             }
             return;
         }
         $page = !empty($_REQUEST['page']) ? $_REQUEST['page'] : 0;
-        /** @var $service Search_Service */
+        /** @var $service SearchService */
         $service = $this->getService();
         $searchResult = $service->onPageSearch($_REQUEST['search'], $page);
         $ui->setLayout("search/page.tpl");
@@ -52,7 +52,7 @@ class Search extends Module{
             return null;
         }
         $page = !empty($_POST['page']) ? $_POST['page'] : 0;
-        /** @var $service Search_Service */
+        /** @var $service SearchService */
         $service = $this->getService();
         $search = $service->onPageSearch($_POST['search'], $page);
         return array(

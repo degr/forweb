@@ -120,7 +120,7 @@ class Core extends Module{
 	 * @return void
 	 */
 	public function process(){
-		$dispatcher = new Page_Dispatcher($_SERVER['REQUEST_URI']);
+		$dispatcher = new PageDispatcher($_SERVER['REQUEST_URI']);
 		$dispatcher->handleRequest();
 		self::$pathParams = $dispatcher->getParams();
 		$keyShift = Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL ? -1 : 0;
@@ -147,11 +147,11 @@ class Core extends Module{
 	}
 
 	/**
-	 * @param $dispatcher Page_Dispatcher
+	 * @param $dispatcher PageDispatcher
 	 */
 	public function onPageContent(){
 		$this->pageModule = Core::getModule("Page");
-		/* @var $pageService Page_Service */
+		/* @var $pageService PageService */
 		$pageService = $this->pageModule->getService();
 		$page = $pageService->findPage(self::$pathParams);
 		$pageService->setCurrentPage($page);
@@ -188,12 +188,12 @@ class Core extends Module{
 	public function getPageIncludes(PersistPages $page){
 		$customFilterQuery = " (page='".$page->getId()."')"
 			." OR (template = '".$page->getTemplate()->getId()."')";
-		$customFilter = new ORM_Query_CustomFilter($customFilterQuery, true);
+		$customFilter = new OrmQueryCustomFilter($customFilterQuery, true);
 		return ORM::load("includes", false,	$customFilter, null, null);
 	}
 
 	protected function processBlocks($blocks){
-		/* @var $pageService Page_Service */
+		/* @var $pageService PageService */
 		$pageService = $this->pageModule->getService();
 		$includes = $this->getPageIncludes($pageService->getCurrentPage());
 		$out = array();

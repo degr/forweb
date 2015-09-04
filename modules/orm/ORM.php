@@ -35,15 +35,15 @@ class ORM{
      * @param $leftKey
      * @param $rightKey
      * @param $type
-     * @return ORM_Persistence_Base|ORM_Persistence_Base[]
+     * @return OrmPersistenceBase|OrmPersistenceBase[]
      */
     public static function loadBinded($tableName, $keyValue, $leftKey, $rightKey, $type) {
         $mainTable = ORM::getTable($tableName);
-        $filter = new ORM_Query_Filter($mainTable->getName(), $rightKey, ORM_Query_Filter::TYPE_EQUAL);
+        $filter = new OrmQueryFilter($mainTable->getName(), $rightKey, OrmQueryFilter::TYPE_EQUAL);
         $filter->setValue($keyValue);
         $filter->setActive(true);
-        $one = $type == ORM_Table::ONE_TO_ONE || $type == ORM_Table::MANY_TO_ONE;
-        return ORM_Utils::load($mainTable, $one, array($filter), null, null);
+        $one = $type == OrmTable::ONE_TO_ONE || $type == OrmTable::MANY_TO_ONE;
+        return OrmUtils::load($mainTable, $one, array($filter), null, null);
     }
 
 
@@ -57,76 +57,76 @@ class ORM{
      */
     public static function load($tableName, $one, $filters, $sorters, $pager) {
         $mainTable = ORM::getTable($tableName);
-        return ORM_Utils::load($mainTable, $one, $filters, $sorters, $pager);
+        return OrmUtils::load($mainTable, $one, $filters, $sorters, $pager);
     }
 
     /**
-     * Save one multy leveled data array. Structure element - ORM_Persistence_Base class object
+     * Save one multy leveled data array. Structure element - OrmPersistenceBase class object
      *
-     * @param ORM_Table $mainTable
+     * @param OrmTable $mainTable
      * @param $object
      */
-    public static function saveArray (ORM_Table $mainTable, $object) {
-        ORM_Utils::saveArray($mainTable, $object);
+    public static function saveArray (OrmTable $mainTable, $object) {
+        OrmUtils::saveArray($mainTable, $object);
     }
 
     /**
-     * Save or update ORM_Persistence_Base object
+     * Save or update OrmPersistenceBase object
      */
-    public static function saveData (ORM_Table $table, ORM_Persistence_Base $object) {
-        ORM_Utils::saveData($table, $object);
+    public static function saveData (OrmTable $table, OrmPersistenceBaseImpl $object) {
+        OrmUtils::saveData($table, $object);
     }
 
     /**
      * Delete object from data base
      */
-    public static function delete(ORM_Table $table, ORM_Persistence_Base $object) {
-        return ORM_Utils::delete($table, $object);
+    public static function delete(OrmTable $table, OrmPersistenceBaseImpl $object) {
+        return OrmUtils::delete($table, $object);
     }
 
     /**
      * Build object from json data
-     * @param $table ORM_Table
+     * @param $table OrmTable
      * @param $data array[id=1, name='Serg', birthdate='1986-02-21']
-     * @return array[0=>ORM_Persistence_Base, 1=>errors[]]
+     * @return array[0=>OrmPersistenceBase, 1=>errors[]]
      */
     public static function buildObject($table, $data) {
-        return ORM_Utils::buildObject($table, $data);
+        return OrmUtils::buildObject($table, $data);
     }
 
-    public static function createTable (ORM_Table $table) {
-        ORM_Register::createTable($table);
+    public static function createTable (OrmTable $table) {
+        OrmRegister::createTable($table);
     }
 
     /**
      * Get table object using it's name
      * @param $tableName
-     * @return ORM_Table
+     * @return OrmTable
      */
     public static function getTable($tableName) {
-        return ORM_Register::getTable($tableName, ORM::$registeredTables);
+        return OrmRegister::getTable($tableName, ORM::$registeredTables);
     }
 
     public static function registerTablesChain($tableName) {
-        ORM_Register::registerTablesChain($tableName, ORM::$registeredTables);
+        OrmRegister::registerTablesChain($tableName, ORM::$registeredTables);
     }
 
     /**
      * @param $tableName string
-     * @return ORM_Table
+     * @return OrmTable
      * @throws Exception in case, when table can't be founded
      */
     public static function registerTable($tableName) {
-        return ORM_Register::registerTable($tableName, ORM::$registeredTables);
+        return OrmRegister::registerTable($tableName, ORM::$registeredTables);
     }
 
     /**
      * Register table in runtime.
      * Required on site initialization
-     * @param ORM_Table $table
+     * @param OrmTable $table
      * @throws FwException
      */
-    public static function registerTableOnFly (ORM_Table $table) {
-        ORM_Register::registerTableOnFly($table, ORM::$registeredTables);
+    public static function registerTableOnFly (OrmTable $table) {
+        OrmRegister::registerTableOnFly($table, ORM::$registeredTables);
     }
 }

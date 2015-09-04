@@ -10,7 +10,7 @@
  * <pre>
  * Project autoload function.
  * Class with name 'Page' must be in modules/page/Page.php file.
- * If class have name Page_Service it must be in modules/page/Service.php file
+ * If class have name PageService it must be in modules/page/Service.php file
  * If class have name Page_Admin_Includes, it must be in modules/page/Admin/Includes.php file
  *
  * If class have name Page, but there is no modules/page/Page.php file, function will try
@@ -24,30 +24,26 @@
  * </pre>
  * @param string $class
  */
-function forweb_autoload($class) {
-    if (strpos($class, '_') !== false) {
-        $path = strtolower($class);
-        $parts = explode('_', $path);
-        $lowered = array_pop($parts);
-        $file = Core::MODULES_FOLDER.implode('/', $parts).'/'.substr($class, strlen($class) - strlen($lowered)).'.php';
-    } else {
-        $file = Core::MODULES_FOLDER.strtolower($class).'/'.$class.'.php';
-        if(!is_file($file)){
-            $file = Core::MODULES_FOLDER.$class.'.php';
-        }
+function forwebAutoload($class) {
+    if(is_file(Core::MODULES_FOLDER.$class.".php")) {
+        require_once Core::MODULES_FOLDER.$class.".php";
+        return;
     }
+    if(is_file(Core::MODULES_FOLDER.strtolower($class).'/'.$class.".php")) {
+        require_once Core::MODULES_FOLDER.strtolower($class).'/'.$class.".php";
+        return;
+    }
+    $parts = preg_split("/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|([_]{1,})/", $class);
+    $class = $class.".php";
+    $folder = Core::MODULES_FOLDER;
+    foreach($parts as $part) {
+        $folder .= $part.'/';
+        $fullPath = $folder.$class;
 
-    if(!is_file($file)){
-        if(is_file(ORM::getPersistExtendedObjectsFolder().$class.".php")){
-            require_once ORM::getPersistExtendedObjectsFolder().$class.".php";
+        if(is_file($fullPath)) {
+            require_once $fullPath;
             return;
         }
-        if(is_file(ORM::getPersistObjectsFolder().$class.".php")){
-            require_once ORM::getPersistObjectsFolder().$class.".php";
-            return;
-        }
-    } else {
-        require_once($file);
     }
 }
 
