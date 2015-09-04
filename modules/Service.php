@@ -115,30 +115,6 @@ class Service{
         return $this->table;
     }
 
-    /**
-     * show current table
-     */
-    public function showPersistObject(){
-        if($this->table === null){
-            debug(null);
-        }
-        $model = array();
-        $model['table name'] = $this->table->getName();
-        $model['table fields'] = $this->table->getFieldsToArray();
-
-        foreach($this->table->getBinds() as $bind){
-            $binded = array();
-            $table = $bind->getRightTable();
-            $binded['binded on'] = $this->table->getName()
-                .".".$bind->getLeftKey()." -> "
-                .$table->getName().".".$bind->getRightKey();
-            $binded['binded type'] = $bind->getType();
-            $binded['table fields'] = $table->getFieldsToArray();
-            $model['binded tables'][] = $binded;
-        }
-        debug($model);
-    }
-
     public function deleteById($id)
     {
         $object = $this->load($id);
