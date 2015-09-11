@@ -49,7 +49,7 @@ class Page_Admin_Page{
                 $link = $pageService->getPagePath($page);
                 $form['fields']['link'] = array(
                     'tag' => 'html',
-                    'value' => '<a href="'.Config::getUrl().$link.'">'.$link.'</a>',
+                    'value' => '<a href="'.CoreConfig::getUrl().$link.'">'.$link.'</a>',
                     'layout' => $layout,
                     'title' => Word::get('admin', 'page_form_field_url')
                 );
@@ -113,7 +113,7 @@ class Page_Admin_Page{
         if(!empty($deleteText)){
             $form['text'] = $deleteText;
             if(!empty($parentLink)){
-                $form['parentLink'] = Config::getUrl().$parentLink;
+                $form['parentLink'] = CoreConfig::getUrl().$parentLink;
             }
         }
         if(!empty($saveText)){

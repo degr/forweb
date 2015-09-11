@@ -81,13 +81,13 @@ class Access extends Module{
     {
         if($this->ajaxHandlers == null) {
             $this->ajaxHandlers = array();
-            $this->ajaxHandlers['getAccessForm'] = new AjaxHandler("getAccessForm", AjaxHandler::JSON);
-            $this->ajaxHandlers['switchAccess'] = new AjaxHandler("switchAccess", AjaxHandler::JSON);
-            $this->ajaxHandlers['editActionName'] = new AjaxHandler("editActionName", AjaxHandler::JSON);
-            $this->ajaxHandlers['deleteAction'] = new AjaxHandler("deleteAction", AjaxHandler::JSON);
-            $this->ajaxHandlers['deleteAccessGroup'] = new AjaxHandler("deleteAccessGroup", AjaxHandler::JSON);
-            $this->ajaxHandlers['createAccessGroup'] = new AjaxHandler("createAccessGroup", AjaxHandler::JSON);
-            $this->ajaxHandlers['createAccessAction'] = new AjaxHandler("createAccessAction", AjaxHandler::JSON);
+            $this->ajaxHandlers['getAccessForm'] = new ModuleAjaxHandler("getAccessForm", ModuleAjaxHandler::JSON);
+            $this->ajaxHandlers['switchAccess'] = new ModuleAjaxHandler("switchAccess", ModuleAjaxHandler::JSON);
+            $this->ajaxHandlers['editActionName'] = new ModuleAjaxHandler("editActionName", ModuleAjaxHandler::JSON);
+            $this->ajaxHandlers['deleteAction'] = new ModuleAjaxHandler("deleteAction", ModuleAjaxHandler::JSON);
+            $this->ajaxHandlers['deleteAccessGroup'] = new ModuleAjaxHandler("deleteAccessGroup", ModuleAjaxHandler::JSON);
+            $this->ajaxHandlers['createAccessGroup'] = new ModuleAjaxHandler("createAccessGroup", ModuleAjaxHandler::JSON);
+            $this->ajaxHandlers['createAccessAction'] = new ModuleAjaxHandler("createAccessAction", ModuleAjaxHandler::JSON);
         }
         return $this->ajaxHandlers;
     }
@@ -163,7 +163,7 @@ class Access extends Module{
 
     /**
      * Get module event handlers
-     * @return EventHandler[]
+     * @return ModuleEventHandler[]
      */
     public function getEventHandlers()
     {

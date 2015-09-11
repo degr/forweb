@@ -19,7 +19,7 @@ class CmsSitemap
         $filter->setActive(true);
         $filter->setValue(1);
         $pages = $pageService->loadAll($filter);
-        $url = $includeUrl ? Config::getUrl() : '';
+        $url = $includeUrl ? CoreConfig::getUrl() : '';
         $out = array();
         $languages = Word::getLanguages();
         /** @var $page PersistPages */

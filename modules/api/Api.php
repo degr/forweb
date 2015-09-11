@@ -34,8 +34,8 @@ class Api
             throw new FwException("Undefined table in request path. Please specify table as second request param.");
         }
 
-        /** @var $provider Api_IPrivoder */
-        if(is_file("modules/api/provider/".ucfirst($table).".php")) {
+        /** @var $provider ApiProvider */
+        if(is_file(Core::MODULES_FOLDER."api/provider/".ucfirst($table).".php")) {
             $class = "Api_Provider_".ucfirst($table);
             $provider = new $class();
         } else {
@@ -45,7 +45,7 @@ class Api
         if(empty($method)) {
             throw new FwException("Undefined method in request path. Please method name as third request param.");
         }
-        Cms::sendHeaders(AjaxHandler::JSON);
+        Cms::sendHeaders(ModuleAjaxHandler::JSON);
         echo json_encode($provider->$method());
     }
 }

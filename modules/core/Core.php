@@ -3,11 +3,11 @@ class Core extends Module{
 
 	const INIT_REQUEST = "init";
 	const RESOURCES_FOLDER = "resources/";
-	const MODULES_FOLDER = "modules/";
 	const DEVELOPMENT = true;
 	const MULTIPLE_LANGUAGES = true;
 	const LANGUAGE_IN_URL = true;
 	const SYS_INCLUDES = 'sys_includes';
+	const MODULES_FOLDER = "modules/";
 
 	public static $FORBIDDEN_URLS = array(
 		'api', 'ajax', 'sitemap.xml'
@@ -16,9 +16,9 @@ class Core extends Module{
 	public function getAjaxHandlers()
 	{
 		if($this->ajaxHandlers == null) {
-			$this->ajaxHandlers['getAjaxConfig'] = new AjaxHandler("getAjaxConfig", 'json');
-			$this->ajaxHandlers['saveConfig'] = new AjaxHandler("saveConfig", 'text');
-			$this->ajaxHandlers['deleteConfig'] = new AjaxHandler("deleteConfig", 'text');
+			$this->ajaxHandlers['getAjaxConfig'] = new ModuleAjaxHandler("getAjaxConfig", 'json');
+			$this->ajaxHandlers['saveConfig'] = new ModuleAjaxHandler("saveConfig", 'text');
+			$this->ajaxHandlers['deleteConfig'] = new ModuleAjaxHandler("deleteConfig", 'text');
 		}
 		return $this->ajaxHandlers;
 	}
@@ -143,39 +143,10 @@ class Core extends Module{
 		if(Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL) {
 			Word::onLanguageUrl();
 		}
-		$this->onPageContent();
+		$provider = new CorePageContent();
+		$provider->onPageContent(self::$pathParams);
 	}
 
-	/**
-	 * @param $dispatcher PageDispatcher
-	 */
-	public function onPageContent(){
-		$this->pageModule = Core::getModule("Page");
-		/* @var $pageService PageService */
-		$pageService = $this->pageModule->getService();
-		$page = $pageService->findPage(self::$pathParams);
-		$pageService->setCurrentPage($page);
-		$template = $pageService->getTemplate();
-		$blocks = $this->getBlocks($template->getId());
-		$pageData = $this->processBlocks($blocks);
-		$this->sendResponse($pageData, $template);
-
-		if(isset($_GET['force_admin_panel'])) {
-			$ui = new UI();
-			/** @var $cms Cms */
-			$cms =Core::getModule("Cms");
-			$cms->getAdminPanel($ui);
-			echo $ui->process();
-		}
-	}
-
-	public function sendResponse($pageData, PersistTemplates $template){
-		$ui = new UI();
-		$ui->addVariable("block", $pageData);
-		$ui->setLayout($template->getTemplate());
-		header('Content-Type: text/html; charset=utf-8');
-		echo $ui->process();
-	}
 
 	/**
 	 * @param integer $id
@@ -192,98 +163,10 @@ class Core extends Module{
 		return ORM::load("includes", false,	$customFilter, null, null);
 	}
 
-	protected function processBlocks($blocks){
-		/* @var $pageService PageService */
-		$pageService = $this->pageModule->getService();
-		$includes = $this->getPageIncludes($pageService->getCurrentPage());
-		$out = array();
-		$data = array();
-		if(!empty($includes)) {
-			/* @var $include PersistIncludes */
-			foreach ($includes as $include) {
-				if (empty($data[$blocks[$include->getBlock()]])) {
-					$data[$blocks[$include->getBlock()]] = array(
-						"before" => array(),
-						"template" => array(),
-						"after" => array()
-					);
-				}
-				if(!empty($data[$blocks[$include->getBlock()]][$include->getPosition()][$include->getPositionNumber()])) {
-					$include->setPositionNumber($include->getPositionNumber() +100);
-				}
-				$data[$blocks[$include->getBlock()]][$include->getPosition()][$include->getPositionNumber()] =
-					$this->processInclude($include);
-			}
-		}
-		//iterate over each block
-		foreach($data as $key => $block) {
-			if(empty($out[$key])) {
-				$out[$key] = "";
-			}
-			//iterate over positions: before, template, after
-			foreach($block as $positionedIncludes){
-				//iterate over includes
-				$keys = (array_keys($positionedIncludes));
-				sort($keys);
-				foreach($keys as $incKey) {
-					$out[$key] .= $positionedIncludes[$incKey];
-				}
-			}
-		}
-		$out['scriptCollector'] = ScriptCollector::get();
-		return $out;
-	}
 
 
-	protected function processInclude(PersistIncludes $include){
-		if(Core::DEVELOPMENT && isset($_GET['dbug_functions']) && Core::isModuleExist("Debug")) {
-			return Debug::getIncludeInformation($include);
-		}
-		/*if(Core::DEVELOPMENT && isset($_GET['dbug_time']) && Core::isModuleExist("Debug")){
-			$time = time();
-		}*/
-		switch($include->getType()){
-			case "text":
-				$out = "\t<p>".htmlspecialchars(Core::getIncludeStaticContent($include))."</p>";
-				break;
-			case "html":
-				$out = Core::getIncludeStaticContent($include)."\n";
-				break;
-			case "image":
-				$out = '<div class="image-holder image-holder-'.$include->getId().'">'
-					.'<img src="'.$include->getContent().'" alt="content_image" title="content_image" />'
-					.'</div>';
-				break;
-			case "executable":
-				$module = $include->getModule();
-				$method = $include->getMethod();
-				if(empty($module) || empty($method) || !Core::isModuleExist($module)) {
-					$out = Core::DEVELOPMENT ? '[undefined module: '.$module.']' : '';
-				} else {
-					$object = Core::getModule($module);
-					if(method_exists($object, $method) ) {
-						$ui = new UI();
-						$object->$method($ui);
-						$out = $ui->process();
-					} else {
-						$out = Core::DEVELOPMENT ? '[undefined mehod: '.$module.'::'.$method.']' : '';
-					}
-				}
-				break;
-			default:
-				throw new Exception("Unknown include type ".$include->getType());
 
-		}
-
-		/*if(Core::DEVELOPMENT && isset($_GET['dbug_time']) && Core::isModuleExist("Debug")){
-			$out = Debug::getIncludeExecutionTime($include, $time);
-		}*/
-
-		return $out;
-	}
-
-
-	private function getIncludeStaticContent(PersistIncludes $include){
+	public static function getIncludeStaticContent(PersistIncludes $include){
 		if(Core::MULTIPLE_LANGUAGES) {
 			return Word::get(Core::SYS_INCLUDES, $include->getId());
 		} else {
@@ -294,7 +177,7 @@ class Core extends Module{
 
 	public function getAdminScript(){
 		$adminScript = Core::getResource("admin.js");
-		$url = Config::getUrl();
+		$url = CoreConfig::getUrl();
 		return str_replace('###url###', $url, $adminScript);
 	}
 
@@ -304,7 +187,7 @@ class Core extends Module{
 
 	public function getAjaxConfig(){
 		Access::denied("can_edit_config");
-		$provider = new Core_Config_Config();
+		$provider = new CoreConfigHandler();
 		return $provider->getAjaxConfig();
 	}
 	/**
@@ -312,16 +195,16 @@ class Core extends Module{
 	 */
 	public function saveConfig(){
 		Access::denied("can_edit_config");
-		$provider = new Core_Config_Config();
+		$provider = new CoreConfigHandler();
 		return $provider->saveConfig();
 	}
 	public function deleteConfig(){
 		Access::denied("can_edit_config");
-		$provider = new Core_Config_Config();
+		$provider = new CoreConfigHandler();
 		return $provider->deleteConfig();
 	}
 	public static function triggerEvent($eventName, $params){
-		$files = glob(self::MODULES_FOLDER.'*');
+		$files = glob(Core::MODULES_FOLDER.'*');
 		$forbidden = array('Module', 'Fwexception');
 		foreach($files as $file) {
 			if(!is_dir($file)) {
@@ -349,10 +232,33 @@ class Core extends Module{
 
 	/**
 	 * Get module event handlers
-	 * @return EventHandler[]
+	 * @return ModuleEventHandler[]
 	 */
 	public function getEventHandlers()
 	{
-		// TODO: Implement getEventHandlers() method.
+	}
+
+	public function autoload($class)
+	{
+		$file = $class.'.php';
+		if(is_file(Core::MODULES_FOLDER.strtolower($class).'/'.$file)) {
+			require_once Core::MODULES_FOLDER.strtolower($class).'/'.$file;
+			return;
+		}
+		if(is_file(Core::MODULES_FOLDER.$file)) {
+			require_once Core::MODULES_FOLDER.$file;
+			return;
+		}
+		$parts = preg_split("/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|([_]{1,})/", $class);
+
+		$folder = Core::MODULES_FOLDER;
+		foreach($parts as $part) {
+			$folder .= $part.'/';
+			$fullPath = $folder.$file;
+			if(is_file($fullPath)) {
+				require_once $fullPath;
+				return;
+			}
+		}
 	}
 }

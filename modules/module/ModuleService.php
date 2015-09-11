@@ -5,7 +5,7 @@
  * Date: 14.03.2015
  * Time: 20:25
  */
-class Service{
+class ModuleService{
     /**
      * Service main table
      * @var OrmTable

@@ -6,7 +6,7 @@
  * Created for secure interest,
  * to prevent any controller's method invocation from ajax
  */
-class AjaxHandler {
+class ModuleAjaxHandler {
 
     const JSON = "json";
     const TEXT = "text";

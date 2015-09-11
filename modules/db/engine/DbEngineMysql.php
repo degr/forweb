@@ -36,7 +36,6 @@ class DbEngineMysql extends DbEngineAbstract{
     {
         DB::incrementQueries();
         $out = $this->mysqli->query($query);
-        file_put_contents("mysql.log", "\n".$query, FILE_APPEND);
         if($this->mysqli->error){
             $this->showError($query);
             throw new FwException("SQL query contain errors.");

@@ -11,23 +11,23 @@ class Word extends Module{
     const SESSION_LANGUAGE = 'language';
     /**
      * Get module ajax handlers
-     * @return AjaxHandler[]
+     * @return ModuleAjaxHandler[]
      */
     public function getAjaxHandlers()
     {
         if($this->ajaxHandlers == null) {
             $this->ajaxHandlers = array(
-                'onUiLanguagesOverview' => new AjaxHandler('onUiLanguagesOverview', AjaxHandler::JSON),
-                'onAjaxSetDefaultLanguage' => new AjaxHandler('onAjaxSetDefaultLanguage', AjaxHandler::JSON),
-                'onAjaxUpdateLanguage' => new AjaxHandler('onAjaxUpdateLanguage', AjaxHandler::TEXT),
-                'deleteLanguage' => new AjaxHandler('onAjaxDeleteLanguage', AjaxHandler::TEXT),
-                'deleteModule' => new AjaxHandler('onAjaxDeleteModule', AjaxHandler::TEXT),
-                'onUiModulesOverview' => new AjaxHandler('onUiModulesOverview', AjaxHandler::JSON),
-                'onAjaxUpdateModule' => new AjaxHandler('onAjaxUpdateModule', AjaxHandler::JSON),
-                'showModuleTerms' => new AjaxHandler('onAjaxShowModuleTerms', AjaxHandler::JSON),
-                'getTermForm' => new AjaxHandler('onAjaxGetTermForm', AjaxHandler::JSON),
-                'saveTerm' => new AjaxHandler('onAjaxSaveTerm', AjaxHandler::JSON),
-                'deleteTerm' => new AjaxHandler('onAjaxDeleteTerm', AjaxHandler::JSON)
+                'onUiLanguagesOverview' => new ModuleAjaxHandler('onUiLanguagesOverview', ModuleAjaxHandler::JSON),
+                'onAjaxSetDefaultLanguage' => new ModuleAjaxHandler('onAjaxSetDefaultLanguage', ModuleAjaxHandler::JSON),
+                'onAjaxUpdateLanguage' => new ModuleAjaxHandler('onAjaxUpdateLanguage', ModuleAjaxHandler::TEXT),
+                'deleteLanguage' => new ModuleAjaxHandler('onAjaxDeleteLanguage', ModuleAjaxHandler::TEXT),
+                'deleteModule' => new ModuleAjaxHandler('onAjaxDeleteModule', ModuleAjaxHandler::TEXT),
+                'onUiModulesOverview' => new ModuleAjaxHandler('onUiModulesOverview', ModuleAjaxHandler::JSON),
+                'onAjaxUpdateModule' => new ModuleAjaxHandler('onAjaxUpdateModule', ModuleAjaxHandler::JSON),
+                'showModuleTerms' => new ModuleAjaxHandler('onAjaxShowModuleTerms', ModuleAjaxHandler::JSON),
+                'getTermForm' => new ModuleAjaxHandler('onAjaxGetTermForm', ModuleAjaxHandler::JSON),
+                'saveTerm' => new ModuleAjaxHandler('onAjaxSaveTerm', ModuleAjaxHandler::JSON),
+                'deleteTerm' => new ModuleAjaxHandler('onAjaxDeleteTerm', ModuleAjaxHandler::JSON)
             );
         }
         return $this->ajaxHandlers;
@@ -230,7 +230,7 @@ class Word extends Module{
                 if($currentLanguage['id'] != $language['id']){
                     $_SESSION[Word::SESSION_LANGUAGE] = $language['id'];
                     Word::$language = $language;
-                    $url = preg_replace("/".$currentLanguage['locale']."\/$/", '', Config::getLocalUrl());
+                    $url = preg_replace("/".$currentLanguage['locale']."\/$/", '', CoreConfig::getLocalUrl());
                     $path = preg_replace("/^\/|".$loc."|\//", '', $_SERVER['REQUEST_URI']);
                     CoreUtils::redirect($url.$path);
                 }
@@ -240,13 +240,13 @@ class Word extends Module{
             if($currentLanguage === null) {
                 throw new FwException("Can't process request. Language not found, but multylanguage site configured.");
             }
-            $url = preg_replace("/\/$/", '', Config::getLocalUrl());
+            $url = preg_replace("/\/$/", '', CoreConfig::getLocalUrl());
             CoreUtils::redirect($url.$_SERVER['REQUEST_URI']);
         }
     }
     /**
      * Get module event handlers
-     * @return EventHandler[]
+     * @return ModuleEventHandler[]
      */
     public function getEventHandlers()
     {

@@ -100,7 +100,7 @@ class SearchService
                 continue;
             }
             $item['value'] = $this->onHighLight($item['value'], $highlightArray);
-            $item['url'] = Config::getUrl().$pageService->getPagePath($pages[$item['page']]);
+            $item['url'] = CoreConfig::getUrl().$pageService->getPagePath($pages[$item['page']]);
             $item['name'] = $pages[$item['page']]->getName();
         }
         unset($item);

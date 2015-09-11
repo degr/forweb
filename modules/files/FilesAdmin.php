@@ -67,7 +67,7 @@ class FilesAdmin{
         $ui->addVariable('newFolder', self::JS_FILES_NEWFOLDER);
         $ui->addVariable('newFile', self::JS_FILES_NEWFILE);
         $ui->addVariable('upload', self::JS_FILES_UPLOAD);
-        $ui->addVariable('uploadTarget', Config::getUrl()."form/files/adminUploadFile");
+        $ui->addVariable('uploadTarget', CoreConfig::getUrl()."form/files/adminUploadFile");
         $ui->addVariable('uploadIframeId', 'admin_upload_iframe');
         $ui->addVariable('uploadIframeOnload', 'onUpload');
 

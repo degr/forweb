@@ -9,7 +9,7 @@
 
      /**
       * Get module ajax handlers
-      * @return AjaxHandler[]
+      * @return ModuleAjaxHandler[]
       */
      public function getAjaxHandlers()
      {
@@ -18,7 +18,7 @@
 
      /**
       * Get module event handlers
-      * @return EventHandler[]
+      * @return ModuleEventHandler[]
       */
      public function getEventHandlers()
      {

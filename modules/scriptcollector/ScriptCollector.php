@@ -20,7 +20,7 @@ class ScriptCollector{
             if(!is_file('js/'.$name)) {
                 throw new FwException("Script with name: " . $name . " not exist.");
             } else {
-                $name = Config::getUrl()."js/".$name;
+                $name = CoreConfig::getUrl()."js/".$name;
             }
         }
         if(!in_array($name, self::$scripts)){

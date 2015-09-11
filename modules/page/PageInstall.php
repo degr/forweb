@@ -83,9 +83,13 @@ class PageInstall implements ModuleInstall{
     public function getDependencies()
     {
         return array(
-            new ModuleDependency('Files'),
-            new ModuleDependency('DB'),
-            new ModuleDependency('ORM')
+            new ModuleDependency('files'),
+            new ModuleDependency('user'),
+            new ModuleDependency('db'),
+            new ModuleDependency('orm'),
+            new ModuleDependency('scriptcollector'),
+            new ModuleDependency('search'),
+            new ModuleDependency('word')
         );
     }
 

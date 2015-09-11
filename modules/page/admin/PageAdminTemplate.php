@@ -132,7 +132,7 @@ class Page_Admin_Template{
             return "Can't delete template, because it used on pages: ".implode(", ", $pages);
         }
 
-        $service = new Service("templates");
+        $service = new ModuleService("templates");
         $service->deleteById($id);
         return array('text'=>"Template was deleted.", 'success'=>1);
     }
@@ -224,7 +224,7 @@ class Page_Admin_Template{
         if(empty($templateId)) {
             return '0';
         }
-        $service = new Service("blocks");
+        $service = new ModuleService("blocks");
         $service->deleteById($id);
         return 1;
     }

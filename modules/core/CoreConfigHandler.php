@@ -1,13 +1,13 @@
 <?
 
-class Core_Config_Config{
+class CoreConfigHandler{
 
 
     public function saveConfig()
     {
         $query = "INSERT INTO config (module, name, value) VALUES";
         $values = array();
-        $config = Config::getConfig();
+        $config = CoreConfig::getConfig();
         foreach($_POST as $module => $data) {
             foreach($data as $name => $value) {
                 if(!isset($config[$module][$name])) {
@@ -28,7 +28,7 @@ class Core_Config_Config{
 
     public function getAjaxConfig()
     {
-        $config = Config::getConfig();
+        $config = CoreConfig::getConfig();
         /* @var $page Page */
         $page = Core::getModule('Page');
         $modules = $page->getModulesList();

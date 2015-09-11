@@ -10,7 +10,7 @@ class CoreUtils {
 
     public static function redirectToHome()
     {
-        $url = Config::getUrl();
+        $url = CoreConfig::getUrl();
         CoreUtils::redirect($url);
     }
 

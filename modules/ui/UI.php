@@ -1,5 +1,4 @@
 <?
-require_once 'modules/Config.php';
 
 class UI{
 	protected $layout;
@@ -126,14 +125,14 @@ class UI{
 		}
 		/* @var $templateEngine Smarty */
 		$templateEngine = UI::getEngine();
-		$templateEngine->assign(UI::CONFIG_NAME, Config::getGeneralConfig());
+		$templateEngine->assign(UI::CONFIG_NAME, CoreConfig::getGeneralConfig());
 		$out = $templateEngine->fetch($layout);
 		$templateEngine->clearAllAssign();
 		return $out;
 	}
 	
 	protected static function initTemplateEngine(){
-		require_once 'modules/ui/templateEngine/Smarty.class.php';
+		require_once Core::MODULES_FOLDER.'ui/templateEngine/Smarty.class.php';
 		define('SMARTY_SPL_AUTOLOAD',1);
 
 		$smarty = new Smarty();
