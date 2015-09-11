@@ -2,31 +2,31 @@
 interface IModule{
 	/**
 	 * Get module ajax handlers
-	 * @return AjaxHandler[]
+	 * @return ModuleAjaxHandler[]
 	 */
 	public function getAjaxHandlers();
 
 	/**
 	 * Get module event handlers
-	 * @return EventHandler[]
+	 * @return ModuleEventHandler[]
 	 */
 	public function getEventHandlers();
 }
 
 abstract class Module implements IModule{
 	/**
-	 * @var AjaxHandler[]
+	 * @var ModuleAjaxHandler[]
 	 */
 	protected $ajaxHandlers;
 	/**
-	 * @var EventHandler[]
+	 * @var ModuleEventHandler[]
 	 */
 	protected $eventHandlers;
 
 	protected $service;
 	/**
 	 * @param $name
-	 * @return AjaxHandler
+	 * @return ModuleAjaxHandler
 	 */
 	public function getAjaxHandler($name){
 		if($this->ajaxHandlers == null) {
@@ -40,7 +40,7 @@ abstract class Module implements IModule{
 	}
 
 
-	public function setHandler($name, AjaxHandler $handler){
+	public function setHandler($name, ModuleAjaxHandler $handler){
 		if(empty($this->ajaxHandlers[$name])) {
 			$this->ajaxHandlers[$name] = $handler;
 		} else {
@@ -49,7 +49,7 @@ abstract class Module implements IModule{
 	}
 
 	/**
-	 * @return Service
+	 * @return ModuleService
 	 */
 	public function getService(){
 		if($this->service == null) {

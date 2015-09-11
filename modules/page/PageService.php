@@ -6,7 +6,7 @@
  * Time: 21:15
  */
 
-class PageService extends Service {
+class PageService extends ModuleService {
 
     /**
      * Current page for request

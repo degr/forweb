@@ -13,13 +13,13 @@ class Cms implements IModule{
             } else {
                 $handler = null;
             }
-            /* @var $handler AjaxHandler */
+            /* @var $handler ModuleAjaxHandler */
             if($handler != null) {
                 $function = $handler->getMethod();
                 $out = $obj->$function();
                 if (isset($out)) {
                     CMS::sendHeaders($handler->getResponse());
-                    if ($handler->getResponse() === AjaxHandler::JSON) {
+                    if ($handler->getResponse() === ModuleAjaxHandler::JSON) {
                         /*$out['time'] = Core::$time;
                         Core::logTime($moduleName.'::'.$handlerName);*/
                         echo json_encode($out);
@@ -34,7 +34,7 @@ class Cms implements IModule{
         exit;
     }
     public static function sendHeaders($response) {
-        if($response === AjaxHandler::JSON) {
+        if($response === ModuleAjaxHandler::JSON) {
             header('Content-Type: application/json; charset=utf-8');
         } else {
             header('Content-Type: text/html; charset=utf-8');
@@ -63,13 +63,13 @@ class Cms implements IModule{
 
             $ui->addVariable("isMultipleLanguages", Core::MULTIPLE_LANGUAGES);
             $ui->addVariable('adminIncludeOptions', addslashes(json_encode(Page::getIncludeTypesList())));
-            $ui->addVariable('url', Config::getUrl());
+            $ui->addVariable('url', CoreConfig::getUrl());
             $ui->setLayout('page/admin/main.tpl');
         }
     }
     /**
      * Get module ajax handlers
-     * @return AjaxHandler[]
+     * @return ModuleAjaxHandler[]
      */
     public function getAjaxHandlers()
     {
@@ -78,7 +78,7 @@ class Cms implements IModule{
     /**
      * Get module ajax handler with selected name
      * @param string $name
-     * @return AjaxHandler
+     * @return ModuleAjaxHandler
      */
     public function getAjaxHandler($name)
     {
@@ -102,7 +102,7 @@ class Cms implements IModule{
     }
     /**
      * Get module event handlers
-     * @return EventHandler[]
+     * @return ModuleEventHandler[]
      */
     public function getEventHandlers()
     {

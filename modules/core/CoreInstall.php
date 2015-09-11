@@ -109,9 +109,15 @@ class CoreInstall implements ModuleInstall{
     {
         return array(
             new ModuleDependency('module'),
+            new ModuleDependency('db'),
+            new ModuleDependency('fwexception'),
+            new ModuleDependency('scriptcollector'),
+            new ModuleDependency('scss'),
+            new ModuleDependency('ui'),
+            new ModuleDependency('validation'),
             new ModuleDependency('page'),
-            new ModuleDependency('user'),
-            new ModuleDependency('access')
+            new ModuleDependency('access'),
+            new ModuleDependency('api'),
         );
     }
     /**

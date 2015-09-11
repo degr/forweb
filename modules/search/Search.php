@@ -9,13 +9,13 @@ class Search extends Module{
 
     /**
      * Get module ajax handlers
-     * @return AjaxHandler[]
+     * @return ModuleAjaxHandler[]
      */
     public function getAjaxHandlers()
     {
         if($this->ajaxHandlers == null){
             $this->ajaxHandlers = array(
-                'search' => new AjaxHandler('onAjaxSearch', AjaxHandler::JSON)
+                'search' => new ModuleAjaxHandler('onAjaxSearch', ModuleAjaxHandler::JSON)
             );
         }
         return $this->ajaxHandlers;
@@ -23,7 +23,7 @@ class Search extends Module{
 
     /**
      * Get module event handlers
-     * @return EventHandler[]
+     * @return ModuleEventHandler[]
      */
     public function getEventHandlers()
     {

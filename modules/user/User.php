@@ -42,8 +42,8 @@ class User extends Module{
     {
         if($this->ajaxHandlers == null) {
             $this->ajaxHandlers = array(
-                'authorization' => new AjaxHandler('onAjaxAuthorization', AjaxHandler::JSON),
-                'logout' => new AjaxHandler('onAjaxLogout', AjaxHandler::JSON)
+                'authorization' => new ModuleAjaxHandler('onAjaxAuthorization', ModuleAjaxHandler::JSON),
+                'logout' => new ModuleAjaxHandler('onAjaxLogout', ModuleAjaxHandler::JSON)
             );
         }
         return $this->ajaxHandlers;
@@ -124,7 +124,7 @@ class User extends Module{
 
     /**
      * Get module event handlers
-     * @return EventHandler[]
+     * @return ModuleEventHandler[]
      */
     public function getEventHandlers()
     {

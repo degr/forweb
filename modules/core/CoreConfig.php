@@ -1,5 +1,5 @@
 <?
-class Config{
+class CoreConfig{
 	protected static $config;
 	protected static $url;
 	protected static $localUrl;
@@ -11,7 +11,7 @@ class Config{
 	 * @throws Exception if unknown key was passed
 	 */
 	public static function get($key){
-		return Config::module("Core", $key);
+		return CoreConfig::module("Core", $key);
 	}
 
 	/**
@@ -21,11 +21,11 @@ class Config{
 	 * @throws Exception if unknown key was passed
 	 */
 	public static function module($module, $key){
-		if(Config::$config == null){
-			Config::getConfig();
+		if(CoreConfig::$config == null){
+			CoreConfig::getConfig();
 		}
-		if(isset(Config::$config[$module][$key])){
-			return Config::$config[$module][$key];
+		if(isset(CoreConfig::$config[$module][$key])){
+			return CoreConfig::$config[$module][$key];
 		} else {
 			throw new Exception("Undefined config value for key: $key");
 		}
@@ -36,28 +36,28 @@ class Config{
 	 * @return array
 	 */
 	public static function getConfig(){
-		if(Config::$config == null){
+		if(CoreConfig::$config == null){
 			$query = "SELECT module, name, value FROM config ORDER by module, name";
 			$table = DB::getTable($query);
 			foreach($table as $row) {
-				Config::$config[$row['module']][$row['name']] = $row['value'];
+				CoreConfig::$config[$row['module']][$row['name']] = $row['value'];
 			}
 		}
-		return Config::$config;
+		return CoreConfig::$config;
 	}
 	/**
 	 * get configuration assoc array
 	 * @return array
 	 */
 	public static function getGeneralConfig(){
-		if(Config::$config == null){
-			Config::getConfig();
-			Config::$config['Core']['url'] = Config::getUrl();
-			Config::$config['Core']['localUrl'] = Config::getLocalUrl();
+		if(CoreConfig::$config == null){
+			CoreConfig::getConfig();
+			CoreConfig::$config['Core']['url'] = CoreConfig::getUrl();
+			CoreConfig::$config['Core']['localUrl'] = CoreConfig::getLocalUrl();
 		}
-		if(!empty(Config::$config['Core'])) {
+		if(!empty(CoreConfig::$config['Core'])) {
 
-			return Config::$config['Core'];
+			return CoreConfig::$config['Core'];
 		} else {
 			return array();
 		}
@@ -65,26 +65,26 @@ class Config{
 
 	public static function getUrl()
 	{
-		if(Config::$url == null) {
-			$url = Config::get("url");
+		if(CoreConfig::$url == null) {
+			$url = CoreConfig::get("url");
 			if (empty($url)) {
 				$isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 				$url = ($isHttps ? 'https://' : 'http://').$_SERVER['HTTP_HOST']."/";
 			}
-			Config::$url = $url;
+			CoreConfig::$url = $url;
 		}
-		return Config::$url;
+		return CoreConfig::$url;
 	}
 
 	public static function getLocalUrl(){
-		if(Config::$localUrl === null) {
+		if(CoreConfig::$localUrl === null) {
 			if(Core::LANGUAGE_IN_URL) {
 				$language = Word::getLanguage();
-				Config::$localUrl = Config::getUrl() . ($language !== null ? $language['locale'] . '/' : '');
+				CoreConfig::$localUrl = CoreConfig::getUrl() . ($language !== null ? $language['locale'] . '/' : '');
 			} else {
-				Config::$localUrl = Config::getUrl();
+				CoreConfig::$localUrl = CoreConfig::getUrl();
 			}
 		}
-		return Config::$localUrl;
+		return CoreConfig::$localUrl;
 	}
 }

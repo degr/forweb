@@ -3,11 +3,10 @@
 session_start();
 define('TIME', microtime(true));
 /*main requirements*/
-require_once "modules/project.functions.php";
-spl_autoload_register('forwebAutoload');
-require_once "modules/module/Module.php";
-require_once "modules/core/Core.php";
-
+require_once 'modules/module/Module.php';
+require_once 'modules/core/Core.php';
+$core = Core::getInstance();
+spl_autoload_register(array($core, 'autoload'));
 
 /* css style building */
 if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
@@ -27,7 +26,6 @@ if($_GET['deploy'] == 1 && Core::DEVELOPMENT){
     exit;
 }
 /* page generation */
-$core = Core::getInstance();
 $core->process();
 DB::close();
 

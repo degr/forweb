@@ -8,18 +8,18 @@
 class Files extends Module{
     /**
      * Get module ajax handlers
-     * @return AjaxHandler[]
+     * @return ModuleAjaxHandler[]
      */
     public function getAjaxHandlers()
     {
         if($this->ajaxHandlers == null) {
             $this->ajaxHandlers = array(
-                'getAjaxUserMedia' => new AjaxHandler('getAjaxUserMedia', AjaxHandler::TEXT),
-                'updateTextFile' => new AjaxHandler('updateTextFile', AjaxHandler::TEXT),
-                'showFileContent' => new AjaxHandler('showFileContent', AjaxHandler::TEXT),
-                'adminDeleteFile' => new AjaxHandler('adminDeleteFile', AjaxHandler::TEXT),
-                'adminNewFile' => new AjaxHandler('adminNewFile', AjaxHandler::TEXT),
-                'adminUploadFile' => new AjaxHandler('adminUploadFile', AjaxHandler::JSON)//@TODO fix this. In past it was FormHandler
+                'getAjaxUserMedia' => new ModuleAjaxHandler('getAjaxUserMedia', ModuleAjaxHandler::TEXT),
+                'updateTextFile' => new ModuleAjaxHandler('updateTextFile', ModuleAjaxHandler::TEXT),
+                'showFileContent' => new ModuleAjaxHandler('showFileContent', ModuleAjaxHandler::TEXT),
+                'adminDeleteFile' => new ModuleAjaxHandler('adminDeleteFile', ModuleAjaxHandler::TEXT),
+                'adminNewFile' => new ModuleAjaxHandler('adminNewFile', ModuleAjaxHandler::TEXT),
+                'adminUploadFile' => new ModuleAjaxHandler('adminUploadFile', ModuleAjaxHandler::JSON)//@TODO fix this. In past it was FormHandler
             );
         }
         return $this->ajaxHandlers;
@@ -78,7 +78,7 @@ class Files extends Module{
 
     /**
      * Get module event handlers
-     * @return EventHandler[]
+     * @return ModuleEventHandler[]
      */
     public function getEventHandlers()
     {

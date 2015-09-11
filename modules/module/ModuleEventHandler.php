@@ -5,7 +5,7 @@
  * Date: 03.05.2015
  * Time: 0:02
  */
-class EventHandler {
+class ModuleEventHandler {
     protected $method;
     protected $event;
     public function __construct($event, $method){

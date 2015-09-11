@@ -15,26 +15,26 @@ class Page extends Module{
 	public function getAjaxHandlers()
 	{
 		if($this->ajaxHandlers == null) {
-			$this->setHandler("editPage", new AjaxHandler("editPage", AjaxHandler::JSON));
-			$this->setHandler("changePagePositions", new AjaxHandler("changePagePositions", AjaxHandler::JSON));
-			$this->setHandler("showPagesTree", new AjaxHandler("getPagesList", AjaxHandler::JSON));
-			$this->setHandler("editTemplateForm", new AjaxHandler("editTemplateForm", AjaxHandler::JSON));
-			$this->setHandler("processPageContent", new AjaxHandler("processPageContent", AjaxHandler::JSON));
-			$this->setHandler("pageContent", new AjaxHandler("pageContent", AjaxHandler::JSON));
-			$this->setHandler("deletePageInclude", new AjaxHandler("deletePageInclude", AjaxHandler::JSON));
-			$this->setHandler("getMethodsList", new AjaxHandler("getMethodsList", AjaxHandler::JSON));
-			$this->setHandler("getModulesList", new AjaxHandler("getModulesList", AjaxHandler::JSON));
-			$this->setHandler("getIncludeTextForm", new AjaxHandler("getIncludeTextForm", AjaxHandler::JSON));
+			$this->setHandler("editPage", new ModuleAjaxHandler("editPage", ModuleAjaxHandler::JSON));
+			$this->setHandler("changePagePositions", new ModuleAjaxHandler("changePagePositions", ModuleAjaxHandler::JSON));
+			$this->setHandler("showPagesTree", new ModuleAjaxHandler("getPagesList", ModuleAjaxHandler::JSON));
+			$this->setHandler("editTemplateForm", new ModuleAjaxHandler("editTemplateForm", ModuleAjaxHandler::JSON));
+			$this->setHandler("processPageContent", new ModuleAjaxHandler("processPageContent", ModuleAjaxHandler::JSON));
+			$this->setHandler("pageContent", new ModuleAjaxHandler("pageContent", ModuleAjaxHandler::JSON));
+			$this->setHandler("deletePageInclude", new ModuleAjaxHandler("deletePageInclude", ModuleAjaxHandler::JSON));
+			$this->setHandler("getMethodsList", new ModuleAjaxHandler("getMethodsList", ModuleAjaxHandler::JSON));
+			$this->setHandler("getModulesList", new ModuleAjaxHandler("getModulesList", ModuleAjaxHandler::JSON));
+			$this->setHandler("getIncludeTextForm", new ModuleAjaxHandler("getIncludeTextForm", ModuleAjaxHandler::JSON));
 
-			$this->setHandler("createTemplate", new AjaxHandler("createTemplate", AjaxHandler::JSON));
-			$this->setHandler("editTemplate", new AjaxHandler("editTemplate", AjaxHandler::JSON));
-			$this->setHandler("deleteTemplate", new AjaxHandler("deleteTemplate", AjaxHandler::TEXT));
+			$this->setHandler("createTemplate", new ModuleAjaxHandler("createTemplate", ModuleAjaxHandler::JSON));
+			$this->setHandler("editTemplate", new ModuleAjaxHandler("editTemplate", ModuleAjaxHandler::JSON));
+			$this->setHandler("deleteTemplate", new ModuleAjaxHandler("deleteTemplate", ModuleAjaxHandler::TEXT));
 
-			$this->setHandler("deleteTemplateForm", new AjaxHandler("deleteTemplateForm", AjaxHandler::JSON));
-			$this->setHandler("createBlock", new AjaxHandler("createBlock", AjaxHandler::JSON));
-			$this->setHandler("deleteBlock", new AjaxHandler("deleteBlock", AjaxHandler::TEXT));
-			$this->setHandler("saveBlocksPosition", new AjaxHandler("saveBlocksPosition", AjaxHandler::TEXT));
-			$this->setHandler("updateBlock", new AjaxHandler("updateBlock", AjaxHandler::JSON));
+			$this->setHandler("deleteTemplateForm", new ModuleAjaxHandler("deleteTemplateForm", ModuleAjaxHandler::JSON));
+			$this->setHandler("createBlock", new ModuleAjaxHandler("createBlock", ModuleAjaxHandler::JSON));
+			$this->setHandler("deleteBlock", new ModuleAjaxHandler("deleteBlock", ModuleAjaxHandler::TEXT));
+			$this->setHandler("saveBlocksPosition", new ModuleAjaxHandler("saveBlocksPosition", ModuleAjaxHandler::TEXT));
+			$this->setHandler("updateBlock", new ModuleAjaxHandler("updateBlock", ModuleAjaxHandler::JSON));
 
 		}
 		return $this->ajaxHandlers;
@@ -132,7 +132,7 @@ class Page extends Module{
 			"can_edit_templates"
 		));
 
-		$dir = glob("modules/*");
+		$dir = glob(Core::MODULES_FOLDER."*");
 		$out = array();
 		$exclude = array('Core', 'Debug', 'Db', 'Files', 'Module', 'Orm', 'Ui', 'FwException', 'Validation');
 		foreach($dir as $name) {
@@ -275,7 +275,7 @@ class Page extends Module{
 
 	/**
 	 * Get module event handlers
-	 * @return EventHandler[]
+	 * @return ModuleEventHandler[]
 	 */
 	public function getEventHandlers()
 	{
