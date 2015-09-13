@@ -115,7 +115,7 @@ class ScssCompiler {
         $locale = setlocale(LC_NUMERIC, 0);
         setlocale(LC_NUMERIC, "C");
 
-        $this->parser = new scss_parser($name);
+        $this->parser = new ScssParser($name);
 
         $tree = $this->parser->parse($code);
 
@@ -1649,7 +1649,7 @@ class ScssCompiler {
             $tree = $this->importCache[$realPath];
         } else {
             $code = file_get_contents($path);
-            $parser = new scss_parser($path, false);
+            $parser = new ScssParser($path, false);
             $tree = $parser->parse($code);
             $this->parsedFiles[] = $path;
 
