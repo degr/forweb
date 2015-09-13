@@ -15,7 +15,7 @@ if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
 }
 /* db initializing */
 $manager = new DbManager("", "Mysql");
-$manager->setCredentials("localhost", "root", "admin", "forweb");
+$manager->setCredentials("localhost", "root", "", "forweb");
 DB::init($manager);
 DB::setEncoding("utf8");
 
@@ -28,16 +28,4 @@ if($_GET['deploy'] == 1 && Core::DEVELOPMENT){
 /* page generation */
 $core->process();
 DB::close();
-
-function convert($size)
-{
-    $unit=array('b','kb','mb','gb','tb','pb');
-    return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
-}
-/*
-echo "time: ".(time()-$time);
-echo "<br>";
-echo "memory: ".convert(memory_get_usage(true));
-*/
-exit;
 ?>

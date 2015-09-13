@@ -29,7 +29,8 @@ class Api
 
     public function handleRequest()
     {
-        $table = Core::getPathParam(1);
+        $shift = Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL ? 0 : 1;
+        $table = Core::getPathParam(0 + $shift);
         if(empty($table)) {
             throw new FwException("Undefined table in request path. Please specify table as second request param.");
         }
@@ -41,7 +42,7 @@ class Api
         } else {
             $provider = new ApiProviderImpl($table);
         }
-        $method = Core::getPathParam(2);
+        $method = Core::getPathParam(1 + $shift);
         if(empty($method)) {
             throw new FwException("Undefined method in request path. Please method name as third request param.");
         }

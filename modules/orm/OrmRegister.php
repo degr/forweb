@@ -50,9 +50,6 @@ class OrmRegister{
      * @return OrmTable
      */
     public static function getTable($tableName, &$registeredTables){
-        if(gettype($tableName) == 'object'){
-            echo '<pre>';print_r(debug_backtrace(1)).'</pre>';
-        }
         $tableName = strtolower($tableName);
         if(empty($registeredTables[$tableName])){
             ORM::registerTablesChain($tableName);

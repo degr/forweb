@@ -78,6 +78,9 @@ class OrmInstall implements ModuleInstall{
         if(!is_dir($folder)){
             OrmInstall::createFolder($folder);
         }
+        if(!is_file($folder.".htaccess")){
+            file_put_contents($folder.".htaccess", "deny from all");
+        }
         $filename = $folder.$table->getName().".data";
         if(is_file($filename)){
             unlink($filename);
