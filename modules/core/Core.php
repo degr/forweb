@@ -256,7 +256,12 @@ class Core extends Module{
 
 		$folder = Core::MODULES_FOLDER;
 		foreach($parts as $part) {
-			$folder .= $part.'/';
+			$folder .= $part;
+			if(!is_dir($folder)) {
+				continue;
+			} else {
+				$folder .= '/';
+			}
 			$fullPath = $folder.$file;
 			if(is_file($fullPath)) {
 				require_once $fullPath;
