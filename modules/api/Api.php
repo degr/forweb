@@ -15,7 +15,7 @@
  */
 class Api
 {
-    const OPEN_API = true;
+    const OPEN_API = false;
     const DEFAULT_LIMIT = 15;
     const DEFAULT_PK_NAME = "id";
 
