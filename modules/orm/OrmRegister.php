@@ -19,8 +19,6 @@ class OrmRegister{
         }
         $table = unserialize($data);
         $registeredTables[$tableName] = $table;
-        $persist = $table->getPersistClassName();
-        require_once ORM::getPersistObjectsFolder().$persist.".php";
         return $table;
     }
 

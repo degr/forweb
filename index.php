@@ -1,5 +1,4 @@
 <?php
-//$time = time();
 session_start();
 define('TIME', microtime(true));
 /*main requirements*/
@@ -7,6 +6,7 @@ require_once 'modules/module/Module.php';
 require_once 'modules/core/Core.php';
 $core = Core::getInstance();
 spl_autoload_register(array($core, 'autoload'));
+spl_autoload_register(array("ORM", 'autoload'));
 
 /* css style building */
 if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
@@ -15,7 +15,7 @@ if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
 }
 /* db initializing */
 $manager = new DbManager("", "Mysql");
-$manager->setCredentials("localhost", "root", "", "forweb");
+$manager->setCredentials("127.0.0.1", "root", "", "forweb");
 DB::init($manager);
 DB::setEncoding("utf8");
 

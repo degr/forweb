@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Class ORM
  * Main class for work with objective datasource model.
@@ -128,5 +127,17 @@ class ORM{
      */
     public static function registerTableOnFly (OrmTable $table) {
         OrmRegister::registerTableOnFly($table, ORM::$registeredTables);
+    }
+
+    /**
+     * Autoload ORM persistance classes
+     * @param $class
+     */
+    public static function autoload($class){
+        if(is_file(ORM::getPersistExtendedObjectsFolder().$class.".php")){
+            require_once ORM::getPersistExtendedObjectsFolder().$class.".php";
+        } else if(is_file(ORM::getPersistObjectsFolder().$class.'.php')) {
+            require_once ORM::getPersistObjectsFolder().$class.'.php';
+        }
     }
 }
