@@ -43,7 +43,7 @@ class PageService extends ModuleService {
 
     /**
      * @param $params
-     * @return PersistPages
+     * @return array('page' => PersistPages, 'position'=>integer)
      */
     public function findPage($params){
         $filterQuery = " pages.id=1 OR pages.url IN ('".implode("','", $params)."') ORDER BY pages.id";
@@ -51,6 +51,7 @@ class PageService extends ModuleService {
         $pages = $this->loadAll($filter);
 
         $detectedPage = reset($pages);
+        $position = 0;
         foreach($params as $param) {
             $empty = true;
             /* @var $page PersistPages */
@@ -62,6 +63,7 @@ class PageService extends ModuleService {
                 if($page->getUrl() === $param && $detectedPage->getId() === $page->getParent()) {
                     $empty = false;
                     $detectedPage = $page;
+                    $position++;
                     break;
                 }
             }
@@ -69,7 +71,7 @@ class PageService extends ModuleService {
                 break;
             }
         }
-        return $detectedPage;
+        return array('page' => $detectedPage, 'position' => $position);
     }
 
     /**

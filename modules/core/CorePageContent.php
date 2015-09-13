@@ -16,7 +16,13 @@ class CorePageContent{
 
         /* @var $pageService PageService */
         $pageService = Core::getModule("Page")->getService();
-        $page = $pageService->findPage($pathParams);
+        $pageDto = $pageService->findPage($pathParams);
+        /** @var $page PersistPages */
+        $page = $pageDto['page'];
+        $allowedParams = $page->getParams_Count();
+        if($allowedParams < count($pathParams) - $pageDto['position']) {
+            CoreRedirect::httpError(404, array());
+        }
         $pageService->setCurrentPage($page);
         $template = $pageService->getTemplate();
         $blocks = $core->getBlocks($template->getId());

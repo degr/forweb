@@ -102,7 +102,9 @@ class Page_Admin_Page{
             }
         }elseif(isset($_POST['href'])){
             $params = $pageService->parseUrlForParams($_POST['href']);
-            $page = $pageService->findPage($params);
+            $pageDto = $pageService->findPage($params);
+            /** @var $page PersistPages */
+            $page = $pageDto['page'];
         }else{
             $page = null;
         }

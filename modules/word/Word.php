@@ -204,7 +204,7 @@ class Word extends Module{
                     }
                     $url.=$item;
                 }
-                CoreUtils::redirect($url);
+                CoreRedirect::redirect($url);
             }
         }
         $ui->setLayout("word/language.switch.tpl");
@@ -216,8 +216,7 @@ class Word extends Module{
      * @param $dispatcher PageDispatcher
      * @throws FwException
      */
-    public static function onLanguageUrl(){
-        $loc = Core::getPathParam(-1);
+    public static function onLanguageUrl($loc){
         /** @var $me Word*/
         $me = Core::getModule("Word");
         $language = null;
@@ -232,7 +231,7 @@ class Word extends Module{
                     Word::$language = $language;
                     $url = preg_replace("/".$currentLanguage['locale']."\/$/", '', CoreConfig::getLocalUrl());
                     $path = preg_replace("/^\/|".$loc."|\//", '', $_SERVER['REQUEST_URI']);
-                    CoreUtils::redirect($url.$path);
+                    CoreRedirect::redirect($url.$path);
                 }
             }
         }
@@ -241,7 +240,7 @@ class Word extends Module{
                 throw new FwException("Can't process request. Language not found, but multylanguage site configured.");
             }
             $url = preg_replace("/\/$/", '', CoreConfig::getLocalUrl());
-            CoreUtils::redirect($url.$_SERVER['REQUEST_URI']);
+            CoreRedirect::redirect($url.$_SERVER['REQUEST_URI']);
         }
     }
     /**

@@ -12,7 +12,9 @@ class Page_Admin_Template{
         /* @var $pageService PageService */
         $pageService = Core::getModule("Page")->getService();
         $params = $pageService->parseUrlForParams($_POST['href']);
-        $page = $pageService->findPage($params);
+        $pageDto = $pageService->findPage($params);
+        /** @var $page PersistPages */
+        $page = $pageDto['page'];
         $template = $page->getTemplate();
 
         $out = array();
@@ -92,7 +94,7 @@ class Page_Admin_Template{
     private function getTemplateOptions()
     {
         $out = array();
-        $files = glob(UI::TEMPLATES_DIR."/*");
+        $files = glob(UI::TEMPLATES_DIR."*");
         foreach($files as $file) {
             if (is_file($file)) {
                 $name = basename($file);

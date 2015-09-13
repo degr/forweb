@@ -41,6 +41,10 @@ class CoreInstallTables{
         $inMenu->setLength(1);
         $table->addField($inMenu);
 
+        $paramsCount = new OrmTableField("params_count", "integer");
+        $paramsCount->setLength(11);
+        $table->addField($paramsCount);
+
         return $table;
     }
 

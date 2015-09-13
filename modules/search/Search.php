@@ -34,7 +34,7 @@ class Search extends Module{
         /** @var $dispatcher PageDispatcher */
         if(empty($_REQUEST['search'])) {
             if(Core::getPathParam(0) !== "") {
-                CoreUtils::redirectToHome();
+                CoreRedirect::redirectToHome();
             }
             return;
         }

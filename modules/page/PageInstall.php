@@ -125,7 +125,8 @@ class PageInstall implements ModuleInstall{
         if(empty($includesIds)) {
             $query = "insert into includes (page, template, type, block, positionNumber, position, content, module, method, comment) VALUES "
                 ."(0, 1, 'executable', 1, 1, 'template', '', 'Cms', 'getAdminPanel', 'Administrator panel. Do not delete.'),"
-                ."(0, 1, 'executable', 1, 1, 'template', '', 'User', 'getAuthorizationForm', 'Authorization form.')";
+                ."(0, 1, 'executable', 1, 1, 'template', '', 'User', 'getAuthorizationForm', 'Authorization form.'),"
+                ."(0, 1, 'executable', 1, 1, 'template', '', 'User', 'getLogOutForm', 'Authorization form.')";
             DB::query($query);
         }
 

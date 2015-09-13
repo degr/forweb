@@ -13,7 +13,7 @@ class UI{
 	const INPUT_CHECKBOX = 'checkbox';
 	const INPUT_CHECKBOX_GROUP = 'checkbox_group';
 
-	const TEMPLATES_DIR = 'templates';
+	const TEMPLATES_DIR = 'templates/';
 	/**
 	 * layout for formfield.
 	 * Put all formfield elements in one container.

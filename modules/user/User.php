@@ -119,7 +119,7 @@ class User extends Module{
             User::$user = null;
             Core::triggerEvent(User::EVENT_LOGOUT, array('userId'=>$userId));
         }
-        CoreUtils::redirectToHome();
+        CoreRedirect::redirectToHome();
     }
 
     /**

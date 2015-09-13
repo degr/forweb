@@ -50,9 +50,8 @@ class Core extends Module{
 	protected static $pathParams;
 
 	public static function getPathParam($num){
-		$realNum = $num + (Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL ? 1 : 0);
-		if(isset(self::$pathParams[$realNum])) {
-			return self::$pathParams[$realNum];
+		if(isset(self::$pathParams[$num])) {
+			return self::$pathParams[$num];
 		}
 		return "";
 	}
@@ -123,8 +122,12 @@ class Core extends Module{
 		$dispatcher = new PageDispatcher($_SERVER['REQUEST_URI']);
 		$dispatcher->handleRequest();
 		self::$pathParams = $dispatcher->getParams();
-		$keyShift = Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL ? -1 : 0;
-		$key = Core::getPathParam($keyShift);
+		if(Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL) {
+			$languageUrl = array_shift(self::$pathParams);
+		} else {
+            $languageUrl = null;
+        }
+		$key = Core::getPathParam(0);
 		if($key == 'api') {
 			/** @var $api Api */
 			$api = Core::getModule("Api");
@@ -132,7 +135,7 @@ class Core extends Module{
 			return;
 		}
 		if($key == 'ajax'){
-			Cms::ajaxHandler(Core::getPathParam(1 + $keyShift), Core::getPathParam(2 + $keyShift));
+			Cms::ajaxHandler(Core::getPathParam(0), Core::getPathParam(1));
 			//unreachable 'return' statement. Exist only as end function marker.
 			// Script will exit in Cms::ajaxHandler;
 			return;
@@ -141,7 +144,7 @@ class Core extends Module{
 			Cms::onSitemapDisplay();
 		}
 		if(Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL) {
-			Word::onLanguageUrl();
+			Word::onLanguageUrl($languageUrl);
 		}
 		$provider = new CorePageContent();
 		$provider->onPageContent(self::$pathParams);

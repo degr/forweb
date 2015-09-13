@@ -13,7 +13,9 @@ class Page_Admin_Includes{
         /* @var $pageService PageService */
         $pageService = Core::getModule("Page")->getService();
         $params = $pageService->parseUrlForParams($_POST['href']);
-        $page = $pageService->findPage($params);
+        $pageDto = $pageService->findPage($params);
+        /** @var $page PersistPages */
+        $page = $pageDto['page'];
         $template = $page->getTemplate();
         $core = Core::getInstance();
         $blocks = $core->getBlocks($template->getId());

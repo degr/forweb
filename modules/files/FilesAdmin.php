@@ -41,14 +41,14 @@ class FilesAdmin{
             $fileSystem->setRelativePath($_POST['path']);
         }
         $ui->addVariable('deleteFile', 'FilesForm.deleteFile');
-        $ui->addVariable('path', $mainPath.'/'.$_POST['path']);
+        $ui->addVariable('path', $mainPath.$_POST['path']);
         $ui->addVariable(FilesSystem::UI_CONTENT, $fileSystem->getFolderContent());
         return $ui->process();
     }
     private function getUiContent($mainPath){
         $ui = new UI();
-        $file = $mainPath.'/'.$_POST['path'];
-        if($mainPath == 'img') {
+        $file = $mainPath.$_POST['path'];
+        if($mainPath == 'img/') {
             $key = 'image';
         } else {
             $key = 'text';
@@ -139,7 +139,7 @@ class FilesAdmin{
             case 'js':
             case 'css':
             case 'img':
-                return $root;
+                return $root."/";
             case 'templates':
                 return UI::TEMPLATES_DIR;
             default:
