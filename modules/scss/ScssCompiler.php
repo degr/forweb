@@ -92,7 +92,7 @@ class ScssCompiler {
 
     protected $numberPrecision = 5;
 
-    protected $formatter = "Scss_Formatter_Compressed";
+    protected $formatter = "ScssFormatterCompressed";
 
     /**
      * Compile scss
