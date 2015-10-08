@@ -82,11 +82,15 @@ class PageService extends ModuleService {
      * @return string
      */
     public function getPagePath(PersistPages $page){
+        static $cache;
         //home page hack
         if($page->getParent() === '0') {
             return "";
         }
-        return $this->getPagePathRecoursivly($page->getParent(), $page->getUrl(), "");
+        if(empty($cache[$page->getId()])){
+            $cache[$page->getId()] = $this->getPagePathRecoursivly($page->getParent(), $page->getUrl(), "");
+        }
+        return $cache[$page->getId()];
     }
 
     /**
@@ -97,7 +101,7 @@ class PageService extends ModuleService {
      * @return mixed
      */
     protected function getPagePathRecoursivly($parent, $url, $path) {
-
+        static $cache;
         if($parent == 0) {
             $path = preg_replace('/^\//', '', $path);
             if(empty($path)){
@@ -107,8 +111,11 @@ class PageService extends ModuleService {
         } else {
             static $urlStorage;
             if(empty($urlStorage[$parent])){
+                if(empty($cache[$parent])) {
+                    $cache[$parent] = $this->load($parent);
+                }
                 /* @var $parentPage PersistPages */
-                $parentPage = $this->load($parent);
+                $parentPage =  $cache[$parent];
                 $urlStorage[$parent]['parent'] = $parentPage->getParent();
                 $urlStorage[$parent]['url'] = $parentPage->getUrl();
 
@@ -130,5 +137,18 @@ class PageService extends ModuleService {
             array_shift($params);
         }
         return $params;
+    }
+
+    /**
+     * Override parent method. Cache result
+     * @param int $key
+     * @return PersistPages
+     */
+    public function load($key) {
+        static $cache;
+        if(empty($cache[$key])) {
+            $cache[$key] = parent::load($key);
+        }
+        return $cache[$key];
     }
 }

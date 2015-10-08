@@ -7,8 +7,8 @@
  */
 interface ModuleInput{
     /**
-     * Return input identifier for input.
-     * Each identifier must be unique for each module
+     * Return identifier for input.
+     * Each identifier must be unique in module scope
      * @return int
      */
     public function getIdentifier();

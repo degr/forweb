@@ -5,8 +5,8 @@
  * @return string|string[]
  * @throws FwException if $params[module] or $params[term] not specified
  */
-function smarty_function_word($params, $template)
+function smarty_function_url($params, $template)
 {
-    $plugin = new UiPluginWord();
+    $plugin = new UiPluginPageurl();
     return $plugin->execute($params);
 }

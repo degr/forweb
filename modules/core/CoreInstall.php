@@ -10,7 +10,18 @@ class CoreInstall implements ModuleInstall{
 
     protected $installedModules;
 
+
     public function run(){
+        if(!empty($_GET['getDependencies'])) {
+            $this->getDependenciesForModule($_GET['getDependencies']);
+            return;
+        } elseif(!empty($_GET['next'])){
+            $this->next($_GET['module'], $_GET['step']);
+            return;
+        } else {
+            echo file_get_contents(Core::MODULES_FOLDER . 'core/install/resources/install.tpl');
+        }
+        exit;
         $this->installedModules = array("module");
 
         $this->installModule('core');
@@ -222,5 +233,44 @@ class CoreInstall implements ModuleInstall{
     public function getUserInput()
     {
         // TODO: Implement getUserInput() method.
+    }
+
+    private function getDependenciesForModule($moduleName)
+    {
+        if($this->isModuleExistLocally($moduleName)) {
+            if($this->isModuleHasInstallation($moduleName)) {
+                $install = $this->getInstallObject($moduleName);
+                echo json_encode(
+                    array(
+                        'type' => 'dependencies',
+                        'module' => $moduleName,
+                        'dependencies' => $this->getDependenciesAsArray($install->getDependencies())
+                    )
+                );
+            }
+        } else {
+            echo 'not';
+        }
+    }
+
+    private function next($module, $step)
+    {
+
+    }
+
+    /**
+     * @param $dependencies ModuleDependency[]
+     */
+    private function getDependenciesAsArray($dependencies)
+    {
+        if(empty($dependencies)) {
+            return array();
+        } else {
+            $out = array();
+            foreach($dependencies as $dependency) {
+                $out[] = get_object_vars($dependency);
+            }
+            return $out;
+        }
     }
 }
