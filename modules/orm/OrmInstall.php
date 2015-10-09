@@ -1,6 +1,7 @@
 <?php
 class OrmInstall implements ModuleInstall{
 
+
     public static function createDBTable(OrmTable $table){
         $primaryKey = $table->getPrimaryKey();
         if(empty($primaryKey)){
@@ -115,14 +116,14 @@ class OrmInstall implements ModuleInstall{
             $currentBind = OrmInstall::getBindForField($field, $binds);
 
             if(!empty($currentBind)){
-                $text .= "//////////////Persist object " . $field->getName(). "  getter and setter ///////////////\n";
+                //$text .= "//////////////Persist object " . $field->getName(). "  getter and setter ///////////////\n";
                 $postfix = $currentBind->getLeftField() === $field->getName() ? OrmUtils::BIND_PREFIX : "";
                 $text .= OrmInstall::getTextForBindGetter($currentBind, $postfix);
                 $text .= OrmInstall::getTextForBindSetter($currentBind);
             } else {
                 $postfix = "";
             }
-            $text .= "//////////////" . $field->getName().$postfix . " getter and setter ///////////////\n";
+            //$text .= "//////////////" . $field->getName().$postfix . " getter and setter ///////////////\n";
             $text .= OrmInstall::getTextForFieldGetter($field, $table, $postfix);
             $text .= OrmInstall::getTextForSetter($field, $table, $postfix);
             if($field->getPrimary()) {
@@ -144,52 +145,34 @@ class OrmInstall implements ModuleInstall{
 
     protected static function getClassDescription(OrmTable $table){
         $fileName = $table->getPersistClassName().ORM::EXTEND;
-        return "/**\n"
-            ." * Warning! Auto-generated code.\n"
-            ." * Do not modify by hands, use ORM install script.\n"
-            ." * If you need to extend class,\n"
-            ." * crete it in file '".ORM::getPersistExtendedObjectsFolder().$fileName.".php'\n"
-            ." * with class name: '".$fileName."'.\n"
-            ." * All this conditions required by ORM engine.\n"
-            ." */";
+        return self::getTemplate("class.description", array('fileName' => $fileName));
     }
 
     protected static function getTextForBindVariable(OrmTableBind $bind, $postfix)
     {
-        $out = '';
-        $out .="\t/**\n";
-        $out .="\t * persist object field for table: "
-            ." ".$bind->getRightTable()->getName()."\n";
-        $out .= "\t * object bind options: \$this->".$bind->getLeftField().$postfix." on "
-            .$bind->getRightTable()->getPersistClassName()."->".$bind->getRightField(). "\n";
         $type = $bind->getType();
         if($type == OrmTable::MANY_TO_MANY || $type == OrmTable::ONE_TO_MANY) {
             $typePrefix = "[]";
         } else {
             $typePrefix = "";
         }
-
-        $out .="\t * @var ".$bind->getRightTable()->getPersistClassName().$typePrefix." $".$bind->getLeftField()."\n";
-        $out .="\t */\n";
-        $out .="\tprotected $".$bind->getLeftField().";\n";
-        return $out;
+        return self::getTemplate(
+            'bind.variable',
+            array('bind' => $bind, 'postfix' => $postfix, 'typePreffix' => $typePrefix)
+        );
     }
 
     protected static function getTextForVariable(OrmTableField $field, $postfix)
     {
-        $enumValues = $field->getEnumValues();
-        $name = $field->getName().$postfix;
-        $type = OrmInstall::defineFieldType($field);
-        $out = '';
-        $out .="\t/**\n";
-        $out .="\t * persist object field"
-            .(!empty($enumValues) ? " enum ['".implode("', '",$enumValues)."']" : "" )
-            .($field->getPrimary() ? ", primary key" : "" )
-            .($field->getAutoIncrement() ? ", autoincrement" : "" )."\n";
-        $out .="\t * @var ".$type." $".$name."\n";
-        $out .="\t */\n";
-        $out .="\tprotected $".$name.";\n";
-        return $out;
+        return self::getTemplate(
+            'text.for.variable',
+            array(
+                'field' => $field,
+                'enumValues'=> $field->getEnumValues(),
+                'name' => $field->getName().$postfix,
+                'type' => OrmInstall::defineFieldType($field)
+            )
+        );
     }
 
     protected static function getTextForBindGetter(OrmTableBind $bind, $postfix)
@@ -200,20 +183,20 @@ class OrmInstall implements ModuleInstall{
         } else {
             $typePrefix = "";
         }
-
         $name = $bind->getLeftField();
-        $text ="\t/**\n";
-        $text .="\t * `".$name."` field getter\n";
-        $text .="\t * @return ".$bind->getRightTable()->getPersistClassName().$typePrefix."\n";
-        $text .="\t */\n";
-
-        $text .= "\tpublic function get" . ucfirst($bind->getLeftField()) . "(){\n";
-        if ($bind->getLazyLoad()) {
-            $text .= OrmInstall::getLazyLoadTextForBind($bind, $postfix);
-        }
-        $text .= "\t\treturn \$this->" . $bind->getLeftField() . ";\n";
-        $text .="\t}\n";
-        return $text;
+        return self::getTemplate(
+            'text.for.bind.getter',
+            array(
+                'postfix' => $postfix,
+                'type' => $type,
+                'typePreffix' => $typePrefix,
+                'name' => $name,
+                'lazyLoadText' => $bind->getLazyLoad() 
+                    ? OrmInstall::getLazyLoadTextForBind($bind, $postfix) 
+                    : ''
+            )
+        );
+       
     }
     protected static function getTextForBindSetter(OrmTableBind $bind)
     {
@@ -242,73 +225,59 @@ class OrmInstall implements ModuleInstall{
     {
         $name = $field->getName().$postfix;
         $type = OrmInstall::defineFieldType($field);
-        $text = OrmInstall::getCommentText($name, $type);
-        $text .= "\tpublic function get" . ucfirst($name) . "(){\n";
-        if ($field->getLazyLoad()) {
-            $text .= OrmInstall::getLazyLoadTextForField($field, $table, $postfix);
-        }
-        $text .= "\t\treturn \$this->" . $name . ";\n";
-        $text .="\t}\n";
-        return $text;
+        return self::getTemplate(
+            'text.for.getter',
+            array(
+                'name' => $name,
+                'type' => $type,
+                'lazyLoadText' => $field->getLazyLoad()
+                    ? OrmInstall::getLazyLoadTextForField($field, $table, $postfix)
+                    : ""
+            )
+        );
     }
 
-
-
-
-    protected static function getCommentText($name, $type){
-        $text = "\t/**\n";
-        $text .= "\t * `" . $name . "` field getter\n";
-        $text .= "\t * @return " . $type . " $" . $name . "\n";
-        $text .= "\t */\n";
-        return $text;
-    }
 
     protected static function getLazyLoadTextForBind(OrmTableBind $bind, $postfix){
-        $propertyName = $bind->getLeftField();
-        $text = "\t\tif(\$this->" . $propertyName . " === null){\n";
-        $text .= "\t\t\t\$this->" . $propertyName . " = ORM::loadBinded('"
-            . $bind->getRightTable()->getName()
-            . "', \$this->get".ucfirst($bind->getLeftKey()).$postfix."(), '"
-            . $bind->getLeftKey() . "', '"
-            . $bind->getRightKey() . "', '"
-            . $bind->getType() . "');\n";
-        $text .= "\t\t}\n";
-        return $text;
+        return self::getTemplate(
+            'lazy.load.binded',
+            array(
+                'propertyName' => $bind->getLeftField(),
+                'bind' => $bind,
+                'postfix' => $postfix
+            )
+        );
     }
 
     protected static function getLazyLoadTextForField(OrmTableField $field, OrmTable $table, $suffix){
-        $propertyName = $field->getName().$suffix;
-
-
-        $text = "\t\tif(\$this->" . $propertyName . " === null){\n";
-        $text .= "\t\t\t\$this->" . $propertyName . " = ORM::loadField('"
-            . $table->getName()
-            . "', \$this->getPrimaryKey(), '"
-            . $propertyName ."');\n";
-        $text .= "\t\t}\n";
-        return $text;
+        return self::getTemplate(
+            'lazy.load.field',
+            array(
+                'propertyName' => $field->getName().$suffix,
+                'field' => $field,
+                'table' => $table
+            )
+        );
     }
 
     protected static function getTextForSetter(OrmTableField $field, OrmTable $table, $suffix)
     {
         $name = $field->getName().$suffix;
         $type = OrmInstall::defineFieldType($field);
-        $text ="\t/**\n";
-        $text .="\t * `".$name."` field setter\n";
-        $text .="\t * @var ".$type." $".$name
-            .(!empty($enumValues) ? " enum ['".implode("', '",$enumValues)."']" : "" )."\n";
-        $text .="\t * @return ".$table->getPersistClassName()."\n";
-        $text .="\t */\n";
-        $text .="\tpublic function set".ucfirst($name)."($".$name."){\n";
-        $text .="\t\t\$this->".$name." = $".$name.";\n";
-        $text .="\t\treturn \$this;\n";
-        $text .="\t}\n\n";
-        return $text;
+        $enumValues = $field->getEnumValues();
+        return self::getTemplate(
+            'text.for.setter',
+            array(
+                'name' => $name,
+                'type' => $type,
+                'enumValues' => (!empty($enumValues) ? " enum ['".implode("', '",$enumValues)."']" : "" ),
+                'className' => $table->getPersistClassName(),
+            )
+        );
     }
 
     protected static function createFolder($folder){
         if(!is_dir($folder)){
-            echo "creating folder $folder <br/>";
             mkdir($folder, 0777, true);
         }
     }
@@ -354,15 +323,13 @@ class OrmInstall implements ModuleInstall{
      */
     private static function getTextForPrimaryKey($field, $postfix)
     {
-        $text = "\t/**\n";
-        $text .= "\t * Primary key getter\n";
-        $text .= "\t */\n";
-
-        $text .= "\tpublic function getPrimaryKey(){\n";
-        $text .= "\t\treturn \$this->" . $field->getName().$postfix . ";\n";
-        $text .= "\t}\n";
-        $text .= "\t\n";
-        return $text;
+        return self::getTemplate(
+            'text.for.primary.key',
+            array(
+                'field' => $field,
+                'postfix' => $postfix
+            )
+        );
     }
 
     private static function isIndexExist($tableName, $fieldName)
@@ -375,6 +342,15 @@ class OrmInstall implements ModuleInstall{
             }
         }
         return false;
+    }
+
+    private static function getTemplate($templateName, $data)
+    {
+        ob_start();
+        include  Core::MODULES_FOLDER.'orm/install/'.$templateName.".php";
+        $out = ob_get_contents();
+        ob_end_clean();
+        return $out;
     }
 
     /**
