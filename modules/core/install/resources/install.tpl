@@ -6,15 +6,23 @@
 </head>
 <body>
 <p id="view"></p>
-<iframe id="console" src="?deploy=1&getDependencies=Core" name="console" onload="execute()"></iframe>
+<iframe id="console" src="?deploy=1&getDependencies=Core" name="console"></iframe>
 <form target="console" id="form" method="post" ></form>
 <script>
-
+    function gogo(){
+        var a = prompt("aaa", "bbb");
+        if(!document.getElementById('console').onload)
+        document.getElementById('console').onload = gogo;
+        document.getElementById('console').src = a;
+    }
     var installed = {
         core:{name: 'Core', installed: false, dependencies: []}
     };
     var onRequest = true;
     function execute(){
+        if(!document.getElementById('console').onload) {
+            document.getElementById('console').onload = execute;
+        }
         var responseString = read();
         var response;
         var view = document.getElementById('view');
@@ -77,7 +85,7 @@
     }
 
     function getModuleDependencies(moduleName){
-        send({}, '?deploy=1&getDependencies='+encodeURIComponent(moduleName));
+        send({i:''}, '?deploy=1&getDependencies='+encodeURIComponent(moduleName));
     }
 
     function addDependencies(response){
@@ -107,6 +115,7 @@
             }
         }
     }
+    execute();
 </script>
 </body>
 </html>

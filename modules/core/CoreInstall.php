@@ -10,7 +10,7 @@ class CoreInstall implements ModuleInstall{
 
     protected $installedModules;
 
-
+    //loadAll
     public function run(){
         if(!empty($_GET['getDependencies'])) {
             $this->getDependenciesForModule($_GET['getDependencies']);
