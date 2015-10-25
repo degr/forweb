@@ -12,26 +12,35 @@ class CoreInstall implements ModuleInstall{
 
     //loadAll
     public function run(){
-        if(!empty($_GET['getDependencies'])) {
-            $this->getDependenciesForModule($_GET['getDependencies']);
-            return;
-        } elseif(!empty($_GET['next'])){
-            $this->next($_GET['module'], $_GET['step']);
+
+        if(!empty($_GET['dependecies'])) {
+            $out = $this->getProjectDependencies();
+        } elseif(!empty($_GET['installExisting'])){
+            $this->installedModules = array("module");
+            $this->installModule('core');
+            $modules = glob(Core::MODULES_FOLDER."*");
+            foreach($modules as $module) {
+                if(is_dir($module) && basename($module) != 'core'){
+                    $this->installModule(basename($module));
+                }
+            }
             return;
         } else {
             echo file_get_contents(Core::MODULES_FOLDER . 'core/install/resources/install.tpl');
+            exit;
         }
+        $this->onAjaxResult($out);
         exit;
-        $this->installedModules = array("module");
 
-        $this->installModule('core');
 
-        $modules = glob(Core::MODULES_FOLDER."*");
-        foreach($modules as $module) {
-            if(is_dir($module) && basename($module) != 'core'){
-                $this->installModule(basename($module));
-            }
-        }
+    }
+
+    private function onAjaxResult($var){
+        header('Content-Type: application/json; charset=utf-8');
+        header("Pragma: no-cache");
+        header("Cache-control: private, must-revalidate");
+        header("Content-disposition: inline");
+        echo json_encode($var);
     }
 
     /**
@@ -176,8 +185,7 @@ class CoreInstall implements ModuleInstall{
 
     private function isModuleHasInstallation($moduleName)
     {
-        $file = Core::MODULES_FOLDER.strtolower($moduleName).'/'.$moduleName.'Install.php';
-        return is_file($file);
+        return is_file(Core::MODULES_FOLDER.strtolower($moduleName).'/'.$moduleName.'Install.php');
     }
 
     /**
@@ -235,27 +243,41 @@ class CoreInstall implements ModuleInstall{
         // TODO: Implement getUserInput() method.
     }
 
-    private function getDependenciesForModule($moduleName)
+
+    /////////////////////////////////////////////////////////////////////////
+    private function getProjectDependencies()
     {
-        if($this->isModuleExistLocally($moduleName)) {
-            if($this->isModuleHasInstallation($moduleName)) {
-                $install = $this->getInstallObject($moduleName);
-                echo json_encode(
-                    array(
-                        'type' => 'dependencies',
-                        'module' => $moduleName,
-                        'dependencies' => $this->getDependenciesAsArray($install->getDependencies())
-                    )
-                );
+        $modules = glob(Core::MODULES_FOLDER."*");
+        $out = array();
+        foreach($modules as $module) {
+            if(!is_dir($module)) {
+                continue;
             }
-        } else {
-            echo 'not';
+            $installClass = $this->findModuleInstallationClass($module);
+            if($installClass == null) {
+                continue;
+            }
+            if(class_exists($installClass, true)) {
+
+                /** @var $installObject ModuleInstall */
+                $installObject = new $installClass();
+                $dependenices = $installObject->getDependencies();
+                if(!empty($dependenices)) {
+                    $out[strtolower(basename($module))] = $dependenices;
+                }
+            }
         }
+        return $this->getDependenciesAsArray($out);
     }
 
-    private function next($module, $step)
-    {
-
+    private function findModuleInstallationClass($moduleFolder){
+        $files = glob(preg_replace('/\/$/', '', $moduleFolder)."/*");
+        foreach($files as $moduleFile) {
+            if(strtolower(basename($moduleFile)) === strtolower(basename($moduleFolder)."install.php")){
+                return preg_replace('/\.php$/i', '', basename($moduleFile));
+            }
+        }
+        return null;
     }
 
     /**
@@ -267,8 +289,16 @@ class CoreInstall implements ModuleInstall{
             return array();
         } else {
             $out = array();
-            foreach($dependencies as $dependency) {
-                $out[] = get_object_vars($dependency);
+            foreach($dependencies as $key => $dependency) {
+                if(is_array($dependency)) {
+                    $out[$key] = $this->getDependenciesAsArray($dependency);
+                } elseif (is_object($dependency)) {
+                    $out[] = get_object_vars($dependency);
+                } elseif(empty($dependency)) {
+                    continue;
+                } else {
+                    throw new FwException("Invalid data. Dependency expected, ".gettype($dependency)." given.");
+                }
             }
             return $out;
         }

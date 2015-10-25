@@ -187,6 +187,7 @@ class OrmInstall implements ModuleInstall{
         return self::getTemplate(
             'text.for.bind.getter',
             array(
+                'bind' => $bind,
                 'postfix' => $postfix,
                 'type' => $type,
                 'typePreffix' => $typePrefix,
@@ -200,25 +201,17 @@ class OrmInstall implements ModuleInstall{
     }
     protected static function getTextForBindSetter(OrmTableBind $bind)
     {
-        $type = $bind->getType();
-        if($type == OrmTable::MANY_TO_MANY || $type == OrmTable::ONE_TO_MANY) {
-            $typePrefix = "[]";
-        } else {
-            $typePrefix = "";
-        }
-
-        $persistClassName = $bind->getRightTable()->getPersistClassName();
-        $name = $bind->getLeftField();
-        $text ="\t/**\n";
-        $text .="\t * `".$name."` field setter\n";
-        $text .="\t * @var ".$persistClassName.$typePrefix." $".$name."\n";
-        $text .="\t * @return ".$bind->getLeftTable()->getPersistClassName()."\n";
-        $text .="\t */\n";
-        $text .="\tpublic function set".ucfirst($name)."($".$name."){\n";
-        $text .="\t\t\$this->".$name." = $".$name.";\n";
-        $text .="\t\treturn \$this;\n";
-        $text .="\t}\n\n";
-        return $text;
+        return self::getTemplate(
+            'text.for.bind.setter',
+            array(
+                'typePrefix' => (
+                    $bind->getType() == OrmTable::MANY_TO_MANY
+                    || $bind->getType() == OrmTable::ONE_TO_MANY ? '[]' : ''
+                ),
+                'name' => $bind->getLeftField(),
+                'persistClassName' => $bind->getRightTable()->getPersistClassName(),
+            )
+        );
     }
 
     protected static function getTextForFieldGetter(OrmTableField $field, OrmTable $table, $postfix)

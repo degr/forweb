@@ -6,19 +6,97 @@
 </head>
 <body>
 <p id="view"></p>
-<iframe id="console" src="?deploy=1&getDependencies=Core" name="console"></iframe>
-<form target="console" id="form" method="post" ></form>
 <script>
-    function gogo(){
-        var a = prompt("aaa", "bbb");
-        if(!document.getElementById('console').onload)
-        document.getElementById('console').onload = gogo;
-        document.getElementById('console').src = a;
-    }
-    var installed = {
-        core:{name: 'Core', installed: false, dependencies: []}
+    var Install = {
+        dependencies: null,
+        write: function(t){
+            var d = document.getElementById('view');
+            d.innerHTML += t + '<br/>';
+        },
+        start: function(){
+            this.requestDependencies();
+            setTimeout(Install.startToResolveDependencies, 500);
+        },
+        requestDependencies: function(){
+            Install.write("Requesting for project dependencies");
+            Install.Ajax.request({
+                url: '?deploy=1&dependecies=1',
+                response: 'json',
+                success: function(o){Install.dependencies = o;}
+            });
+        },
+        startToResolveDependencies: function(){
+            if(Install.dependencies === null) {
+                setTimeout(Install.startToResolveDependencies, 500);
+                return;
+            }
+            Install.write("Dependencies colleted, start to resolve.");
+            Install.Ajax.request({
+                url: '?deploy=1&installExisting=1',
+                response: 'json',
+                success: function(o){
+                    alert('installed');
+                    console.log(o);
+                }
+            });
+        },
+        Ajax: {
+            request : function(obj) {
+                var req = this.getXmlHttp();
+
+                var url = obj.url || window.location.href;
+                var reqType = obj.type || "GET";
+                var success = obj.success||false;
+                var data = obj.data || null;
+                var response = obj.response || 'json';
+
+                req.onloadend = function() {
+                    if(success){
+                        var answer = response == 'json' ? JSON.parse(req.responseText) : req.responseText;
+                        success(answer, req);
+                    }
+                };
+
+                req.open(reqType, url, true);
+                //	if (reqType.toLowerCase() == "post") {
+                req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                //}
+                if (!data) {
+                    req.send(null);
+                } else {
+                    if(typeof data == 'object'){
+                        var d = [];
+                        for(var i in data){
+                            d.push(encodeURIComponent(i)+'='+(typeof data[i] == 'object' ? Install.Ajax.encodeRecoursivly(data[i]) : encodeURIComponent(data[i])));
+                        }
+                        data = d.join('&');
+                    }
+                    req.send(data);
+                }
+
+            },
+            getXmlHttp : function() {
+                if (window.XMLHttpRequest && (!window.location || 'file:' != window.location.protocol || !window.ActiveXObject)) {
+                    return new XMLHttpRequest;
+                } else {
+                    try { return new ActiveXObject('Microsoft.XMLHTTP'); } catch(e) { }
+                    try { return new ActiveXObject('Msxml2.XMLHTTP.6.0'); } catch(e) { }
+                    try { return new ActiveXObject('Msxml2.XMLHTTP.3.0'); } catch(e) { }
+                    try { return new ActiveXObject('Msxml2.XMLHTTP'); } catch(e) { }
+                }
+                return null;
+            },
+
+            encodeRecoursivly: function(v){
+                var d = [];
+                for(var i in v) {
+                    d.push('"'+encodeURIComponent(i)+'":"'+(typeof v[i] == 'object' ? Ajax.encodeRecoursivly(v[i]) : encodeURIComponent(v[i]))+'"');
+                }
+                return "{" + d.join(encodeURIComponent( ',' )) + '}';
+            },
+        }
     };
-    var onRequest = true;
+    Install.start();
     function execute(){
         if(!document.getElementById('console').onload) {
             document.getElementById('console').onload = execute;
@@ -46,44 +124,6 @@
         }
 
     }
-
-    function read(){
-        var frame = document.getElementById('console');
-        var holder = frame.contentWindow ? frame.contentWindow : frame.contentDocument;
-        return holder.document.getElementsByTagName('body')[0].innerHTML;
-
-    }
-
-    function send(object, url) {
-        if(onRequest) {
-            setTimeout(send(object, url), 500);
-            return;
-        }
-        console.log(url);
-        var form = document.getElementById('form');
-        form.action = url;
-        form.setAttribute('action', url);
-        form.innerHTML = '';
-        var hasProperties = false;
-        for(var i in object) {
-            if(!hasProperties) {
-                hasProperties = true;
-            }
-            var o = object[i];
-            var input = document.createElement('input');
-            input.setAttribute('name', i);
-            input.value = o;
-            form.appendChild(input);
-        }
-        if(!hasProperties) {
-            form.method = 'get';
-        } else {
-            form.method = 'post';
-        }
-        form.setAttribute('method', form.method);
-        form.submit();
-    }
-
     function getModuleDependencies(moduleName){
         send({i:''}, '?deploy=1&getDependencies='+encodeURIComponent(moduleName));
     }
@@ -115,7 +155,6 @@
             }
         }
     }
-    execute();
 </script>
 </body>
 </html>

@@ -3,8 +3,6 @@
      * @return <?= $data['bind']->getRightTable()->getPersistClassName().$typePrefix ?> 
      */
     public function get<?= ucfirst($data['bind']->getLeftField()) ?>(){
-<?php if ($data['bind']->getLazyLoad()) {?>
-    <?= $data['lazyLoadText'] ?>;
-<?php } ?>
+<?php if ($data['bind']->getLazyLoad()) { echo $data['lazyLoadText']; } ?>
         return $this-><?= $data['bind']->getLeftField() ?>;
     }
