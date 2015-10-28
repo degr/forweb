@@ -61,7 +61,7 @@ class Page extends Module{
 	 */
 	public function getPageForm($page){
 		Access::denied("can_edit_pages");
-		$provider = new Page_Admin_Page();
+		$provider = new PageAdminPage();
 		return $provider->getContent($page);
 	}
 
@@ -71,7 +71,7 @@ class Page extends Module{
 	 */
 	public function editPage(){
 		Access::denied("can_edit_pages");
-		$provider = new Page_Admin_Page();
+		$provider = new PageAdminPage();
 		return $provider->editPage();
 	}
 
@@ -84,7 +84,7 @@ class Page extends Module{
 	public function editTemplateForm(){
 		Access::denied("can_edit_templates");
 		if(isset($_POST['href'])){
-			$provider = new Page_Admin_Template();
+			$provider = new PageAdminTemplate();
 			return $provider->getContent();
 
 		}
@@ -98,7 +98,7 @@ class Page extends Module{
 	public function pageContent(){
 		Access::denied("can_edit_pages");
 		if(isset($_POST['href'])){
-			$provider = new Page_Admin_Includes($this);
+			$provider = new PageAdminIncludes($this);
 			return $provider->getContent();
 		}
 		return array('text'=>'Page not found');
@@ -169,7 +169,7 @@ class Page extends Module{
 	public function processPageContent(){
 		Access::denied("can_edit_pages");
 
-		$provider = new Page_Admin_Includes();
+		$provider = new PageAdminIncludes();
 		return $provider->onAjaxSaveBlock();
 	}
 
@@ -180,7 +180,7 @@ class Page extends Module{
 	public function deletePageInclude(){
 		Access::denied("can_edit_pages");
 
-		$provider = new Page_Admin_Includes();
+		$provider = new PageAdminIncludes();
 		return $provider->delete();
 	}
 
@@ -190,7 +190,7 @@ class Page extends Module{
 	 */
 	public function createTemplate(){
 		Access::denied("can_edit_templates");
-		$provider = new Page_Admin_Template();
+		$provider = new PageAdminTemplate();
 		if($_POST['action'] == 'save') {
 			return $provider->saveNewTemplate();
 		} else {
@@ -203,7 +203,7 @@ class Page extends Module{
 	 */
 	public function editTemplate(){
 		Access::denied("can_edit_templates");
-		$provider = new Page_Admin_Template();
+		$provider = new PageAdminTemplate();
 		return $provider->processTemplateEdit();
 	}
 	/**
@@ -212,7 +212,7 @@ class Page extends Module{
 	 */
 	public function deleteTemplate(){
 		Access::denied("can_edit_templates");
-		$provider = new Page_Admin_Template();
+		$provider = new PageAdminTemplate();
 		return $provider->deleteTemplate();
 	}
 	/**
@@ -221,7 +221,7 @@ class Page extends Module{
 	 */
 	public function deleteTemplateForm(){
 		Access::denied("can_edit_templates");
-		$provider = new Page_Admin_Template();
+		$provider = new PageAdminTemplate();
 		return $provider->getDeleteTemplateForm();
 	}
 	/**
@@ -230,7 +230,7 @@ class Page extends Module{
 	 */
 	public function createBlock(){
 		Access::denied("can_edit_templates");
-		$provider = new Page_Admin_Template();
+		$provider = new PageAdminTemplate();
 		return $provider->createBlock();
 	}
 	/**
@@ -239,7 +239,7 @@ class Page extends Module{
 	 */
 	public function deleteBlock(){
 		Access::denied("can_edit_templates");
-		$provider = new Page_Admin_Template();
+		$provider = new PageAdminTemplate();
 		return $provider->deleteBlock();
 	}
 	/**
@@ -248,7 +248,7 @@ class Page extends Module{
 	 */
 	public function saveBlocksPosition(){
 		Access::denied("can_edit_templates");
-		$provider = new Page_Admin_Template();
+		$provider = new PageAdminTemplate();
 		return $provider->saveBlocksPosition();
 	}
 	/**
@@ -257,19 +257,19 @@ class Page extends Module{
 	 */
 	public function updateBlock(){
 		Access::denied("can_edit_templates");
-		$provider = new Page_Admin_Template();
+		$provider = new PageAdminTemplate();
 		return $provider->updateBlock();
 	}
 
 	public function getIncludeTextForm(){
 		Access::denied("can_edit_pages");
-		$provider = new Page_Admin_Includes();
+		$provider = new PageAdminIncludes();
 		return $provider->getIncludeTextForm();
 	}
 
 	public function changePagePositions(){
 		Access::denied("can_edit_pages");
-		$provider = new Page_Admin_Page();
+		$provider = new PageAdminPage();
 		$provider->changePagePositions();
 	}
 

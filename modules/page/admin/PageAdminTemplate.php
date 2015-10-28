@@ -5,7 +5,7 @@
  * Date: 14.03.2015
  * Time: 19:35
  */
-class Page_Admin_Template{
+class PageAdminTemplate{
 
     public function getContent()
     {

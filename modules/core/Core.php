@@ -244,23 +244,20 @@ class Core extends Module{
 	public function autoload($class)
 	{
 		$file = $class.'.php';
-		if(is_file(Core::MODULES_FOLDER.strtolower($class).'/'.$file)) {
-			require_once Core::MODULES_FOLDER.strtolower($class).'/'.$file;
-			return;
-		}
-		if(is_file(Core::MODULES_FOLDER.$file)) {
-			require_once Core::MODULES_FOLDER.$file;
+		$inc = Core::MODULES_FOLDER.strtolower($class).'/'.$file;
+		if(is_file($inc)) {
+			require_once $inc;
 			return;
 		}
 		$parts = preg_split("/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|([_]{1,})/", $class);
-
 		$folder = Core::MODULES_FOLDER;
 		foreach($parts as $part) {
-			$folder .= $part;
-			if(!is_dir($folder)) {
+			$f = $folder.strtolower($part);
+			if(!is_dir($f)) {
+				$folder .= $part;
 				continue;
 			} else {
-				$folder .= '/';
+				$folder = $f.'/';
 			}
 			$fullPath = $folder.$file;
 			if(is_file($fullPath)) {
