@@ -8,6 +8,12 @@ $core = Core::getInstance();
 spl_autoload_register(array($core, 'autoload'));
 spl_autoload_register(array("ORM", 'autoload'));
 
+/* db initializing */
+$manager = new DbManager("", "Mysql");
+$manager->setCredentials("127.0.0.1", "root", "", "forweb.org");
+DB::init($manager);
+DB::setEncoding("utf8");
+
 /* project deploy */
 if($_GET['deploy'] == 1 && Core::DEVELOPMENT){
     $coreInstall = new CoreInstall();
@@ -19,11 +25,6 @@ if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
     $scss = new ScssServer('templates/scss', 'cache/scss');
     $scss->serve();
 }
-/* db initializing */
-$manager = new DbManager("", "Mysql");
-$manager->setCredentials("127.0.0.1", "root", "admin", "forweb");
-DB::init($manager);
-DB::setEncoding("utf8");
 
 /* page generation */
 $core->process();

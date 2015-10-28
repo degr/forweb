@@ -72,7 +72,7 @@ var DragManager = {
 		var r=o._.el[i]+o._.mc[i]-o._.mi[i];
 		if(r < 0)return 0;
 		var w=DragManager.getWindowSize(i);
-		var e = DragManager.object.target[(i=='x' ? 'offsetWidth' : 'offsetHeight')]
+		var e = DragManager.object.target[(i=='x' ? 'offsetWidth' : 'offsetHeight')];
 		return (r + e < w) ? r : w - e;
 	},
 	getWindowSize: function(d){
@@ -93,7 +93,7 @@ var DragManager = {
 			obj.oX = obj.oX===false?0:1;
 			obj.oY = obj.oY===false?0:1;
 			if(obj.fixPosition !== false){
-				s = target.style.position
+				s = target.style.position;
 				if(!s)s=getComputedStyle(target)['position'];
 				if(s != 'absolute' & s != 'fixed')target.style.position='absolute';
 			}

@@ -7,4 +7,3 @@
         $this-><?= $data['name']?> = $<?= $data['name'] ?>;
         return $this;
     }
-    
