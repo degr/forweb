@@ -7,6 +7,7 @@
  */
 class CoreInstallInputUrl implements ModuleInput{
 
+    const APPLICATION_URL = 'applicationUrl';
     /**
      * Return input identifier for input.
      * Each identifier must be unique for each module
@@ -14,7 +15,7 @@ class CoreInstallInputUrl implements ModuleInput{
      */
     public function getIdentifier()
     {
-        // TODO: Implement getIdentifier() method.
+        return self::APPLICATION_URL;
     }
 
     /**
@@ -23,7 +24,20 @@ class CoreInstallInputUrl implements ModuleInput{
      */
     public function process($userInput)
     {
-        // TODO: Implement process() method.
+        $query = "select * from config where module = 'core' and name='url'";
+        $row = DB::getRow($query);
+        if(empty($userInput)) {
+            return;
+        }
+        $userInput = preg_replace('/\/$/', '', $userInput).'/';
+        
+        $userInput = DB::escape($userInput);
+        if(empty($row)) {
+            $query = "insert into config (module, name, value) values ('core', 'url', '{$userInput}')";
+        } else {
+            $query = "update config set value = '{$userInput}' where module = 'core' and name='url'";
+        }
+        DB::query($query);
     }
 
     /**
@@ -32,6 +46,8 @@ class CoreInstallInputUrl implements ModuleInput{
      */
     public function getQuestion()
     {
-        // TODO: Implement getQuestion() method.
+        return "Please, enter base application url in format\n".
+            "http://yoursite.com/\n".
+            "(with protocol, port (if it not equal to 80), and ending slash)";
     }
 }

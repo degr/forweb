@@ -18,21 +18,14 @@ class CoreInstall implements ModuleInstall{
  * */
     //loadAll
     public function run(){
-
         if(!empty($_GET['dependecies'])) {
             $out = $this->getProjectDependencies();
         } else if(!empty($_GET['download'])) {
             $out = $this->getDownloadResult();
+        } elseif (!empty($_GET['collectUserInput'])) {
+            $out = $this->collectUserInput();
         } elseif(!empty($_GET['installExisting'])){
-            $this->installedModules = array("module");
-            $this->installModule('core');
-            $modules = glob(Core::MODULES_FOLDER."*");
-            foreach($modules as $module) {
-                if(is_dir($module) && basename($module) != 'core'){
-                    $this->installModule(basename($module));
-                }
-            }
-            return;
+            $out = $this->installExisting();
         } else {
             echo file_get_contents(Core::MODULES_FOLDER . 'core/install/resources/install.html');
             exit;
@@ -55,29 +48,35 @@ class CoreInstall implements ModuleInstall{
      * Get module dependencyes, install each of them, than install module
      * @param $moduleName string
      * @throws FwException if module not exist LOCALLY
+     * @return string (html data about installed module)
      */
     private function installModule($moduleName)
     {
+        $out = array();
         if($this->isModuleExistLocally($moduleName)) {
             if($this->isModuleHasInstallation($moduleName) && !in_array($moduleName, $this->installedModules)) {
                 /* @var $moduleInstallObject ModuleInstall */
                 $moduleInstallObject = $this->getInstallObject($moduleName);
-                echo '<div style="padding: 10px; border: 1px dotted lightgray">';
-                echo $moduleInstallObject->getInfo();
                 $dependencies = $moduleInstallObject->getDependencies();
                 if (!empty($dependencies)) {
+                    $items = array();
                     foreach ($dependencies as $dependency) {
-                        $this->resolveDependency($dependency);
+                        $items = array_merge($items, $this->resolveDependency($dependency));
                     }
+                    $out = $items;
                 }
                 $moduleInstallObject->install();
-                echo '<p>Module <span style="font-weight: bold">"'.$moduleName.'"</span> installed successfully.</p>';
-                echo '</div>';
+               
+                array_unshift($out, '<div style="padding: 10px; border: 1px dotted lightgray">'.
+                    $moduleInstallObject->getInfo().
+                    '<p>Module <span style="font-weight: bold">"'.$moduleName.'"</span> installed successfully.</p>'.
+                    '</div>');
             }
             $this->installedModules[] = $moduleName;
         } else {
             throw new FwException("Can't install module because it does not exist.");
         }
+        return $out;
     }
 
     /**
@@ -145,13 +144,13 @@ class CoreInstall implements ModuleInstall{
             new ModuleDependency('validation'),
             new ModuleDependency('page'),
             new ModuleDependency('access'),
-            new ModuleDependency('api'),
-            new ModuleDependency('hoho'),
+            new ModuleDependency('api')
         );
     }
     /**
      * Try to resolve module dependency
      * @param $dependency ModuleDependency
+     * @return array
      * @throws FwException, if dependency does not contain id and name;
      */
     private function resolveDependency($dependency)
@@ -159,13 +158,11 @@ class CoreInstall implements ModuleInstall{
         if(empty($dependency->moduleName)) {
             throw new FwException("Module dependency does not contain name property.");
         }
-
-        if(!$this->isModuleExistLocally($dependency->moduleName)){
-            $this->downloadModule($dependency);
-        }
+        $out = array();
         if(!in_array($dependency->moduleName, $this->installedModules)) {
-            $this->installModule($dependency->moduleName);
+            $out = array_merge($out, $this->installModule($dependency->moduleName));
         }
+        return $out;
     }
 
     /**
@@ -194,7 +191,8 @@ class CoreInstall implements ModuleInstall{
 
     private function isModuleHasInstallation($moduleName)
     {
-        return is_file(Core::MODULES_FOLDER.strtolower($moduleName).'/'.$moduleName.'Install.php');
+        $installClassName = $moduleName.'Install';
+        return class_exists($installClassName, true);
     }
 
     /**
@@ -250,7 +248,7 @@ class CoreInstall implements ModuleInstall{
      */
     public function getUserInput()
     {
-        // TODO: Implement getUserInput() method.
+        return array(new CoreInstallInputUrl());
     }
 
 
@@ -353,5 +351,50 @@ class CoreInstall implements ModuleInstall{
             unlink($path);
         }
         return $out;
+    }
+
+    private function installExisting()
+    {
+        $this->installedModules = array("module");
+        $out = $this->installModule('core');
+        $modules = glob(Core::MODULES_FOLDER."*");
+        foreach($modules as $module) {
+            if(is_dir($module) && in_array(basename($module), $this->installedModules)){
+                $out = array_merge($out, $this->installModule(basename($module)));
+            }
+        }
+        return array_filter($out);
+    }
+
+    private function collectUserInput()
+    {
+        $out = array();
+        $modules = glob(Core::MODULES_FOLDER."*");
+        foreach($modules as $moduleName) {
+            $moduleName = basename($moduleName);
+            if($this->isModuleExistLocally($moduleName)) {
+                if($this->isModuleHasInstallation($moduleName)) {
+                    /* @var $moduleInstallObject ModuleInstall */
+                    $moduleInstallObject = $this->getInstallObject($moduleName);
+                    $inputArray = $moduleInstallObject->getUserInput();
+                    if(!empty($inputArray)) {
+                        $item = array();
+                        /** @var $input ModuleInput */
+                        foreach($inputArray as $input) {
+                            $item[] = array(
+                                'identifier' => $input->getIdentifier(),
+                                'question' => $input->getQuestion()
+                            );
+                        }
+                        if(!empty($item)) {
+                            $out[$moduleName] = $item;
+                        }
+                    }
+                }
+            } else {
+                throw new FwException("Can't install module because it does not exist(".$moduleName.").");
+            }
+        }
+        return array_filter($out);
     }
 }

@@ -3,12 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>ForWeb install page</title>
+    <style>
+        #question_form{
+            background: white;
+            box-shadow: 0 0 5px 1px;
+        }
+        #question_form td{
+            padding: 5px;
+        }
+        #question_form input[type='text']{
+            min-width: 150px;
+            height: 24px;
+        }
+        #question_form input[type='text']:focus{
+            border: none;
+            outline:0 !important;
+            -webkit-appearance:none;
+            padding: 2px;
+        }
+    </style>
 </head>
 <body>
 <p id="view"></p>
 <script>
     var Install = {
         dependencies: null,
+        userInput: null,
+        moduleValues: {},
+        questionName: null,
         write: function(t){
             var d = document.getElementById('view');
             d.innerHTML += t + '<br/>';
@@ -109,7 +131,7 @@
                     Install.write("Project can't be deployed, because it depend from not existing" +
                         "modules (" + skipped.join(", ") +"). Please, download it by hands, or launch deploy one more time.");
                 } else {
-                    Install.installExisting();
+                    Install.collectInput();
                 }
             };
             if(toDownload && toDownload.length) {
@@ -124,16 +146,103 @@
                 clb(null);
             }
         },
-                    
+        collectInput: function(){
+            Install.Ajax.request({
+                url: '?deploy=1&collectUserInput=1',
+                response: 'json',
+                success: function (o) {
+                    Install.userInput = o;
+                    Install.onUserQuestions();
+                }
+            });
+        },
+        onUserQuestions: function(){
+            if(Install.questionName === null && Install.userInput){
+                Install.questionName = Object.keys(Install.userInput)[0];
+            }
+            var form = document.getElementById('question_form');
+            if(form){
+                form.remove();
+            }
+            if(Install.questionName && !Install.userInput || !Install.userInput[Install.questionName]) {
+                Install.installExisting();
+            } else {
+                Install.showForm(Install.userInput[Install.questionName], Install.questionName);
+                var keys = Object.keys(Install.userInput);
+                Install.questionName = keys[keys.indexOf(Install.questionName) + 1];
+            }
+        },
         installExisting: function(){
             Install.Ajax.request({
                 url: '?deploy=1&installExisting=1',
                 response: 'json',
+                type: 'POST',
+                data: Install.moduleValues,
                 success: function (o) {
-                    alert('installed');
-                    console.log(o);
+                    if(o && o.length) {
+                        for(var i = 0; i < o.length; i++) {
+                            if(o[i]) {
+                                Install.write(o[i]);
+                            }
+                        }
+                    }
                 }
             });
+        },
+        showForm: function(data, moduleName){
+            if(!data) {
+                Install.onUserQuestions();
+            }
+            var table = document.createElement('table');
+            for(var i = 0; i < data.length; i++) {
+                var holder = document.createElement('tr');
+                var cell1 = document.createElement('td');
+                var cell2 = document.createElement('td');
+                holder.appendChild(cell1);
+                holder.appendChild(cell2);
+                
+                var label = document.createElement('label');
+                label.innerHTML = data[i].question;
+                label.setAttribute('for', data[i].identifier + "_question");
+                var input = document.createElement('input');
+                input.type = 'text';
+                input.name = data[i].identifier;
+                input.id = data[i].identifier + "_question";
+
+                cell1.appendChild(label);
+                cell2.appendChild(input);
+                table.appendChild(holder);
+            }
+            if(data.length >= 0) {
+                var submit = document.createElement('input');
+                submit.type = 'submit';
+                submit.value = 'Save data for module: ' + moduleName;
+                var tr = document.createElement('tr');
+                var td = document.createElement('td');
+                tr.appendChild(td);
+                td.appendChild(submit);
+                td.setAttribute('colspan', '2');
+                table.appendChild(tr);
+            }
+            var form = document.createElement('form');
+            form.id = 'question_form';
+            form.setAttribute('data-module', moduleName);
+            form.appendChild(table);
+            form.onsubmit = Install.collectFormData;
+            form.setAttribute('style', 'position: fixed; width: 468px; left: 50%; margin-left: -234px;');
+            document.body.appendChild(form);
+        },
+        collectFormData: function(e){
+            e = e || window.event;
+            e.preventDefault();
+            var form = document.getElementById('question_form');
+            var inputs = form.getElementsByTagName('input');
+            var data = {};
+            for(var i = 0; i < inputs.length; i++) {
+                data[inputs[i].name] = inputs[i].value;
+            }
+            Install.moduleValues[form.getAttribute('data-module')] = data;
+            Install.onUserQuestions();
         },
         Ajax: {
             request : function(obj) {

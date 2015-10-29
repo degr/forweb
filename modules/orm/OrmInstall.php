@@ -204,6 +204,7 @@ class OrmInstall implements ModuleInstall{
         return self::getTemplate(
             'text.for.bind.setter',
             array(
+                'bind' => $bind,
                 'typePrefix' => (
                     $bind->getType() == OrmTable::MANY_TO_MANY
                     || $bind->getType() == OrmTable::ONE_TO_MANY ? '[]' : ''
