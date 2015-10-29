@@ -9,12 +9,20 @@
 class CoreInstall implements ModuleInstall{
 
     protected $installedModules;
-
+/*
+ * [
+ *   {name: core, input: [], state}
+ * 
+ * ]
+ * 
+ * */
     //loadAll
     public function run(){
 
         if(!empty($_GET['dependecies'])) {
             $out = $this->getProjectDependencies();
+        } else if(!empty($_GET['download'])) {
+            $out = $this->getDownloadResult();
         } elseif(!empty($_GET['installExisting'])){
             $this->installedModules = array("module");
             $this->installModule('core');
@@ -26,7 +34,7 @@ class CoreInstall implements ModuleInstall{
             }
             return;
         } else {
-            echo file_get_contents(Core::MODULES_FOLDER . 'core/install/resources/install.tpl');
+            echo file_get_contents(Core::MODULES_FOLDER . 'core/install/resources/install.html');
             exit;
         }
         $this->onAjaxResult($out);
@@ -138,6 +146,7 @@ class CoreInstall implements ModuleInstall{
             new ModuleDependency('page'),
             new ModuleDependency('access'),
             new ModuleDependency('api'),
+            new ModuleDependency('hoho'),
         );
     }
     /**
@@ -196,7 +205,8 @@ class CoreInstall implements ModuleInstall{
     private function downloadModuleFromUrl($dependency, $url)
     {
         $folder = Core::MODULES_FOLDER.strtolower($dependency->moduleName);
-        $archive = Files::download($url, $folder);
+        $archive = $folder.'/archive.zip';
+        Files::download($url, $archive);
         Files::extract($archive, $folder);
         unlink($archive);
     }
@@ -254,18 +264,17 @@ class CoreInstall implements ModuleInstall{
                 continue;
             }
             $installClass = $this->findModuleInstallationClass($module);
-            if($installClass == null) {
-                continue;
-            }
-            if(class_exists($installClass, true)) {
-
+            if($installClass == null || !class_exists($installClass, true)) {
+                $dependenices = array();
+            } else {
                 /** @var $installObject ModuleInstall */
                 $installObject = new $installClass();
                 $dependenices = $installObject->getDependencies();
-                if(!empty($dependenices)) {
-                    $out[strtolower(basename($module))] = $dependenices;
+                if (empty($dependenices)) {
+                    $dependenices = array();
                 }
             }
+            $out[strtolower(basename($module))] = $dependenices;
         }
         return $this->getDependenciesAsArray($out);
     }
@@ -281,7 +290,10 @@ class CoreInstall implements ModuleInstall{
     }
 
     /**
+     * Return dependencies object for http transport
      * @param $dependencies ModuleDependency[]
+     * @return array of arrays with module dependencies
+     * @throws FwException in case when dependency contain invalid data
      */
     private function getDependenciesAsArray($dependencies)
     {
@@ -293,7 +305,14 @@ class CoreInstall implements ModuleInstall{
                 if(is_array($dependency)) {
                     $out[$key] = $this->getDependenciesAsArray($dependency);
                 } elseif (is_object($dependency)) {
-                    $out[] = get_object_vars($dependency);
+                    $out[] = array(
+                        'minorVersion' => $dependency->minorVersion,
+                        'majorVersion' => $dependency->majorVersion,
+                        'moduleId' => $dependency->moduleId,
+                        'moduleName' => $dependency->moduleName,
+                        'moduleUrl' => $dependency->moduleUrl,
+                        'isExistLocally' => $this->isModuleExistLocally($dependency->moduleName)
+                    );
                 } elseif(empty($dependency)) {
                     continue;
                 } else {
@@ -302,5 +321,37 @@ class CoreInstall implements ModuleInstall{
             }
             return $out;
         }
+    }
+
+    private function isModuleWasInstalled($clientData, $moduleName)
+    {
+        /** @var $item CoreInstallDependency */
+        foreach ($clientData as $item) {
+            if(strtolower($item->getPackage()) === strtolower($moduleName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function getDownloadResult()
+    {
+        if(empty($_POST['items']) || !is_array($_POST['items'])){
+            return array();
+        }
+        $path = Core::MODULES_FOLDER.'core/install/temp/archive.zip';
+        $out = array();
+        foreach($_POST['items'] as $object) {
+            $module = $object['module'];
+            $url = $object['url'];
+            try {
+                $out[$module] = Files::download($url, $path) 
+                    && Files::extract($path, Core::MODULES_FOLDER . strtolower($module));
+            } catch (Exception $e) {
+                $out[$module] = false;
+            }
+            unlink($path);
+        }
+        return $out;
     }
 }

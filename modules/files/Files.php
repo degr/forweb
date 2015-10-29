@@ -28,20 +28,30 @@ class Files extends Module{
     /**
      * download file from url to selected location
      * @param $url string
-     * @param $folder string
+     * @param $path string
      * @return string file path
      */
-    public static function download($url, $folder){
-
+    public static function download($url, $path){
+        $fs = new FilesSystem("");
+        $fs->createFolder(dirname($path));
+        $downloader = new FilesDownloader($url);
+        return $downloader->download($path);
     }
 
     /**
      * Extract archive, and put all content into selected folder
      * @param $archive string - path to archive
      * @param $folder - path to folder
+     * @return boolean;
      */
     public static function extract($archive, $folder)
     {
+        $zip = new ZipArchive;
+        @$zip->open($archive);
+        @$zip->extractTo($folder);
+        $out = ZipArchive::ER_OK === $zip->status;
+        @$zip->close();
+        return $out;
     }
 
     public function getAjaxUserMedia(){

@@ -2,7 +2,6 @@
 class Core extends Module{
 
 	const INIT_REQUEST = "init";
-	const RESOURCES_FOLDER = "resources/";
 	const DEVELOPMENT = true;
 	const MULTIPLE_LANGUAGES = true;
 	const LANGUAGE_IN_URL = true;
@@ -175,17 +174,6 @@ class Core extends Module{
 		} else {
 			return $include->getContent();
 		}
-	}
-
-
-	public function getAdminScript(){
-		$adminScript = Core::getResource("admin.js");
-		$url = CoreConfig::getUrl();
-		return str_replace('###url###', $url, $adminScript);
-	}
-
-	public static function getResource($name){
-		return file_get_contents(Core::RESOURCES_FOLDER.$name);
 	}
 
 	public function getAjaxConfig(){

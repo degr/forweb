@@ -14,12 +14,14 @@ class FilesSystem{
     const UI_CONTENT = 'content';
 
     public function __construct($basePath){
-        $this->basePath =  preg_replace('/\/$/','', $basePath)."/";
+        $bp = preg_replace('/\/$/','', $basePath);
+        $this->basePath = !empty($bp) ? preg_replace('/\/$/','', $basePath)."/" : "";
+        $this->relativePath = '';
     }
 
     public function setRelativePath($relativePath){
         if(is_file($this->basePath.$relativePath)) {
-            $relativePath = str_replace(basename($relativePath), "", $relativePath);
+            $relativePath = dirname($relativePath);
         }
         $this->relativePath = $this->removeUpFolders($relativePath);
     }
@@ -137,11 +139,13 @@ class FilesSystem{
         $file = $this->removeUpFolders($name);
         $file = self::removeFirstAndLastSlashes($file);
         $path = $this->basePath.$this->relativePath.$file;
-        mkdir($path);
+        $this->createFoldersPath($path);
     }
 
     private function createFoldersPath($path){
-        mkdir($path, 0777, true);
+        if(!empty($path) && !is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
     }
 
 

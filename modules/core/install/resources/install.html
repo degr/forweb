@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ForWeb install page</title>
+</head>
+<body>
+<p id="view"></p>
+<script>
+    var Install = {
+        dependencies: null,
+        write: function(t){
+            var d = document.getElementById('view');
+            d.innerHTML += t + '<br/>';
+        },
+        start: function(){
+            this.requestDependencies();
+            setTimeout(Install.startToResolveDependencies, 500);
+        },
+        requestDependencies: function(){
+            Install.write("Requesting for project dependencies");
+            Install.Ajax.request({
+                url: '?deploy=1&dependecies=1',
+                response: 'json',
+                success: function(o){Install.dependencies = o;}
+            });
+        },
+        buildCommonUrl: function(name){
+            return "http://forweb.org/storage/" + name;
+        },
+        startToResolveDependencies: function(){
+            if(Install.dependencies === null) {
+                setTimeout(Install.startToResolveDependencies, 500);
+                return;
+            }
+            Install.write("Dependencies collected, start to resolve.");
+            var notExisting = {};
+            for(var i in Install.dependencies) {
+                if(Install.dependencies.hasOwnProperty(i)) {
+                    var dep = Install.dependencies[i];
+                    for (var d = 0; d < dep.length; d++) {
+                        if(!dep[d].isExistLocally) {
+                            var add = true;
+                            if(notExisting[dep[d].moduleName]) {
+                                if(notExisting[dep[d].moduleName].moduleUrl !== dep[d].moduleUrl) {
+                                    add = false;
+                                    var url1 = notExisting[dep[d].moduleName].moduleUrl ? 
+                                            notExisting[dep[d].moduleName].moduleUrl : 
+                                            Install.buildCommonUrl(dep[d].moduleName);
+                                    var url2 = dep[d].moduleUrl ? 
+                                            dep[d].moduleUrl :
+                                            Install.buildCommonUrl(dep[d].moduleName);
+                                    
+                                    var choosenUrl = alert("Two or more modules have dependency with same name, but ask" +
+                                            "different locations. Please select: " + url1 + ", " + url2);
+                                    if(choosenUrl) {
+                                        notExisting[dep[d].moduleName].moduleUrl = choosenUrl;
+                                    }
+                                } 
+                            }
+                            if(add) {
+                                notExisting[dep[d].moduleName] = dep[d];
+                            }
+                        }
+                    }
+                }
+            }
+            if(notExisting) {
+                var collectionToDownload = [];
+                var skipped = [];
+                for(var ne in notExisting) {
+                    if(notExisting.hasOwnProperty(ne)) {
+                        var required = notExisting[ne];
+                        var message = "Project require dependency with name: " + required.moduleName;
+                        var url = Install.buildCommonUrl(required.moduleName);
+                        if(url === required.moduleUrl) {
+                            message += '. Dependency say, that it can be downloaded from official web site: ';
+                        } else if (required.moduleUrl) {
+                            message += ". It can be downloaded by this url (we guarantee nothing in case)," +
+                                    " but also you can try to download it from official site '" + url + "'";
+                            url = required.moduleUrl;
+                        } else {
+                            message += '. There is no specified url, so, we can try to download it from official web site: '
+                        }
+                        var out = prompt(message, url);
+                        if (out){
+                            collectionToDownload.push({module: required.moduleName, url: out});
+                            Install.write('Will be downloaded module with name: ' + required.moduleName + " by this url: " + url);
+                        } else {
+                            Install.write('<span style="color: red">Skipped</span> module download: ' + required.moduleName +"</span>" );
+                            skipped.push(required.moduleName);
+                        }
+                    }
+                }
+                Install.downloadModules(collectionToDownload, skipped);
+            } else {
+                Install.installExisting();
+            }
+        },
+        downloadModules: function(toDownload, skipped){
+            var clb = function(r){
+                if(!skipped) {
+                    skipped = [];
+                }
+                if(r && r.failedDownload && r.failedDownload.length) {
+                    skipped = skipped.concat(r.failedDownload);
+                }
+                if(skipped.length) {
+                    Install.write("Project can't be deployed, because it depend from not existing" +
+                        "modules (" + skipped.join(", ") +"). Please, download it by hands, or launch deploy one more time.");
+                } else {
+                    Install.installExisting();
+                }
+            };
+            if(toDownload && toDownload.length) {
+                Install.Ajax.request({
+                    url: '?deploy=1&download=1',
+                    type: 'POST',
+                    response: 'json',
+                    data: {items: toDownload},
+                    success: clb
+                })
+            } else {
+                clb(null);
+            }
+        },
+                    
+        installExisting: function(){
+            Install.Ajax.request({
+                url: '?deploy=1&installExisting=1',
+                response: 'json',
+                success: function (o) {
+                    alert('installed');
+                    console.log(o);
+                }
+            });
+        },
+        Ajax: {
+            request : function(obj) {
+                var req = this.getXmlHttp();
+
+                var url = obj.url || window.location.href;
+                var type = obj.type || "GET";
+                var success = obj.success||false;
+                var data = obj.data || null;
+                var response = obj.response || 'json';
+
+                req.onloadend = function() {
+                    if(success){
+                        var answer = response == 'json' ? JSON.parse(req.responseText) : req.responseText;
+                        success(answer, req);
+                    }
+                };
+
+                req.open(type, url, true);
+                //	if (reqType.toLowerCase() == "post") {
+                req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                //}
+                if (!data) {
+                    req.send(null);
+                } else {
+                    if(typeof data == 'object'){
+                        data = Install.Ajax.encodeRecoursivly(data);
+                    }
+                    req.send(data);
+                }
+
+            },
+            getXmlHttp : function() {
+                if (window.XMLHttpRequest && (!window.location || 'file:' != window.location.protocol || !window.ActiveXObject)) {
+                    return new XMLHttpRequest;
+                } else {
+                    try { return new ActiveXObject('Microsoft.XMLHTTP'); } catch(e) { }
+                    try { return new ActiveXObject('Msxml2.XMLHTTP.6.0'); } catch(e) { }
+                    try { return new ActiveXObject('Msxml2.XMLHTTP.3.0'); } catch(e) { }
+                    try { return new ActiveXObject('Msxml2.XMLHTTP'); } catch(e) { }
+                }
+                return null;
+            },
+            encodeRecoursivly: function(obj, prefix) {
+                var str = [];
+                for(var p in obj) {
+                    if (obj.hasOwnProperty(p)) {
+                        var k = prefix ? prefix + "[" + p + "]" : p, v = obj[p];
+                        str.push(typeof v == "object" ? Install.Ajax.encodeRecoursivly(v, k) :
+                        encodeURIComponent(k) + "=" + encodeURIComponent(v));
+                    }
+                }
+                return str.join("&");
+            },
+            encodeRecoursivly1: function(v){
+                var d = [];
+                for(var i in v) {
+                    d.push('"'+encodeURIComponent(i)+'":"'+(typeof v[i] == 'object' ? Ajax.encodeRecoursivly(v[i]) : encodeURIComponent(v[i]))+'"');
+                }
+                return "{" + d.join(encodeURIComponent( ',' )) + '}';
+            }
+        }
+    };
+    Install.start();
+    function execute(){
+        if(!document.getElementById('console').onload) {
+            document.getElementById('console').onload = execute;
+        }
+        var responseString = read();
+        var response;
+        var view = document.getElementById('view');
+        if(responseString) {
+            try {
+                response = JSON.parse(responseString);
+                switch (response.type) {
+                    case 'dependencies':
+                        onRequest = false;
+                        addDependencies(response);
+                        loadDependencyChain(response.dependencies);
+                        return;
+                    default:
+                        view.innerHTML += '<span style="color:red;">Unknown object type: '+response.type+'</span>';
+                }
+            } catch (e) {
+                view.innerHTML += '<span style="color:red;">Last command end with error.</span>';
+                console.log(e);
+                return;
+            }
+        }
+
+    }
+    function getModuleDependencies(moduleName){
+        send({i:''}, '?deploy=1&getDependencies='+encodeURIComponent(moduleName));
+    }
+
+    function addDependencies(response){
+        if(!response.dependencies) {
+            return;
+        }
+        if(!installed[response.module]) {
+            installed[response.module] = {name: response.module, installed: false, dependencies: response.dependencies};
+        } else {
+            installed[response.module].dependencies = response.dependencies;
+        }
+    }
+
+    function installModule(moduleName){
+        installed[moduleName] = {name: moduleName, installed: false, dependencies: []};
+    }
+
+    function loadDependencyChain(dependencies){
+        if(!dependencies || !dependencies.length) {
+
+        } else {
+            var current = dependencies.pop();
+            if(installed[current.moduleName]) {
+                loadDependencyChain(dependencies);
+            } else {
+                getModuleDependencies(current.moduleName);
+            }
+        }
+    }
+</script>
+</body>
+</html>

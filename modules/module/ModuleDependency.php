@@ -6,11 +6,11 @@
  * Time: 12:34
  */
 class ModuleDependency{
-    public function __construct($name) {
-        if(empty($name)) {
+    public function __construct($moduleName) {
+        if(empty($moduleName)) {
             throw new FwException("Module name property is required for dependeny object. It can't be empty.");
         }
-        $this->moduleName = $name;
+        $this->moduleName = $moduleName;
     }
     /**
      * minimum module version
@@ -25,7 +25,7 @@ class ModuleDependency{
      */
     public $majorVersion;
     /**
-     * Module id used for download module from http://forweb.org/modules/storage/%moduleId%
+     * Module id used for download module from http://forweb.org/storage/%moduleId%
      * can be null
      * @var string hash @TODO
      */
