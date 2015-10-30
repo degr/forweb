@@ -12,7 +12,8 @@ class CorePageContent{
      */
     public function onPageContent($pathParams){
         $this->pageModule = Core::getModule("Page");
-        $core = Core::getInstance();
+        /** @var $core Core */
+        $core = Core::getModule('Core');
 
         /* @var $pageService PageService */
         $pageService = Core::getModule("Page")->getService();
@@ -39,7 +40,8 @@ class CorePageContent{
     }
 
     protected function processBlocks($blocks){
-        $core = Core::getInstance();
+        /** @var $core Core */
+        $core = Core::getModule('Core');
         /* @var $pageService PageService */
         $pageService = Core::getModule("Page")->getService();
         $includes = $core->getPageIncludes($pageService->getCurrentPage());

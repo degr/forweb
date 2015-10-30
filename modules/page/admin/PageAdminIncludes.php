@@ -17,7 +17,8 @@ class PageAdminIncludes{
         /** @var $page PersistPages */
         $page = $pageDto['page'];
         $template = $page->getTemplate();
-        $core = Core::getInstance();
+        /** @var $core Core */
+        $core = Core::getModule('Core');
         $blocks = $core->getBlocks($template->getId());
         $includes = $core->getPageIncludes($page);
         return $this->getIncludesRepresentation($blocks, $includes, $page);

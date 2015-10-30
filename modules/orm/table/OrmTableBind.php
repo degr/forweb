@@ -13,6 +13,10 @@ class OrmTableBind{
 	protected $customRightField;
 
 	protected $lazyLoad;
+	
+	protected $manyToManyBindingName;
+
+	
 	public function getType(){return $this->type;}
 	public function __construct($leftTable, $leftKey, $type, $rightTable, $rightKey, $lazyLoad){
 		if(gettype($leftTable) != 'string'){
@@ -138,5 +142,37 @@ class OrmTableBind{
 		} else {
 			$bind->setCustomRightField($name, false);
 		}
+	}
+
+	/**
+	 * @return null
+	 */
+	public function getCustomLeftField() {
+		return $this->customLeftField;
+	}
+
+	/**
+	 * @return null
+	 */
+	public function getCustomRightField() {
+		return $this->customRightField;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getManyToManyBindingName() {
+		return $this->manyToManyBindingName;
+	}
+	/**
+	 * @param string
+	 */
+	public function setManyToManyBindingName($manyToManyBindingName) {
+		if($this->manyToManyBindingName === $manyToManyBindingName) {
+			return;
+		}
+		$this->manyToManyBindingName = $manyToManyBindingName;
+		$assymetricBind = $this->getRightTable()->getBind($this->getLeftTable()->getName());
+		$assymetricBind->setManyToManyBindingName($manyToManyBindingName);
 	}
 }

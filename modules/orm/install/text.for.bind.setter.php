@@ -4,6 +4,6 @@
      * @return <?= $data['bind']->getLeftTable()->getPersistClassName() ?>
      */
     public function set<?= ucfirst($data['name']) ?>($<?=$data['name']?>){
-        $this-><?= $data['name'] ?> = $<?= ucfirst($data['name']) ?>;
-        return $this;;
+        $this-><?= $data['name'] ?> = $<?= $data['name'] ?>;
+        return $this;
     }

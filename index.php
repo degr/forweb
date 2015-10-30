@@ -1,10 +1,12 @@
 <?php
 session_start();
 define('TIME', microtime(true));
+
 /*main requirements*/
 require_once 'modules/module/Module.php';
 require_once 'modules/core/Core.php';
-$core = Core::getInstance();
+/** @var $core Core */
+$core = Core::getModule('Core');
 spl_autoload_register(array($core, 'autoload'));
 spl_autoload_register(array("ORM", 'autoload'));
 
@@ -29,5 +31,4 @@ if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
 /* page generation */
 $core->process();
 DB::close();
-echo Core::$incCount;
 ?>

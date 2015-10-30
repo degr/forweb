@@ -21,19 +21,6 @@ class Core extends Module{
 		}
 		return $this->ajaxHandlers;
 	}
-
-	/**
-	 * get core instance
-	 * @return Core
-	 */
-	public static function getInstance(){
-		if(Core::$instance == null) {
-			Core::$instance = new Core();
-		}
-		return Core::$instance;
-	}
-
-
 	/**
 	 * Array with modules
 	 * @var IModule[]
@@ -54,14 +41,6 @@ class Core extends Module{
 		}
 		return "";
 	}
-	/**
-	 * Core instance.
-	 * Core class must have singleton model. Do not create core objects,
-	 * use Core::getInstance method.
-	 * @var Core
-	 */
-	protected static $instance;
-
 
 	/**
 	 * Get module. If module is not defined, try to find it in path:
@@ -72,20 +51,9 @@ class Core extends Module{
 	 */
 	public static function getModule($module){
 		if(empty(Core::$modules[$module])) {
-			Core::loadModule($module);
+			Core::$modules[$module] = new $module();
 		}
 		return Core::$modules[$module];
-	}
-
-	/**
-	 * Create new module instance, and put into modules storage.
-	 * 'modules/yourModule/YourModule.php'
-	 * @param string $module
-	 * @return Module
-	 * @throws Exception
-	 */
-	protected static function loadModule($module){
-		Core::$modules[$module] = new $module();
 	}
 
 	/**
@@ -100,17 +68,6 @@ class Core extends Module{
 		}
 		$file = Core::MODULES_FOLDER."/".strtolower($module)."/".$module.".php";
 		return is_file($file);
-	}
-
-
-	/**
-	 * Save any object into modules array. Use it carefully,
-	 * method was created to store Module instances.
-	 * @param $module IModule
-	 * @param $key string
-	 */
-	protected function setModule(IModule $module, $key){
-		Core::$modules[$key] = $module;
 	}
 
 	/**

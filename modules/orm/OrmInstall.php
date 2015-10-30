@@ -5,7 +5,7 @@ class OrmInstall implements ModuleInstall{
     public static function createDBTable(OrmTable $table){
         $primaryKey = $table->getPrimaryKey();
         if(empty($primaryKey)){
-            throw new Exception("Can't create table with no primary keys, please define it (".$table->getName().")");
+            throw new FwException("Can't create table with no primary keys, please define it (".$table->getName().")");
         }
 
         $tables = DB::getColumn("SHOW TABLES");
@@ -51,7 +51,8 @@ class OrmInstall implements ModuleInstall{
             $query .= implode(", ", $fields).") ENGINE=InnoDB CHARACTER SET=UTF8;";
             DB::query($query);
         }
-
+        
+        self::resolveManyToMany($table);
 
         foreach($table->getFields() as $field) {
             if($field->getIndex()) {
@@ -348,6 +349,75 @@ class OrmInstall implements ModuleInstall{
     }
 
     /**
+     * Create many-to-many binding tables
+     * @param OrmTable $table
+     * @throws FwException
+     */
+    private static function resolveManyToMany(OrmTable $table)
+    {
+        foreach ($table->getBinds() as $bind) {
+            if($bind->getType() === OrmTable::MANY_TO_MANY) {
+                $bindingName = $bind->getManyToManyBindingName();
+                if(empty($bindingName)) {
+                    $rName = $bind->getRightTable()->getName();
+                    $lName = $bind->getLeftTable()->getName();
+                    //z - this tables will be in the end of tables list
+                    //mm - Many-to-Many
+                    $supposedNames = array(
+                        'z_mm_'.$lName.'_'.$rName,
+                        'z_mm_'.$rName.'_'.$lName
+                    );
+                    $found = 0;
+                    $realName = null;
+                    $tables = DB::getColumn("show tables");
+                    foreach($supposedNames as $supposed) {
+                        if(in_array($supposed, $tables)) {
+                            $found++;
+                            $realName = $supposed;
+                        }
+                    }
+                    switch($found) {
+                        case 0:
+                            $bind->setManyToManyBindingName($supposedNames[0]);
+                            $query = "create table ".$supposedNames[0]."("
+                                .self::buildFieldDescriptionForManyToMany($bind->getLeftTable()).','
+                                .self::buildFieldDescriptionForManyToMany($bind->getRightTable())
+                                .") ENGINE=InnoDB CHARACTER SET=UTF8;";
+                            DB::query($query);
+                            break;
+                        case 1:
+                            break;
+                        default:
+                            throw new FwException("Found multiple binding between tables with many-to-many "
+                                ."relationship. Please delete explicit table from database, or specify custom "
+                                ." manyToManyBindingName property for any of your binds.");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param OrmTable $table
+     * @return string
+     * @throws Exception
+     * @throws FwException
+     */
+    private static function buildFieldDescriptionForManyToMany(OrmTable $table)
+    {
+        $key = $table->getName();
+        $field = $table->getField($table->getPrimaryKey());
+        $keyType = $field->getType();
+        $keyLength = $field->getLength();
+        if(empty($keyLength) || empty($keyType) || empty($key)) {
+            throw new FwException("Some of attributes was not been set.");
+        }
+        
+        return $key." ".$keyType.'('.$keyLength.') not null,'
+            .'index ix_'.$key.' using hash ('.$key.')';
+    }
+
+    /**
      * Make all necessary preparations for this module
      * as PersistTables deploy, cache files creating etc..
      * @return void
@@ -387,7 +457,7 @@ class OrmInstall implements ModuleInstall{
      */
     public function getDependencies()
     {
-        return array(new ModuleDependency("DB"));
+        return array(new ModuleDependency("DB"), new ModuleDependency("FwException"));
     }
 
     /**
