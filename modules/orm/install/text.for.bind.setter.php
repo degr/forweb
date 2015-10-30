@@ -1,9 +1,9 @@
     /**
      * `<?= $data['name']?>` field setter
-     * @var <?= $data['persistClassName'].$typePrefix." $".$name ?>
+     * @var <?= $data['persistClassName'].$data['typePrefix']." $".$data['name'] ?>
      * @return <?= $data['bind']->getLeftTable()->getPersistClassName() ?>
      */
-    public function set<?= ucfirst($name) ?>($<?=$name?>){
-        $this-><?= $name ?> = $<?= ucfirst($name) ?>;
+    public function set<?= ucfirst($data['name']) ?>($<?=$data['name']?>){
+        $this-><?= $data['name'] ?> = $<?= ucfirst($data['name']) ?>;
         return $this;;
     }

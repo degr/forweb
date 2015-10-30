@@ -15,70 +15,27 @@ class OrmUtils{
      */
     public static function load(OrmTable $mainTable, $one, $filters, $sorters, $paginator){
         $query = OrmQueryBuilder::getLoadQuery($mainTable, $filters, $sorters, $paginator);
-        $result = DB::getTable($query);
-        return OrmUtils::resultToArray($mainTable, $result, $one);
+        $resultSet = DB::getResultSet($query);
+        
+        return OrmUtils::resultToArray($mainTable, $resultSet, $one);
     }
     /**
      * Transform assoc array into objects array
      * @param OrmTable $mainTable
-     * @param $result array data of previous query [[person_id=>1, person_name=>2, address_id=1, address_name='Lenina st 45']]
+     * @param $resultSet mysqli_result
      * @param $one boolean - if true, will be returned one object, of false, array of objects
      * @return OrmPersistenceBase|OrmPersistenceBase[]
      * @throws Exception
      */
-    protected static function resultToArray(OrmTable $mainTable, $result, $one){
-        $tables = array($mainTable);
-        foreach($mainTable->getBinds() as $bind) {
-            if(!$bind->getLazyLoad()) {
-                $tables[] = $bind->getRightTable();
-            }
-        }
-        $orderedObject = OrmUtils::buildOrderedObject($mainTable, $result, $tables);
-        /* @var $table OrmTable */
-        foreach($tables as $table) {
-            /* @var $bind OrmTableBind */
-            foreach ($table->getBinds() as $bind) {
-                if (empty($orderedObject[$bind->getRightTable()->getName()])) {
-                    continue;
-                }
-                $postfix = $bind->getLeftField() === $table->getField($bind->getLeftKey())->getName() ? OrmUtils::BIND_PREFIX : "";
-                $lKeyMethod = 'get' . ucfirst($bind->getLeftKey()).$postfix;
-                $lKeySetter = 'set' . ucfirst($bind->getLeftField());
-                $rKeyMethod = 'get' . ucfirst($bind->getRightKey());
-                foreach ($orderedObject[$table->getName()] as $entity) {
-                    $setValue = null;
-                    /** @var $binded OrmPersistenceBase*/
-                    foreach ($orderedObject[$bind->getRightTable()->getName()] as $binded) {
-                        if($table->getField($bind->getLeftKey())->getLazyLoad()){
-                            continue;
-                        }
-                        if($bind->getLazyLoad()){
-                            continue;
-                        }
-                        if ($bind->getType() == OrmTable::ONE_TO_ONE || $bind->getType() == OrmTable::MANY_TO_ONE) {
-                            if ($entity->$lKeyMethod() == $binded->$rKeyMethod()) {
-                                $entity->$lKeySetter($binded);
-                                break;
-                            }
-                        } else {
-                            if ($setValue == null) {
-                                $setValue = array();
-                            }
-                            $setValue[$binded->getPrimaryKey()] = $binded;
-                        }
-                    }
-                    if (is_array($setValue)) {
-                        $entity->$lKeySetter($setValue);
-                    }
-                }
-            }
-        }
-        if($one) {
-            $out = reset($orderedObject[$mainTable->getName()]);
-            return !empty($out)? $out : null;
-        } else {
-            return $orderedObject[$mainTable->getName()];
-        }
+    protected static function resultToArray(OrmTable $mainTable, $resultSet, $one){
+
+        /** @var $resultSet mysqli_result */
+        $metadata = $resultSet->fetch_fields();
+        $dataBinder = new OrmUtilsDatabinder($mainTable, $resultSet, $metadata);
+        $dataBinder->buildTables();
+        $dataBinder->addDataToStack();
+        $dataBinder->bindData();
+        return $dataBinder->getResult($one);
     }
     protected static function fromArrayToObject(OrmTable $table, $row){
         $class = $table->getPersistClassName();
@@ -168,7 +125,7 @@ class OrmUtils{
      * @param $value
      * @return int|string
      */
-    public static function getValueForField($field, $value) {
+    public static function getValueForField($field, $value, $escapeStrings = true) {
         $dv = $field->getDefaultValue();
         if(!isset($value) && isset($dv)) {
             $value = $dv;
@@ -198,7 +155,7 @@ class OrmUtils{
                 }
             // no break
             default:
-                return "'".DB::escape($value)."'";
+                return $escapeStrings ? "'".DB::escape($value)."'" : $value;
         }
     }
     /**
@@ -283,29 +240,7 @@ class OrmUtils{
         }
         return null;
     }
-    /**
-     * Build ordered object before data transformation into Persist objects
-     * @param OrmTable $mainTable
-     * @param $result
-     * @param $tables OrmTable[]
-     * @return array
-     */
-    private static function buildOrderedObject(OrmTable $mainTable, $result, $tables)
-    {
-        $out = array();
-        $out[$mainTable->getName()] = array();
-        foreach($result as $row){
-            foreach($tables as $table) {
-                /** @var $obj OrmPersistenceBase */
-                $obj = OrmUtils::fromArrayToObject($table, $row);
-                if($obj == null) {
-                    continue;
-                }
-                $out[$table->getName()][$obj->getPrimaryKey()] = $obj;
-            }
-        }
-        return $out;
-    }
+    
     /**
      * @param $allBinds OrmTableBind[]
      * @param $table OrmTable

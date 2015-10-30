@@ -48,6 +48,7 @@ class OrmQueryBuilder {
             }
         }
         $out = "SELECT ".implode(",", $select)." FROM ".implode(" ", $tables);
+        $out = "SELECT * FROM ".implode(" ", $tables);
 
         if($filters != null) {
             if(is_array($filters)) {

@@ -44,4 +44,13 @@ interface DbEngine{
     public function getColumn($query);
 
     public function getCell($query);
+
+    public function close();
+
+    /**
+     * Escape value for db operation
+     * @param $value
+     * @return string
+     */
+    public function escape($value);
 }

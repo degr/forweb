@@ -121,12 +121,12 @@ class Core extends Module{
 		$dispatcher = new PageDispatcher($_SERVER['REQUEST_URI']);
 		$dispatcher->handleRequest();
 		self::$pathParams = $dispatcher->getParams();
+		$key = Core::getPathParam(0);
 		if(Core::MULTIPLE_LANGUAGES && Core::LANGUAGE_IN_URL) {
 			$languageUrl = array_shift(self::$pathParams);
 		} else {
-            $languageUrl = null;
-        }
-		$key = Core::getPathParam(0);
+			$languageUrl = null;
+		}
 		if($key == 'api') {
 			/** @var $api Api */
 			$api = Core::getModule("Api");

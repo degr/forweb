@@ -183,6 +183,14 @@ class DB{
     }
 
     /**
+     * @param $query
+     * @return mysqli_result
+     */
+    public static function getResultSet($query){
+        return DB::getInstance()->getResultSet($query);
+    }
+    
+    /**
      *
      */
     public static function incrementQueries(){

@@ -60,8 +60,8 @@ class DbEngineMysql extends DbEngineAbstract{
         echo "</pre>";
     }
 
-
-    public function close(){
+    public function close()
+    {
         $this->mysqli->close();
     }
 }
