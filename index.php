@@ -29,4 +29,5 @@ if(Core::DEVELOPMENT && $_GET['scss'] == 1 || !is_file('css/compilled.css')) {
 /* page generation */
 $core->process();
 DB::close();
+echo Core::$incCount;
 ?>
