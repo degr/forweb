@@ -208,7 +208,9 @@
                 input.type = 'text';
                 input.name = data[i].identifier;
                 input.id = data[i].identifier + "_question";
-
+                if(data[i]['default']) {
+                    input.value = data[i]['default'];
+                }
                 cell1.appendChild(label);
                 cell2.appendChild(input);
                 table.appendChild(holder);
@@ -239,6 +241,10 @@
             var inputs = form.getElementsByTagName('input');
             var data = {};
             for(var i = 0; i < inputs.length; i++) {
+                if(inputs[i].type === 'submit')continue;
+                if(!data[inputs[i].name]){
+                    data[inputs[i].name] = {};
+                }
                 data[inputs[i].name] = inputs[i].value;
             }
             Install.moduleValues[form.getAttribute('data-module')] = data;

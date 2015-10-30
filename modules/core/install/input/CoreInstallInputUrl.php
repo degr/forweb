@@ -50,4 +50,13 @@ class CoreInstallInputUrl implements ModuleInput{
             "http://yoursite.com/\n".
             "(with protocol, port (if it not equal to 80), and ending slash)";
     }
+
+    /**
+     * Ask question for user on module install
+     * @return string
+     */
+    public function getDefaultValue()
+    {
+        return CoreConfig::getUrl();
+    }
 }

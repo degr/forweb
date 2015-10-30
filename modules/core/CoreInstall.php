@@ -9,14 +9,7 @@
 class CoreInstall implements ModuleInstall{
 
     protected $installedModules;
-/*
- * [
- *   {name: core, input: [], state}
- * 
- * ]
- * 
- * */
-    //loadAll
+    
     public function run(){
         if(!empty($_GET['dependecies'])) {
             $out = $this->getProjectDependencies();
@@ -54,7 +47,13 @@ class CoreInstall implements ModuleInstall{
     {
         $out = array();
         if($this->isModuleExistLocally($moduleName)) {
-            if($this->isModuleHasInstallation($moduleName) && !in_array($moduleName, $this->installedModules)) {
+            $installMessage = array(
+                0 => '<div style="padding: 10px; border: 1px dotted lightgray">',
+                1 => null,
+                2 => '<p>Module <span style="font-weight: bold">"'.$moduleName.'"</span> installed successfully.</p>'.
+                    '</div>'
+            );
+            if($this->isModuleHasInstallation($moduleName) && !in_array(strtolower($moduleName), $this->installedModules)) {
                 /* @var $moduleInstallObject ModuleInstall */
                 $moduleInstallObject = $this->getInstallObject($moduleName);
                 $dependencies = $moduleInstallObject->getDependencies();
@@ -66,13 +65,13 @@ class CoreInstall implements ModuleInstall{
                     $out = $items;
                 }
                 $moduleInstallObject->install();
-               
-                array_unshift($out, '<div style="padding: 10px; border: 1px dotted lightgray">'.
-                    $moduleInstallObject->getInfo().
-                    '<p>Module <span style="font-weight: bold">"'.$moduleName.'"</span> installed successfully.</p>'.
-                    '</div>');
+                $this->resolveUserInput($moduleInstallObject, $moduleName);
+                $installMessage[1] = $moduleInstallObject->getInfo();
             }
-            $this->installedModules[] = $moduleName;
+            if(!in_array(strtolower($moduleName), $this->installedModules)) {
+                array_unshift($out, implode('', array_filter($installMessage)));
+                $this->installedModules[] = strtolower($moduleName);
+            }
         } else {
             throw new FwException("Can't install module because it does not exist.");
         }
@@ -321,17 +320,6 @@ class CoreInstall implements ModuleInstall{
         }
     }
 
-    private function isModuleWasInstalled($clientData, $moduleName)
-    {
-        /** @var $item CoreInstallDependency */
-        foreach ($clientData as $item) {
-            if(strtolower($item->getPackage()) === strtolower($moduleName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private function getDownloadResult()
     {
         if(empty($_POST['items']) || !is_array($_POST['items'])){
@@ -383,7 +371,8 @@ class CoreInstall implements ModuleInstall{
                         foreach($inputArray as $input) {
                             $item[] = array(
                                 'identifier' => $input->getIdentifier(),
-                                'question' => $input->getQuestion()
+                                'question' => $input->getQuestion(),
+                                'default' => $input->getDefaultValue()
                             );
                         }
                         if(!empty($item)) {
@@ -396,5 +385,23 @@ class CoreInstall implements ModuleInstall{
             }
         }
         return array_filter($out);
+    }
+
+    /**
+     * @param $installObject ModuleInstall
+     * @param $moduleName
+     */
+    private function resolveUserInput($installObject, $moduleName)
+    {
+        $input = $installObject->getUserInput();
+        if(empty($_POST[$moduleName]) || empty($input)) {
+            return;
+        }
+        /** @var $inputProcessObject ModuleInput */
+        foreach($installObject->getUserInput() as $inputProcessObject) {
+            $id = $inputProcessObject->getIdentifier();
+            $value = empty($_POST[$moduleName][$id]) ? '' : $_POST[$moduleName][$id]; 
+            $inputProcessObject->process($value);
+        }
     }
 }

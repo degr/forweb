@@ -15,6 +15,7 @@ interface ModuleInput{
 
     /**
      * Process user response
+     * @param $userInput string. not null, ''.
      * @return boolean
      */
     public function process($userInput);
@@ -24,4 +25,9 @@ interface ModuleInput{
      * @return string
      */
     public function getQuestion();
+    /**
+     * Ask question for user on module install
+     * @return string
+     */
+    public function getDefaultValue();
 }
