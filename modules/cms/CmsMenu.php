@@ -41,13 +41,13 @@ class CmsMenu{
 
     private function generateMenu($parent, $includeHome, $addInfo){
         $out = array();
-        //@TODO add order by position
         /* @var $pageModule Page */
         $pageModule = Core::getModule("Page");
         /* @var $service PageService */
         $service =  $pageModule->getService();
         $customFilter = new OrmQueryCustomFilter("  (".($includeHome ? "pages.id=1 OR " : "")." pages.parent = ".$parent.") AND in_menu = 1 ", true);
-        $pages = $service->loadAll($customFilter);
+        $sorter = new OrmQuerySorter('pages', 'position_number', OrmQuerySorter::DIRECTION_ASC);
+        $pages = $service->loadAll($customFilter, $sorter);
         /* @var $page PersistPages */
         foreach($pages as &$page) {
             $pageUrl = $service->getPagePath($page);
