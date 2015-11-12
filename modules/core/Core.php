@@ -1,7 +1,6 @@
 <?
 class Core extends Module{
 
-	const INIT_REQUEST = "init";
 	const DEVELOPMENT = true;
 	const MULTIPLE_LANGUAGES = true;
 	const LANGUAGE_IN_URL = true;
