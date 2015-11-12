@@ -99,8 +99,8 @@ class PageInstall implements ModuleInstall{
         $query = "select id from pages where id = 1";
         $pageId = DB::getCell($query);
         if(empty($pageId)) {
-            $query = "insert into pages (id, name, url, parent, template, position, active, in_menu) VALUES ("
-                . "1, 'home', 'home', 0, 1, 1, 1, 1)";
+            $query = "insert into pages (id, name, url, parent, template, position, active, in_menu, params_count) VALUES ("
+                . "1, 'home', 'home', 0, 1, 1, 1, 1, 1)";
             DB::query($query);
         }
         $query = "select id from templates where id = 1";
