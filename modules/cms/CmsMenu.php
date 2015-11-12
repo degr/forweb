@@ -7,7 +7,7 @@
  */
 class CmsMenu{
     public function onHeaderMenu(UI $ui){
-        $ui->setLayout("forweb/common/headerMenu.tpl");
+        $ui->setLayout("cms/header.menu.tpl");
         /* @var $pageModule Page */
         $pageModule = Core::getModule("Page");
         /* @var $service PageService */
@@ -17,7 +17,7 @@ class CmsMenu{
     }
 
     public function onSidebarSubmenu(UI $ui){
-        $ui->setLayout("forweb/common/sidebarSubmenu.tpl");
+        $ui->setLayout("cms/sidebar.menu.tpl");
         /* @var $pageModule Page */
         $pageModule = Core::getModule("Page");
         $param = Core::getPathParam(0);

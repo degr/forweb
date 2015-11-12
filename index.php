@@ -12,7 +12,7 @@ spl_autoload_register(array("ORM", 'autoload'));
 
 /* db initializing */
 $manager = new DbManager("", "Mysql");
-$manager->setCredentials("127.0.0.1", "root", "admin", "forweb");
+$manager->setCredentials("127.0.0.1", "root", "", "forweb.org");
 DB::init($manager);
 DB::setEncoding("utf8");
 

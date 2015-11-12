@@ -20,6 +20,18 @@ class UserGuiForms{
 
     public function getLogOutForm(UI $ui)
     {
+        if(empty($_GET)) {
+            $url = $_SERVER['REQUEST_URI']."?logout=1";
+        } else {
+            $isLogout = false;
+            $query = $_GET;
+            $query['logout'] = 1;
+            foreach($query as $key => $value) {
+                $query[$key] = $key . '=' . $value;
+            }
+            $url = $_SERVER['REQUEST_URI']."?".implode("&", $query);
+        }
+        $ui->addVariable('url', $url);
         $ui->setLayout("user/forms/logout.tpl");
     }
 

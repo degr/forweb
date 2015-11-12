@@ -29,4 +29,4 @@ RewriteCond %{REQUEST_URI} !\.css$
 RewriteCond %{REQUEST_URI} !\.txt$
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$  index.php?q=$1 [L,QSA]
+RewriteRule ^(.*)$  index.php [L,QSA]

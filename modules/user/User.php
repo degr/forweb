@@ -90,6 +90,9 @@ class User extends Module{
             $auth = null;
             if(isset($_POST['email']) && isset($_POST['password'])) {
                 $auth = $this->onAjaxAuthorization();
+                if(empty($auth['errors'])){
+                    return;
+                }
             }
             $provider = new UserGuiForms();
             $provider->getAuthorizationForm($ui, !empty($auth['errors']) ? $auth['errors'] : array());
@@ -102,24 +105,17 @@ class User extends Module{
      * @param UI $ui
      */
     public function getLogOutForm(UI $ui){
-        if(User::getUser() != null) {
-            $provider = new UserGuiForms();
-            $provider->getLogOutForm($ui);
-        }
-    }
-
-    /**
-     * User authorization form UI controller.
-     * Prepare data for form rendering
-     */
-    public function onAjaxLogout(){
-        if(User::getUser() != null) {
+        if(!empty($_GET['logout']) && User::getUser() !== null) {
             $userId = User::getUserId();
             User::setUserId(0);
             User::$user = null;
             Core::triggerEvent(User::EVENT_LOGOUT, array('userId'=>$userId));
+            CoreRedirect::redirectToHome();
         }
-        CoreRedirect::redirectToHome();
+        if(User::getUser() != null) {
+            $provider = new UserGuiForms();
+            $provider->getLogOutForm($ui);
+        }
     }
 
     /**
@@ -128,6 +124,6 @@ class User extends Module{
      */
     public function getEventHandlers()
     {
-        // TODO: Implement getEventHandlers() method.
+        return null;
     }
 }

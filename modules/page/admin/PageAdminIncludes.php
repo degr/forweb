@@ -54,7 +54,7 @@ class PageAdminIncludes{
                 $form['type']['options'] = $typesList;
                 $form['module']['options'] = $modulesList;
                 $form['module']['tag'] = UI::TAG_SELECT;
-                $form['method']['tag'] = UI::TAG_SELECT;
+                $form['page']['value'] = (!empty($form['page']['value']) ? $form['page']['value']->getId() : '');
 
                 if(!empty($form['module']['value'])){
                     $moduleName = $form['module']['value'];
@@ -72,12 +72,21 @@ class PageAdminIncludes{
                     'tag' => UI::TAG_FIELDSET,
                     'layout' => UI::LAYOUT_OVERVIEW
                 );
-                $out[$blocks[$include->getBlock()]]['fields'][$include->getPosition()][] = $data;
+
+                $out[$blocks[$include->getBlock()]]['fields'][$include->getPosition()][$include->getPositionNumber()] = $data;
             }
 
             foreach($out as $key => &$block) {
+                if(!empty($block['fields']['before'])) {
+                    ksort($block['fields']['before'], SORT_NUMERIC );
+                }
+                if(!empty($block['fields']['template'])) {
+                    ksort($block['fields']['template'], SORT_NUMERIC );
+                }
+                if(!empty($block['fields']['after'])) {
+                    ksort($block['fields']['after'], SORT_NUMERIC );
+                }
                 $block['title'] = $key;
-
                 $block['fields']['submit'] = UI::getSubmitButton();
             }
         }
@@ -126,12 +135,9 @@ class PageAdminIncludes{
             $out[] = "Was deleted includes with ids: [".implode(", ", $ids)."]";
             DB::query("DELETE FROM includes WHERE id IN('".implode("','", $ids)."')");
         }
-        $allIds = array();
-        if($onCreate) {
-            $query = "SELECT id FROM includes where block='".$blockId
-                ."' AND page = '".DB::escape($pageId)."' ORDER BY positionNumber";
-            $allIds = DB::getColumn($query);
-        }
+        $query = "SELECT id FROM includes where block='".$blockId
+            ."' AND page = '".DB::escape($pageId)."' ORDER BY positionNumber";
+        $allIds = DB::getColumn($query);
         return array('text'=>implode("<br/>",$out), 'ids'=>$allIds, 'block' => $blockId);
     }
 
